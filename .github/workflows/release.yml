@@ -1,0 +1,57 @@
+name: release
+on:
+  push:
+    tags: ["v*"]
+permissions:
+  contents: read
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
+      attestations: write
+    env:
+      SYFT_VERSION: "1.55.0"
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Verify source checksums
+        run: sha256sum -c SHA256SUMS.txt
+      - name: Build zip
+        env:
+          TAG: ${{ github.ref_name }}
+        run: |
+          VER="${TAG#v}"
+          NAME="safeblueprint-selfhost-${VER}"
+          mkdir -p "dist/${NAME}"
+          cp -a site Dockerfile docker-compose.yml nginx.conf INSTALL.md VERSION SHA256SUMS.txt LICENSE README.md "dist/${NAME}/"
+          (cd dist && zip -qrX "${NAME}.zip" "${NAME}")
+          echo "NAME=${NAME}" >> "$GITHUB_ENV"
+      - name: Install syft (checksum verified)
+        run: |
+          base="https://github.com/anchore/syft/releases/download/v${SYFT_VERSION}"
+          f="syft_${SYFT_VERSION}_linux_amd64.tar.gz"
+          curl -sSfLO "${base}/${f}" -O "${base}/syft_${SYFT_VERSION}_checksums.txt"
+          grep " ${f}\$" "syft_${SYFT_VERSION}_checksums.txt" | sha256sum -c -
+          tar -xzf "${f}" syft
+      - name: SBOMs
+        run: |
+          ./syft scan "dir:dist/${NAME}" -o "spdx-json=dist/${NAME}.spdx.json" -o "cyclonedx-json=dist/${NAME}.cdx.json"
+          (cd dist && sha256sum "${NAME}.zip" "${NAME}.spdx.json" "${NAME}.cdx.json" > SHA256SUMS)
+      - uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
+        with:
+          subject-path: dist/${{ env.NAME }}.zip
+      - uses: actions/attest-sbom@c604332985a26aa8cf1bdc465b92731239ec6b9e # v4.1.0
+        with:
+          subject-path: dist/${{ env.NAME }}.zip
+          sbom-path: dist/${{ env.NAME }}.spdx.json
+      - name: Create release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          gh release create "$TAG" --repo "$GITHUB_REPOSITORY" --title "SafeBlueprint $TAG" --verify-tag \
+            --notes "Self-hosted edition. Verify with: gh attestation verify ${NAME}.zip --repo ${GITHUB_REPOSITORY} && sha256sum -c SHA256SUMS" \
+            "dist/${NAME}.zip" "dist/${NAME}.spdx.json" "dist/${NAME}.cdx.json" dist/SHA256SUMS

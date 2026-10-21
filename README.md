@@ -20,6 +20,17 @@ docker compose up -d           # Docker + nginx, see INSTALL.md
 ```
 Or copy `site/` to any static host (intranet, S3, Azure Static Web Apps). Serve from the site root. Verify integrity with `sha256sum -c SHA256SUMS.txt`. Details: [INSTALL.md](INSTALL.md).
 
+## Verify a release
+
+Each GitHub Release ships the zip, SPDX and CycloneDX SBOMs, a `SHA256SUMS` file, and signed build-provenance and SBOM attestations.
+
+```bash
+gh release download v1.0.0 --repo goloviproducts-coder/safeblueprint-community
+sha256sum -c SHA256SUMS
+gh attestation verify safeblueprint-selfhost-1.0.0.zip --repo goloviproducts-coder/safeblueprint-community
+```
+Both must pass before you deploy. After unzipping, `sha256sum -c SHA256SUMS.txt` inside the folder checks every file.
+
 ## Screenshots
 | Leader summary (portfolio) | Portfolio report p1 | Portfolio report p2 |
 |---|---|---|
