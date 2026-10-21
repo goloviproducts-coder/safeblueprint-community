@@ -58,7 +58,7 @@ jobs:
         run: |
           VER="${TAG#v}"
           VER_RE="$(printf '%s' "$VER" | sed 's/[.]/\\./g')"
-          awk -v v="$VER_RE" '$0 ~ ("^## \\[" v "\\]") {f=1; next} /^## \[/ && f {exit} f' CHANGELOG.md > notes.md
+          VER_RE="$VER_RE" awk '$0 ~ ("^## \\[" ENVIRON["VER_RE"] "\\]") {f=1; next} /^## \[/ && f {exit} f' CHANGELOG.md > notes.md
           for h in "Features" "Issues fixed" "Interfaces updated" "Security fixes" "Privacy" "General"; do
             grep -qx "### $h" notes.md || { echo "CHANGELOG.md section for $VER is missing heading: $h" >&2; exit 1; }
           done
