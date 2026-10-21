@@ -102,6 +102,12 @@ To pass: add or update the relevant threats and mitigations (edit the JSON in Th
 - **OSV-Scanner** checks dependencies on PRs and weekly.
 - **ZAP baseline** passively scans `npx serve site` on PRs and fails on any High-risk alert. Tune false positives in `.zap/rules.tsv` with a reason. Header alerts are ignored locally because `serve` does not apply `site/_headers`; production headers are set in `_headers` and `nginx.conf`.
 
+## Editions and deploys
+- `site/` is the **self-hosted edition**: contact form off, nothing sent anywhere. The release zip is built from it.
+- `editions/hosted/` overlays the **hosted edition** (https://safeblueprint.pages.dev): contact page, `contact.js`, `config.js` with `FORM_ENDPOINT = "/api/contact"`. `functions/api/contact.js` is the Cloudflare Pages Function; it sends through Resend only and reads `RESEND_API_KEY` and `CONTACT_TO` from the Pages environment. No keys or addresses live in the repo.
+- Build either with `node scripts/build-edition.js hosted|selfhost`.
+- Every merge to `main` runs `deploy.yml`, which waits for a maintainer to approve the `production` environment, builds the hosted edition, deploys it to Cloudflare Pages and smoke-tests it.
+
 ## Commit style
 - Conventional prefixes: `feat:`, `fix:`, `docs:`, `mapping:`, `pattern:`, `i18n:`, `chore:`.
 - Imperative, under 72 chars: `mapping: add OWASP LLM08 controls to PAT-03`.

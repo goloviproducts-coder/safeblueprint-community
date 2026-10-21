@@ -36,6 +36,7 @@
     <a href="/security/" aria-current="page">Security</a>
     <a href="/about/">About us</a>
     <a href="/contact/">Contact</a>
+    <a href="https://github.com/goloviproducts-coder/safeblueprint-community" rel="noopener">GitHub</a>
   </nav>
 </header>
 <div class="hero">
@@ -108,6 +109,11 @@
     </table>
   </div>
 
+  <h2>Open source and continuous scanning</h2>
+  <p>The code is public on <a href="https://github.com/goloviproducts-coder/safeblueprint-community" rel="noopener">GitHub</a> under Apache-2.0. Changes to the main branch go through a pull request. Each pull request runs a checksum check plus CodeQL, Semgrep, Gitleaks, Trivy, dependency review and a GitHub Actions check. Secret scanning with push protection is on.</p>
+  <p>The repo's <a href="https://securityscorecards.dev/viewer/?uri=github.com/goloviproducts-coder/safeblueprint-community" rel="noopener">OpenSSF Scorecard</a> results are public. From v1.0.0, release checksums and build attestations are available on the <a href="https://github.com/goloviproducts-coder/safeblueprint-community/releases" rel="noopener">releases page</a>. Signed releases are being added.</p>
+  <p>You can also report a vulnerability privately through <a href="https://github.com/goloviproducts-coder/safeblueprint-community/security/advisories/new" rel="noopener">GitHub security advisories</a>. See the repo's <a href="https://github.com/goloviproducts-coder/safeblueprint-community/security" rel="noopener">Security tab</a>.</p>
+
   <h2>Threat model summary</h2>
   <p>There are no accounts to spoof. The contact form is the only contact route, and the mailbox is not in the source. Pages load only same-origin CSS and JavaScript, with subresource integrity, and user text is not assigned as HTML. A form post is a message you chose to send. The site does not keep a server-side audit log. Initiative names and answers stay in memory for the visit. They are not put in storage, cookies, or the address. Copy tasks leaves the initiative name out. A playbook summary, if you tick the optional box, does not include that name. Form spam is limited by a honeypot, a short wait, length limits, and the same checks on the relay. There is no role to escalate. The service worker caches listed site files only. The notes for models are our own static description, not a channel a visitor can write to. This summary is not a penetration test.</p>
 
@@ -127,7 +133,7 @@
 </aside>
 </main>
 <footer>
-  <p class="footline">© 2026 · Beta · Not legal advice · <a href="/privacy/">Privacy</a> · <a href="/security/">Security</a> · <a href="/about/">About us</a> · <a href="/contact/">Contact</a></p>
+  <p class="footline">© 2026 · Beta · Not legal advice · <a href="/privacy/">Privacy</a> · <a href="/contact/">Contact</a> · <a href="https://github.com/goloviproducts-coder/safeblueprint-community" rel="noopener">Open source</a></p>
 </footer>
 <script src="/ui.js" integrity="sha384-1jE67bRdK6s55k8WY5W9spZeaxtXRE98d1/FNj3s7GVJ+0JD+yWg4uB9Cd3ad5i6" crossorigin="anonymous"></script>
 </body>

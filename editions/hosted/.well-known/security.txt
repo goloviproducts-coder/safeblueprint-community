@@ -1,0 +1,7 @@
+Contact: https://github.com/goloviproducts-coder/safeblueprint-community/security/advisories/new
+Contact: https://safeblueprint.pages.dev/contact/
+Expires: 2027-10-21T23:59:59.000Z
+Preferred-Languages: en
+Canonical: https://safeblueprint.pages.dev/.well-known/security.txt
+Policy: https://github.com/goloviproducts-coder/safeblueprint-community/blob/main/SECURITY.md
+Policy: https://safeblueprint.pages.dev/security/

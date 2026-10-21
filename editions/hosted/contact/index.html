@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Contact SafeBlueprint</title>
+<meta name="description" content="Ask about ADM disclosure help, an AI security review, or the playbook. This form does not include checklist or inventory answers.">
+<link rel="canonical" href="https://safeblueprint.pages.dev/contact/">
+<meta property="og:title" content="Contact SafeBlueprint">
+<meta property="og:description" content="Tell us what you need. The form does not include your tool answers.">
+<meta property="og:url" content="https://safeblueprint.pages.dev/contact/">
+<meta property="og:image" content="https://safeblueprint.pages.dev/og-image.png">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="en_AU">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Contact SafeBlueprint">
+<meta name="twitter:description" content="Tell us what you need. The form does not include your tool answers.">
+<meta name="twitter:image" content="https://safeblueprint.pages.dev/og-image.png">
+<link rel="icon" href="data:,">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="theme-color" content="#14213D">
+<link rel="stylesheet" href="/app.css" integrity="sha384-lx500xV3bTIEzZnwN1jrfV03z5LdlA5SMGVSNHj5Z806NtVLPfwyCFshRwxW+lJI" crossorigin="anonymous">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' blob:; img-src 'self' data:; connect-src 'self'; form-action 'self'; base-uri 'none'; object-src 'none'; worker-src 'self'; manifest-src 'self'">
+</head>
+<body>
+<a class="skip" href="#contact-form">Skip to the form</a>
+<header class="topbar">
+  <a class="logo" href="/">Safe<span>Blueprint</span></a>
+  <span class="badge">Beta</span>
+  <span class="net-pill" id="net-pill" hidden></span>
+  <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="primary-nav">Menu</button>
+  <nav class="menu" id="primary-nav" aria-label="Primary">
+    <a href="/">Home</a>
+    <a href="/ai-security-checklist/">AI Security Checklist</a>
+    <a href="/privacy/">Privacy</a>
+    <a href="/security/">Security</a>
+    <a href="/about/">About us</a>
+    <a href="/contact/" aria-current="page">Contact</a>
+    <a href="https://github.com/goloviproducts-coder/safeblueprint-community" rel="noopener">GitHub</a>
+  </nav>
+</header>
+<div class="hero">
+  <div class="hero-inner">
+    <h1>Contact</h1>
+    <p>Tell us what you need. This form does not include checklist or inventory answers.</p>
+  </div>
+</div>
+<main class="split">
+<section class="card">
+  <form id="contact-form" method="post" action="#contact-form">
+    <label class="field" for="c-name">Name</label>
+    <input id="c-name" name="name" type="text" required autocomplete="name" maxlength="120">
+    <label class="field" for="c-email">Work email</label>
+    <input id="c-email" name="email" type="email" required autocomplete="email" maxlength="160">
+    <label class="field" for="c-company">Company</label>
+    <input id="c-company" name="company" type="text" required autocomplete="organization" maxlength="160">
+    <label class="field" for="c-role">Role</label>
+    <input id="c-role" name="role" type="text" required autocomplete="organization-title" maxlength="120">
+    <label class="field" for="c-size">Company size</label>
+    <select id="c-size" name="size" required>
+      <option value="">Choose one</option>
+      <option>1–10</option>
+      <option>11–50</option>
+      <option>51–200</option>
+      <option>201–1000</option>
+      <option>1000+</option>
+    </select>
+    <label class="field" for="c-need">What do you need?</label>
+    <select id="c-need" name="need" required>
+      <option value="">Choose one</option>
+      <option>ADM disclosure help</option>
+      <option>AI security review</option>
+      <option>Playbook</option>
+      <option>Other</option>
+    </select>
+    <label class="field" for="c-message">Message</label>
+    <textarea id="c-message" name="message" required maxlength="2000"></textarea>
+    <input class="hp" type="text" name="_honey" tabindex="-1" autocomplete="off" aria-hidden="true">
+    <label class="block"><input id="c-consent" type="checkbox" name="consent"> I agree to being emailed about this request. Unsubscribe anytime.</label>
+    <button class="btn" id="c-submit" type="submit" disabled>Send</button>
+    <p class="status" id="c-status" role="status"></p>
+  </form>
+</section>
+<aside class="side card">
+  <h2>Before you write</h2>
+  <ul class="take">
+    <li>This form does not include checklist or inventory answers.</li>
+    <li>Nothing is sent until you tick consent.</li>
+    <li>The free tools stay in your browser. Start on Home or the AI security checklist.</li>
+  </ul>
+  <p>We never see your initiative names or answers.</p>
+</aside>
+</main>
+<footer>
+  <p class="footline">© 2026 · Beta · Not legal advice · <a href="/privacy/">Privacy</a> · <a href="/contact/">Contact</a> · <a href="https://github.com/goloviproducts-coder/safeblueprint-community" rel="noopener">Open source</a></p>
+</footer>
+<script src="/config.js" integrity="sha384-lY3cGFTwJZzHITSxFW0vEarS5fBv03uFYJRPxVHlBrVkhj7qnOvU0E0oNXMOL444" crossorigin="anonymous"></script>
+<script src="/forms.js" integrity="sha384-2QmT2nQwms92leNr15QC7ZTgoYyRvHkEAgfO59VGRxsDEYZHaorGtKure/jnuyKT" crossorigin="anonymous"></script>
+<script src="/contact.js" integrity="sha384-gSm3JGM8iT05M+igZSOSl8o9e+E2inE81NJgU+zQe0LwjjX18ObSLnN0pLHMBooq" crossorigin="anonymous"></script>
+<script src="/ui.js" integrity="sha384-1jE67bRdK6s55k8WY5W9spZeaxtXRE98d1/FNj3s7GVJ+0JD+yWg4uB9Cd3ad5i6" crossorigin="anonymous"></script>
+</body>
+</html>

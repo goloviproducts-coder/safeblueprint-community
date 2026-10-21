@@ -482,6 +482,18 @@
                   "mitigation": "Threat-model gate (run from the base branch) requires a model update or a maintainer label applied after the latest push; CODEOWNERS; 1 approval and conversation resolution. Controls: ISO42001-8.1",
                   "modelType": "STRIDE",
                   "score": ""
+                },
+                {
+                  "id": "6fc09652-b8ad-5250-ae85-dad12715af20",
+                  "number": 20,
+                  "title": "Unreviewed code deployed to production",
+                  "status": "Mitigated",
+                  "severity": "High",
+                  "type": "Elevation of privilege",
+                  "description": "A deploy could ship code that skipped review.",
+                  "mitigation": "Deploy only from main (PR + required checks); production environment needs maintainer approval; secrets scoped to the environment; pinned wrangler-action; smoke tests after deploy; setup-node package cache disabled in the deploy job to prevent cache poisoning; production contact function accepts only the pages.dev origins (no localhost). Controls: SLSA-L2, OWASP-CICD-SEC-1",
+                  "modelType": "STRIDE",
+                  "score": ""
                 }
               ],
               "hasOpenThreats": false,
@@ -705,12 +717,57 @@
               "isTrustBoundary": false,
               "threats": []
             }
+          },
+          {
+            "id": "04c8864c-c27e-5c5c-be37-e4adf4136c02",
+            "shape": "process",
+            "position": {
+              "x": 80,
+              "y": 560
+            },
+            "size": {
+              "width": 160,
+              "height": 80
+            },
+            "zIndex": 1,
+            "attrs": {
+              "text": {
+                "text": "Contact function (hosted only)"
+              }
+            },
+            "data": {
+              "type": "tm.Process",
+              "name": "Contact function (hosted only)",
+              "description": "Cloudflare Pages Function relaying consented contact requests via Resend",
+              "outOfScope": false,
+              "reasonOutOfScope": "",
+              "hasOpenThreats": false,
+              "isTrustBoundary": false,
+              "handlesCardPayment": false,
+              "handlesGoodsOrServices": false,
+              "isWebApplication": true,
+              "privilegeLevel": "",
+              "threats": [
+                {
+                  "id": "bd96e229-b353-550c-a906-5af7d548cff6",
+                  "number": 19,
+                  "title": "Contact details sent to a third party or leaked in logs",
+                  "status": "Mitigated",
+                  "severity": "Medium",
+                  "type": "Information disclosure",
+                  "description": "Contact form data could go to an unintended service or appear in logs.",
+                  "mitigation": "Resend only; recipient and key from Pages env (CONTACT_TO, RESEND_API_KEY); 503 when unset; origin allow-list; strict field limits; emails redacted in logs; self-host edition has no function. Controls: APP11, OWASP-ASVS-14.4",
+                  "modelType": "STRIDE",
+                  "score": ""
+                }
+              ]
+            }
           }
         ]
       }
     ],
     "diagramTop": 1,
     "reviewer": "",
-    "threatTop": 18
+    "threatTop": 20
   }
 }

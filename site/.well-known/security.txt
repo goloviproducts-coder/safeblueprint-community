@@ -1,2 +1,5 @@
-# Self-hosted edition. Report issues to your internal security team.
+# Self-hosted copies: replace Contact with your internal security team.
+Contact: https://github.com/goloviproducts-coder/safeblueprint-community/security/advisories/new
+Expires: 2027-10-21T23:59:59.000Z
 Preferred-Languages: en
+Policy: https://github.com/goloviproducts-coder/safeblueprint-community/blob/main/SECURITY.md
