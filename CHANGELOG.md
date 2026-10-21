@@ -4,30 +4,8 @@ All notable changes to this project are documented here. Each release uses six p
 
 ## [Unreleased]
 ### Features
-- _None yet_
-
-### Issues fixed
-- _None yet_
-
-### Interfaces updated
-- _None yet_
-
-### Security fixes
-- _None yet_
-
-### Privacy
-- _None yet_
-
-### General
-- _None yet_
-
-## [1.0.0] - 2026-10-22
-### Features
-- APP 1.7 automated-decision readiness inventory and AI security checklist
-- Three-part report written for leaders, delivery teams and security architects
-- Portfolio view to compare several systems side by side
 - Custom question packs: load your own questions from CSV or JSON, with weights and control mappings
-- Exports to PDF, JSON, Markdown and HTML
+- HTML export for custom question pack reports
 
 ### Issues fixed
 - Removed a penalty figure from the guidance (we do not quote penalty amounts)
@@ -39,22 +17,42 @@ All notable changes to this project are documented here. Each release uses six p
 - Step-by-step guide for creating your own question packs
 
 ### Security fixes
-- Every change is checked by code, secret, dependency and container scans before it can merge
-- Automated penetration tests (ZAP, Nuclei, Nikto) and browser security tests
 - Threat model check required on every change
-- Signed commits, protected main branch and owner approval for every live deploy
-- Signed release with software bills of materials (SBOMs) and build provenance
+- Automated penetration tests (ZAP, Nuclei, Nikto) and browser security tests
+- Owner approval required for every live deploy to the hosted site
 
 ### Privacy
-- Answers stay on your device and are never uploaded
 - Removed the third-party form service (FormSubmit); no contact email is shown on the site
 - Nothing you enter is captured without your consent
 
 ### General
-- Open source under Apache-2.0, maintained on GitHub
+- Automatic deploy of the hosted site from the main branch to Cloudflare Pages
 - NOTICE file and a polite request to credit SafeBlueprint when you reuse it
-- Contributing guide, security policy and issue templates
+
+## [1.0.0] - 2026-10-22
+### Features
+- APP 1.7 automated-decision readiness inventory and AI security checklist
+- Three-part report written for leaders, delivery teams and security architects
+- Portfolio view to compare several systems side by side
+- Exports to PDF, JSON and Markdown
+
+### Issues fixed
+- None
+
+### Interfaces updated
+- None (first release)
+
+### Security fixes
+- Every change is checked by code, secret, dependency, container and workflow scans before it can merge
+- Signed release with software bills of materials (SBOMs) and build provenance
+
+### Privacy
+- The assessment runs on your device; your answers are not uploaded or stored by us
+
+### General
+- Open source under Apache-2.0, maintained on GitHub
 - Self-hosting pack: Docker, docker-compose, nginx and install guide
+- Contributing guide with an approval checklist, security policy and issue templates
 
 [Unreleased]: https://github.com/goloviproducts-coder/safeblueprint-community/compare/v1.0.0...HEAD
 [1.0.0]: https://github.com/goloviproducts-coder/safeblueprint-community/releases/tag/v1.0.0

@@ -57,8 +57,11 @@ jobs:
           TAG: ${{ github.ref_name }}
         run: |
           VER="${TAG#v}"
-          awk -v v="$VER" '$0 ~ "^## \\[" v "\\]" {f=1; next} /^## \[/ && f {exit} f' CHANGELOG.md > notes.md
-          grep -q '^### Features' notes.md || { echo "CHANGELOG.md has no section for $VER" >&2; exit 1; }
+          VER_RE="$(printf '%s' "$VER" | sed 's/[.]/\\./g')"
+          awk -v v="$VER_RE" '$0 ~ ("^## \\[" v "\\]") {f=1; next} /^## \[/ && f {exit} f' CHANGELOG.md > notes.md
+          for h in "Features" "Issues fixed" "Interfaces updated" "Security fixes" "Privacy" "General"; do
+            grep -qx "### $h" notes.md || { echo "CHANGELOG.md section for $VER is missing heading: $h" >&2; exit 1; }
+          done
           printf '\nVerify the download: `gh attestation verify %s.zip --repo %s && sha256sum -c SHA256SUMS`\n' "$NAME" "$GITHUB_REPOSITORY" >> notes.md
           gh release create "$TAG" --repo "$GITHUB_REPOSITORY" --title "SafeBlueprint $TAG" --verify-tag \
             --notes-file notes.md \

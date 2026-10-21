@@ -20,5 +20,5 @@ Release notes are short, plain-English bullets for executives. Use these six hea
 
 Rules:
 - One line per bullet, no jargon, no PR numbers needed.
-- Write "None" under a heading with nothing to report.
+- Write "None" (exactly) under a heading with nothing to report.
 - No penalty amounts, no legal advice, no email addresses.
