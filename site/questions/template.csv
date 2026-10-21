@@ -1,0 +1,6 @@
+# name: My question pack
+# version: 0.1
+id,pack,section,order,question,help_text,type,options,required,weight,risk_if,severity,maps_to_control,pattern,finding_text,action_text,owner_role,show_if,audience
+Q01,mypack,Agents,1,Can the AI take actions on its own?,"For example send email, change records or call an API.",choice,text=Text only|approve=With approval|auto=On its own,true,0,,,,PAT-04,,,Solution architect,,architects
+Q02,mypack,Agents,2,Does a person approve high-impact actions?,,yesno,,true,3,no|unsure,high,OWASP-LLM06|ACME-POL-07,PAT-01,No person approves high-impact agent actions.,Add a human approval step before the agent changes data.,Product owner,Q01!=text,delivery
+Q03,mypack,Access,3,How many people hold admin rights to the AI console?,Count named people only.,number,,false,2,>5,medium,ASD-E8-ADMIN,,Too many people hold admin rights.,Reduce admin rights to a small named group.,Security architect,,delivery

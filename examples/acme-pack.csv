@@ -1,0 +1,11 @@
+# name: ACME Retail AI controls
+# version: 2026.1
+id,pack,section,order,question,help_text,type,options,required,weight,risk_if,severity,maps_to_control,pattern,finding_text,action_text,owner_role,show_if,audience
+A01,acme,Context,1,What does the AI do?,,choice,chat=Customer chatbot|pricing=Dynamic pricing|fraud=Refund fraud scoring|other=Other,true,0,,,,,,,Product owner,,leaders
+A02,acme,Context,2,Which data does it use?,Tick all that apply.,multi,pi=Personal information|pay=Payment data|stock=Stock and sales|none=None of these,true,2,pay,high,ACME-DATA-03|ASD-E8-ADMIN,,Payment data reaches the AI system.,Remove payment data from prompts and logs; use tokens instead.,Security architect,,architects
+A03,acme,Customers,3,Can a customer ask a person to review a pricing or refund decision?,,yesno,,true,3,no|unsure,high,APP1.7|ACME-POL-07,PAT-01,Customers cannot ask for a human review.,Publish a review route in the privacy policy and store help pages.,Privacy officer,A01=pricing|fraud,delivery
+A04,acme,Customers,4,Is the chatbot labelled as AI to customers?,,yesno,,false,1,no,medium,AU-AI5|ACME-POL-11,,Customers may not know they are talking to AI.,Label the chatbot as AI in the first message.,Product owner,A01=chat,delivery
+A05,acme,Security,5,Is the chatbot tested against prompt injection before each release?,,choice,ci=In CI|manual=Manually|no=No,true,3,manual|no,high,OWASP-LLM01|ATLAS-AML.T0051|ACME-SEC-02,PAT-03,Prompt injection is not tested in CI.,Add an injection test suite to the release pipeline.,Developer,A01=chat,delivery
+A06,acme,Security,6,How many days are prompts and outputs kept?,Enter 0 if they are not kept.,number,,false,1,>90,low,ACME-DATA-07|ISO42001-A.7,,Prompts are kept longer than the 90-day ACME standard.,Set log retention to 90 days or less.,Security architect,,architects
+A07,acme,Governance,7,Is this system in the ACME AI register?,,yesno,,true,2,no|unsure,medium,NIST-GOVERN-1.1|ISO42001-6.1|ACME-POL-01,,The system is missing from the AI register.,Add the system to the ACME AI register with a named owner.,Accountable executive,,leaders
+A08,acme,Governance,8,Anything else the reviewer should know?,,text,,false,0,,,,,,,,,delivery

@@ -8,6 +8,7 @@ Thanks for helping. This guide explains what we accept and how to get a change m
 - **New security patterns** - additions to the PAT-nn pattern library (e.g. new agent or RAG patterns). Describe the context, risks, controls and mapping.
 - **Wording and readability** - plainer language, especially page 1 for leaders. Keep it short.
 - **Translations** - open an issue first so we can agree file structure.
+- **Question packs** - see "Contribute a question pack" below.
 - **Docs** - INSTALL.md, hosting recipes, screenshots.
 
 ## Workflow
@@ -25,7 +26,19 @@ npx serve site      # then open http://localhost:3000
 ```
 Check every page you touched, the PDF/JSON/Markdown exports, and the browser devtools Network tab: there must be **no requests to outside hosts**.
 
+## Tests
+Run `npm test` (Node 20+, no install needed). **Test policy: new or changed functionality must include tests in the automated suite (`test/`), and the `tests` CI check must pass.**
+
+## Contribute a question pack
+1. Build it with [docs/CUSTOMISING.md](docs/CUSTOMISING.md) and check it loads with no errors.
+2. Put it in `examples/<name>-pack.csv` with `# name:` and `# version:` lines.
+3. Cite official sources (with version/date) for every framework ID in `maps_to_control`. No penalty amounts, no legal advice, no organisation names or email addresses.
+4. Add it to the list in `test/validation.test.js` ("shipped template and example packs are valid").
+5. If you change the built-in questions in `home.js` or `checklist.js`, run `npm run build:default-pack` and commit `site/questions/default.*`.
+
 ## Updating hashes after edits
+Quickest: `node scripts/update-hashes.js` updates every SRI attribute and `SHA256SUMS.txt`. CI fails if you forget. Manual method:
+
 **SRI:** if you change a JS or CSS file referenced with `integrity="sha384-..."`, regenerate it:
 ```bash
 openssl dgst -sha384 -binary site/app.css | openssl base64 -A
@@ -60,6 +73,7 @@ A PR is approved when all of the following hold (mirrors the PR template checkli
 - `SHA256SUMS.txt` and SRI hashes updated
 - Runs locally with `npx serve site`
 - PDF, JSON and Markdown exports work
+- New or changed functionality has tests and `npm test` passes
 
 ### 5. Hygiene
 - Commits signed off (DCO, `git commit -s`)
@@ -70,7 +84,7 @@ A PR is approved when all of the following hold (mirrors the PR template checkli
 > **Maintainer final approval required** for changes to security headers (`site/_headers`, `nginx.conf`), privacy wording, workflows (`.github/`), `LICENSE` or `SECURITY.md`.
 
 ## Security scans on your PR
-Required to pass: `verify` (checksums + no outbound calls), CodeQL, Semgrep, Gitleaks, Trivy, dependency review and zizmor. HTML validation must pass too; Lighthouse is report-only. If a scanner flags a false positive, explain it in the PR rather than disabling the rule. New workflows must pin actions to a full commit SHA, use least-privilege `permissions`, set `persist-credentials: false` and never use `pull_request_target`. The `security-review` label triggers an optional AI review (off until the maintainers add an API key).
+Required to pass: `test` (unit tests + hashes current), `verify` (checksums + no outbound calls), CodeQL, Semgrep, Gitleaks, Trivy, dependency review and zizmor. HTML validation must pass too; Lighthouse is report-only. If a scanner flags a false positive, explain it in the PR rather than disabling the rule. New workflows must pin actions to a full commit SHA, use least-privilege `permissions`, set `persist-credentials: false` and never use `pull_request_target`. The `security-review` label triggers an optional AI review (off until the maintainers add an API key).
 
 ## Commit style
 - Conventional prefixes: `feat:`, `fix:`, `docs:`, `mapping:`, `pattern:`, `i18n:`, `chore:`.

@@ -1,0 +1,12 @@
+{
+  "name": "safeblueprint-community",
+  "version": "1.0.0",
+  "private": true,
+  "description": "SafeBlueprint community edition. No runtime dependencies; tests use the built-in node:test runner.",
+  "license": "Apache-2.0",
+  "scripts": {
+    "test": "node --test test/",
+    "build:default-pack": "node scripts/build-default-pack.js"
+  },
+  "engines": { "node": ">=20" }
+}

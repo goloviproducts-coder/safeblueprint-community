@@ -21,6 +21,7 @@
 - [ ] `SHA256SUMS.txt` and SRI hashes updated
 - [ ] Runs locally with `npx serve site`
 - [ ] PDF, JSON and Markdown exports work
+- [ ] New or changed functionality has tests and `npm test` passes
 
 ### 5. Hygiene
 - [ ] Commits signed off (DCO, `git commit -s`)

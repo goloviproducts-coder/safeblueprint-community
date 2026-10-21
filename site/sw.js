@@ -2,7 +2,7 @@
 // Activate deletes every other cache, which is what drops the previous offline copy.
 // Navigations, HTML, and CSS are network-first: fetch, update this cache, and use the
 // cache only when the network fails. Icons and images stay cache-first.
-var CACHE = "safeblueprint-selfhost-1.0.0";
+var CACHE = "safeblueprint-selfhost-1.1.0-dev";
 var FILES = [
   "/",
   "/index.html",
@@ -13,6 +13,12 @@ var FILES = [
   "/report.js",
   "/checklist.js",
   "/ui.js",
+  "/questions/engine.js",
+  "/questions/loader.js",
+  "/questions/default.csv",
+  "/questions/default.json",
+  "/questions/template.csv",
+  "/schema/questions/v1.json",
   "/manifest.webmanifest",
   "/icon-192.png",
   "/icon-512.png",
