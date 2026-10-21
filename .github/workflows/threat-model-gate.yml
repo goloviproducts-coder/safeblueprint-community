@@ -5,44 +5,79 @@ on:
 permissions:
   contents: read
 jobs:
+  # A new push invalidates an earlier review: drop the label so a maintainer must re-apply it.
+  reset-review-label:
+    if: github.event.action == 'synchronize' && contains(github.event.pull_request.labels.*.name, 'threat-model-reviewed') && github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    steps:
+      - name: Harden runner
+        uses: step-security/harden-runner@dc2769abcc0fcfbadfc1df54081c1608579ef6b2 # v2.22.2
+        with:
+          egress-policy: audit
+      - name: Remove threat-model-reviewed label
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR: ${{ github.event.pull_request.number }}
+        run: gh api -X DELETE "repos/$REPO/issues/$PR/labels/threat-model-reviewed" || true
   threat-model:
     runs-on: ubuntu-latest
     permissions:
       contents: read
       issues: read
       pull-requests: read
+      checks: read
     steps:
       - name: Harden runner
         uses: step-security/harden-runner@dc2769abcc0fcfbadfc1df54081c1608579ef6b2 # v2.22.2
         with:
           egress-policy: audit
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Check out PR
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
+          persist-credentials: false
+      # The gate script and its rules come from the base branch, so a PR cannot weaken them.
+      - name: Check out base branch gate
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          path: .base
+          sparse-checkout: scripts/threat-model-gate.js
+          sparse-checkout-cone-mode: false
           persist-credentials: false
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: 22
-      - name: Was the review label applied by a maintainer?
+      - name: Was the review label applied by a maintainer after the latest push?
         id: label
         env:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
           PR: ${{ github.event.pull_request.number }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
         run: |
-          actor=$(gh api "repos/$REPO/issues/$PR/events" --paginate -q '[.[] | select((.event=="labeled" or .event=="unlabeled") and .label.name=="threat-model-reviewed")] | last | select(.event=="labeled") | .actor.login')
+          ev=$(gh api "repos/$REPO/issues/$PR/events" --paginate -q '[.[] | select((.event=="labeled" or .event=="unlabeled") and .label.name=="threat-model-reviewed")] | last | select(.event=="labeled") | "\(.actor.login) \(.created_at)"')
+          # When the head commit reached GitHub: first check suite on that SHA (not the forgeable commit date).
+          pushed_at=$(gh api "repos/$REPO/commits/$HEAD_SHA/check-suites" -q '[.check_suites[].created_at] | min' 2>/dev/null || true)
           ok=false
-          if [ -n "$actor" ]; then
+          if [ -n "$ev" ]; then
+            actor=${ev%% *}; at=${ev##* }
             perm=$(gh api "repos/$REPO/collaborators/$actor/permission" -q .permission 2>/dev/null || echo none)
-            case "$perm" in admin|maintain) ok=true ;; esac
-            echo "Label applied by $actor ($perm)"
+            ref=$pushed_at
+            echo "Label by $actor ($perm) at $at; head pushed at $ref"
+            case "$perm" in admin|maintain)
+              if [ -n "$ref" ] && [[ "$at" > "$ref" ]]; then ok=true; else echo "Label predates the latest push (or push time unknown); re-apply it after reviewing."; fi ;;
+            esac
           fi
           echo "reviewed=$ok" >> "$GITHUB_OUTPUT"
-      - name: Threat model gate
+      - name: Threat model gate (base branch script)
         env:
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
           REVIEWED_LABEL: ${{ steps.label.outputs.reviewed }}
         run: |
-          git diff --name-only "$BASE_SHA...$HEAD_SHA" > changed.txt
-          node scripts/threat-model-gate.js changed.txt
+          git diff --name-only "$BASE_SHA...$HEAD_SHA" > "$RUNNER_TEMP/changed.txt"
+          node .base/scripts/threat-model-gate.js "$RUNNER_TEMP/changed.txt"

@@ -41,7 +41,7 @@ CI/CD --signed release, attestations--> Repository --zip/image--> Self-host serv
 | T14 | CI/CD (GitHub Actions) | Tampering | Compromised third-party action | High | All actions pinned to full SHAs; allowed-actions list; SHA pinning required; harden-runner egress audit; zizmor lint; read-only default token. | SLSA-L2, OWASP-CICD-SEC-8 | Mitigated |
 | T15 | CI/CD (GitHub Actions) | Elevation of privilege | Untrusted PR code with secrets | High | No pull_request_target; persist-credentials false; fork workflow approval for external contributors; AI review only for same-repo PRs. | OWASP-CICD-SEC-4 | Mitigated |
 | T16 | CI/CD (GitHub Actions) | Spoofing | Unverified commits or tags | Medium | Signed commits required on main; tag ruleset restricts v* to admins; provenance attestations. | SLSA-L2 | Mitigated |
-| T17 | CI/CD (GitHub Actions) | Repudiation | Security-sensitive change without review | Medium | Threat-model gate requires a model update or maintainer label; CODEOWNERS; 1 approval and conversation resolution. | ISO42001-8.1 | Mitigated |
+| T17 | CI/CD (GitHub Actions) | Repudiation | Security-sensitive change without review | Medium | Threat-model gate (run from the base branch) requires a model update or a maintainer label applied after the latest push; CODEOWNERS; 1 approval and conversation resolution. | ISO42001-8.1 | Mitigated |
 | T18 | Source repository | Information disclosure | Secrets committed | Medium | Secret scanning with push protection; Gitleaks full-history scan. | CWE-798 | Mitigated |
 
 ## When to update
