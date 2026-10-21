@@ -32,7 +32,7 @@ gh release download v1.0.0 --repo goloviproducts-coder/safeblueprint-community
 sha256sum -c SHA256SUMS
 gh attestation verify safeblueprint-selfhost-1.0.0.zip --repo goloviproducts-coder/safeblueprint-community
 ```
-Both must pass before you deploy. After unzipping, `sha256sum -c SHA256SUMS.txt` inside the folder checks every file.
+Both must pass before you deploy. Full steps, including the signed tag and how to rebuild the zip yourself and match the hash: [docs/VERIFY.md](docs/VERIFY.md). After unzipping, `sha256sum -c SHA256SUMS.txt` inside the folder checks every file.
 
 ## Screenshots
 | Leader summary (portfolio) | Portfolio report p1 | Portfolio report p2 |
