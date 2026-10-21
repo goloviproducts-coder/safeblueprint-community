@@ -12,7 +12,7 @@ Target: **8.0 or above**. Full check-by-check results: [Scorecard viewer](https:
 | Dangerous-Workflow, Token-Permissions, Pinned-Dependencies | 10 | Read-only default token, per-job permissions, every action and image pinned by SHA or digest |
 | Security-Policy, License, Binary-Artifacts, Vulnerabilities, Dependency-Update-Tool, CI-Tests | 10 | SECURITY.md, Apache-2.0, no binaries, OSV/Trivy/Dependabot |
 | SAST | 9 | CodeQL and Semgrep on every pull request and push to main; rises to 10 as history accrues |
-| Fuzzing | 0 → fixed | Property-based fuzzing of the question-pack loader with fast-check (`test/fuzz.test.js`), run on every change |
+| Fuzzing | 0 (pending re-scan) | Property-based fuzzing of the question-pack loader with fast-check (`test/fuzz.test.js`), run on every change |
 | Signed-Releases | 0 | Releases carry GitHub artifact attestations (SLSA provenance and SBOM). Scorecard only counts signature files attached to the release; see [SLSA](SLSA.md) |
 | Branch-Protection | 4 | Rulesets protect main and release tags; Scorecard's default token cannot read every ruleset setting |
 | Code-Review | 0 | Every change goes through a pull request; rises as changes are approved by a maintainer |
@@ -33,7 +33,11 @@ Target: **8.0 or above**. Full check-by-check results: [Scorecard viewer](https:
 | Site quality | [![Site quality](https://github.com/goloviproducts-coder/safeblueprint-community/actions/workflows/site-quality.yml/badge.svg)](https://github.com/goloviproducts-coder/safeblueprint-community/actions/workflows/site-quality.yml) |
 | Integrity and supply chain | [![checksums](https://github.com/goloviproducts-coder/safeblueprint-community/actions/workflows/checksums.yml/badge.svg)](https://github.com/goloviproducts-coder/safeblueprint-community/actions/workflows/checksums.yml) [![Scorecard](https://github.com/goloviproducts-coder/safeblueprint-community/actions/workflows/scorecard.yml/badge.svg)](https://github.com/goloviproducts-coder/safeblueprint-community/actions/workflows/scorecard.yml) [![Release](https://github.com/goloviproducts-coder/safeblueprint-community/actions/workflows/release.yml/badge.svg)](https://github.com/goloviproducts-coder/safeblueprint-community/actions/workflows/release.yml) |
 
-## Also enabled
-Secret scanning with push protection, Dependabot alerts and security updates, private vulnerability reporting, signed commits, linear history, required reviews and checks on main, and protected release tags.
+## Also enabled (checked with the GitHub API on 22 Oct 2026)
+- Secret scanning with push protection
+- Dependabot alerts and Dependabot security updates
+- Private vulnerability reporting
+- `main` ruleset: pull request with review required, required status checks, signed commits, linear history, no force-push, no deletion
+- Release-tag ruleset (`v*`): tags cannot be created, moved or deleted except by admins
 
 Found something? See [SECURITY.md](../SECURITY.md).
