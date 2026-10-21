@@ -69,3 +69,8 @@ test("the shipped Threat Dragon model parses and has threats", () => {
   assert.ok(threats.length >= 10);
   threats.forEach((t) => assert.ok(t.mitigation && t.status, t.title));
 });
+test("changes to the gate, its tests, ZAP rules, CODEOWNERS and lockfiles are sensitive", () => {
+  ["scripts/threat-model-gate.js", "test/threat-model-gate.test.js", ".github/workflows/threat-model-gate.yml", ".zap/rules.tsv", ".github/CODEOWNERS", "package-lock.json"].forEach((f) => {
+    assert.equal(evaluate([f], { root: repo({}) }).pass, false, f);
+  });
+});

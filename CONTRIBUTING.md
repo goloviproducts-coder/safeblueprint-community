@@ -91,10 +91,11 @@ Required to pass: `test` (unit tests + hashes current), `verify` (checksums + no
 - `site/_headers`, `nginx.conf`, `Dockerfile`, `docker-compose.yml`
 - `.github/workflows/**`, `.github/dependabot.yml`, `.github/CODEOWNERS`
 - `site/schema/**`, `site/questions/loader.js`, `site/questions/engine.js`
+- `scripts/threat-model-gate.js`, `test/threat-model-gate.test.js`, `.zap/**`, `package.json`, `package-lock.json`
 - export code (`site/report.js`, `site/forms.js`) and `site/sw.js`
 - any changed `site/**/*.js` that uses `fetch(`, `XMLHttpRequest`, `FileReader`, `localStorage`, `sessionStorage`, `indexedDB`, `navigator.sendBeacon`, `import(`, `WebSocket`, `EventSource`, `postMessage` or `innerHTML`
 
-To pass: add or update the relevant threats and mitigations (edit the JSON in Threat Dragon, then mirror the table in `THREAT_MODEL.md`), **or** ask a maintainer to review and apply the `threat-model-reviewed` label. The label only counts if a user with admin or maintain permission applied it. The JSON must parse, and the job summary lists the areas that were triggered. Tests: `test/threat-model-gate.test.js`.
+To pass: add or update the relevant threats and mitigations (edit the JSON in Threat Dragon, then mirror the table in `THREAT_MODEL.md`), **or** ask a maintainer to review and apply the `threat-model-reviewed` label. The label only counts if a user with admin or maintain permission applied it **after the latest push**; a new push removes the label automatically. The gate script always runs from the base branch, so a PR cannot weaken it, and changes to the gate itself, its tests, `.zap/**`, `CODEOWNERS` or `package*.json` are also security-sensitive. The JSON must parse, and the job summary lists the areas that were triggered. Tests: `test/threat-model-gate.test.js`.
 
 ## Extra scanners
 - **harden-runner** (egress audit) runs first in every job except container jobs (semgrep), where it isn't supported.

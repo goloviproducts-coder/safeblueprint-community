@@ -8,5 +8,13 @@
     "test": "node --test test/*.test.js",
     "build:default-pack": "node scripts/build-default-pack.js"
   },
-  "engines": { "node": ">=20" }
+  "engines": {
+    "node": ">=20"
+  },
+  "devDependencies": {
+    "serve": "14.2.6"
+  },
+  "overrides": {
+    "compression": "1.8.2"
+  }
 }
