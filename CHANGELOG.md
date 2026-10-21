@@ -12,6 +12,12 @@ All notable changes to this project are documented here. Format: [Keep a Changel
 - `docs/CUSTOMISING.md` guide for non-developers.
 - `npm test` (node:test) and a `tests` CI workflow; `scripts/update-hashes.js` refreshes SRI and SHA256SUMS.
 
+### Features
+- Community question pack library with health, education and public sector starter packs, plus a template for your own internal control IDs
+
+### General
+- Pack contribution and review process with contributor credit; every pack is validated automatically
+
 ## [1.0.0] - 2026-10-22
 ### Added
 - First community release: APP 1.7 automated-decision readiness inventory, AI security checklist, three-part report (leaders, delivery team, security architects), portfolio view, PDF/JSON/Markdown exports.

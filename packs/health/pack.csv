@@ -1,0 +1,11 @@
+# name: Health services AI readiness (community)
+# version: 2026.1
+# contributor: SafeBlueprint contributors
+id,pack,section,order,question,help_text,type,options,required,weight,risk_if,severity,maps_to_control,pattern,finding_text,action_text,owner_role,show_if,audience
+H01,health,Context,1,What does the AI system do?,,choice,triage=Triage or prioritisation|admin=Scheduling or admin|scribe=Clinical notes or scribe|decision=Supports clinical decisions|other=Other,true,0,,,,,,,Clinical lead,,leaders
+H02,health,Data,2,Does it use health information about patients?,Health information is sensitive information.,yesno,,true,3,yes,high,APP1.7|ISO42001-A.7,,Health information is used by the AI system.,Confirm a lawful basis and consent approach and record it with your privacy team.,Privacy officer,,delivery
+H03,health,Oversight,3,Does a qualified clinician review AI output before it affects care?,,yesno,,true,3,no|unsure,high,NIST-MANAGE-2.2|EUAIA-Art14|AU-AI5,,No clinician review of AI output before it affects care.,Add a clinician review step and record who reviewed each output.,Clinical lead,,delivery
+H04,health,Transparency,4,Are patients told when AI is used in their care?,,yesno,,false,2,no|unsure,medium,APP1.7|AU-AI4,,Patients are not told when AI is used.,Add a plain-language notice to patient information and consent material.,Privacy officer,,leaders
+H05,health,Safety,5,Has the system been tested for accuracy across the patient groups you serve?,,yesno,,false,2,no|unsure,medium,NIST-MEASURE-2.11|ISO42001-A.6,,Accuracy across patient groups is not tested.,"Test performance across age, sex and other relevant groups before go-live and after changes.",Clinical safety officer,,architects
+H06,health,Vendors,6,Does the vendor contract stop patient data being used to train the vendor's models?,,yesno,,false,2,no|unsure,high,ISO42001-A.10|ASD-AGENTIC-SUPPLY,,Vendor may train on patient data.,Get a written term that patient data is not used for training.,Procurement lead,,delivery
+H07,health,Incidents,7,Is there a way for staff to report AI errors or near misses?,,yesno,,false,1,no|unsure,low,NIST-MANAGE-4.1|AU-AI6,,No route for reporting AI errors.,Add AI errors to your existing clinical incident reporting.,Clinical safety officer,,delivery

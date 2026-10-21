@@ -14,7 +14,7 @@ Hosted version: https://safeblueprint.pages.dev
 - Exports to PDF, JSON (schema in `site/schema/report/`) and Markdown, ready to feed into GRC or AI tools.
 
 ## Customise the questions
-Load your own questions (your policies, control IDs and owners) from a CSV or JSON file. It stays on your device. Plain guide: [docs/CUSTOMISING.md](docs/CUSTOMISING.md). Template: [site/questions/template.csv](site/questions/template.csv). Example: [examples/acme-pack.csv](examples/acme-pack.csv).
+Load your own questions (your policies, control IDs and owners) from a CSV or JSON file. It stays on your device. Plain guide: [docs/CUSTOMISING.md](docs/CUSTOMISING.md). Template: [site/questions/template.csv](site/questions/template.csv). Example: [examples/acme-pack.csv](examples/acme-pack.csv). Ready-made packs: [packs/](packs/) (health, education, public sector, internal control IDs).
 
 ## Quick start
 ```bash

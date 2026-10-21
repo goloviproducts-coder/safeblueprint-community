@@ -1,0 +1,8 @@
+{
+  "id": "internal-controls-template",
+  "sector": "template",
+  "contributors": ["SafeBlueprint contributors"],
+  "reviewed_by": "Maintainer",
+  "status": "reviewed",
+  "licence": "Apache-2.0"
+}

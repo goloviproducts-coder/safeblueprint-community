@@ -1,0 +1,11 @@
+# name: Education AI readiness (community)
+# version: 2026.1
+# contributor: SafeBlueprint contributors
+id,pack,section,order,question,help_text,type,options,required,weight,risk_if,severity,maps_to_control,pattern,finding_text,action_text,owner_role,show_if,audience
+E01,education,Context,1,What does the AI system do?,,choice,tutor=Tutoring or study help|marking=Marking or feedback|admin=Admissions or admin|monitor=Proctoring or monitoring|other=Other,true,0,,,,,,,Head of learning,,leaders
+E02,education,Students,2,Is it used by or about students under 18?,,yesno,,true,3,yes,high,APP1.7|ISO42001-A.5,,The system is used by or about children.,Do a child-focused impact assessment and involve parents or carers where appropriate.,Principal or dean,,leaders
+E03,education,Oversight,3,Does a teacher review AI marks or decisions before they count?,,yesno,,true,3,no|unsure,high,NIST-MANAGE-2.2|EUAIA-Art14|AU-AI5,,AI marks or decisions count without teacher review.,Require teacher review before any mark or decision is final.,Head of learning,,delivery
+E04,education,Transparency,4,Are students and families told how AI is used and how to raise a concern?,,yesno,,false,2,no|unsure,medium,APP1.7|AU-AI4,,Students and families are not told about AI use.,Publish a plain-language AI use statement with a contact route for concerns.,Principal or dean,,leaders
+E05,education,Data,5,Is student work or data kept out of vendor model training?,,yesno,,false,2,no|unsure,high,ISO42001-A.10,,Student work may be used to train vendor models.,Get a written term that student data is not used for training.,IT lead,,delivery
+E06,education,Fairness,6,Has it been checked for unfair results across student groups?,,yesno,,false,2,no|unsure,medium,NIST-MEASURE-2.11,,Results across student groups are not checked.,Compare outcomes across groups each term and act on differences.,Head of learning,,architects
+E07,education,Security,7,Do staff accounts that manage the AI tool use multi-factor authentication?,,yesno,,false,1,no|unsure,medium,ASD-E8-MFA,,Admin accounts lack MFA.,Turn on MFA for every admin account.,IT lead,,architects
