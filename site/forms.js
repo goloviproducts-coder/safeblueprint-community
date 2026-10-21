@@ -196,6 +196,7 @@ function controlFields(spec) {
     { label: "Approved by", line: true },
     { label: "Next review", className: "doc-next", value: spec.nextReview }
   );
+  if (spec.extraControl && spec.extraControl.length) fields.splice.apply(fields, [5, 0].concat(spec.extraControl));
   return fields;
 }
 function buildRecord(root, spec) {

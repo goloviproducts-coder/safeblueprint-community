@@ -1,5 +1,7 @@
 {
-  "_status": "NOT YET ACTIVE. This file is ignored by the current release. It documents a planned feature.",
+  "questionPack": "/questions/default.csv",
+  "_questionPack": "Self-hosters: point this at your own pack, for example /questions/acme.csv. Same-site paths only.",
+  "_status": "Only questionPack is active. The other fields document a planned feature.",
   "_purpose": "Future custom templates: map report sections to your own owners and control IDs.",
   "version": "0.0-draft",
   "organisation": { "name": "" },

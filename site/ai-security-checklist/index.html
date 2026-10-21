@@ -19,7 +19,7 @@
 <link rel="icon" href="data:,">
 <link rel="manifest" href="/manifest.webmanifest">
 <meta name="theme-color" content="#14213D">
-<link rel="stylesheet" href="/app.css" integrity="sha384-lx500xV3bTIEzZnwN1jrfV03z5LdlA5SMGVSNHj5Z806NtVLPfwyCFshRwxW+lJI" crossorigin="anonymous">
+<link rel="stylesheet" href="/app.css" integrity="sha384-ozcuaizrqCjsWBV1A9mCSs6pW/FSC81xfYndxzZp5dsj9e4lAY/MeXbR2zuuKFFe" crossorigin="anonymous">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' blob:; img-src 'self' data:; connect-src 'self'; form-action 'self'; base-uri 'none'; object-src 'none'; worker-src 'self'; manifest-src 'self'">
 </head>
 <body>
@@ -131,6 +131,28 @@
 </aside>
 <div class="workspace-rest">
 <section class="card report-card" id="out" hidden></section>
+<section class="card noprint" id="packs" aria-labelledby="packs-title">
+  <h2 id="packs-title">Use your own questions</h2>
+  <p>Load a question pack (CSV or JSON) from this device. It is read in your browser and never uploaded. <a href="/questions/template.csv" download>Download the template</a> or the <a href="/questions/default.csv" download>default pack</a>, edit it in Excel, save as CSV UTF-8, then load it here.</p>
+  <label class="btn" for="pack-file">Load your questions</label>
+  <input class="visually-hidden" id="pack-file" type="file" accept=".csv,.json,text/csv,application/json">
+  <div class="pack-errors" id="pack-errors" role="alert" hidden></div>
+  <div class="pack-preview" id="pack-preview" aria-live="polite" hidden></div>
+</section>
+<section class="card noprint" id="pack-run" aria-labelledby="pack-run-title" hidden>
+  <h2 id="pack-run-title">Your pack</h2>
+  <p class="count" id="pack-count">0 answered</p>
+  <div class="qcards" id="pack-qcards"></div>
+  <button class="btn" id="pack-results" type="button">See pack results</button>
+</section>
+<section class="card report-card" id="pack-out" hidden></section>
+<section class="card noprint" id="pack-exports" hidden>
+  <h2>Save the pack report</h2>
+  <p>Saved files go to this device only.</p>
+  <button class="btn" id="pack-json" type="button">Download JSON</button>
+  <button class="btn" id="pack-md" type="button">Download Markdown</button>
+  <button class="btn" id="pack-html" type="button">Download HTML (print to PDF)</button>
+</section>
 <section class="card noprint playbook" id="ai-playbook" hidden>
   <h2>Want a playbook?</h2>
   <p>Email yourself a tailored playbook, or <a href="/contact/">contact us</a>. The contact form does not include your answers.</p>
@@ -153,9 +175,11 @@
   <p class="footline">© 2026 · Beta · Not legal advice · <a href="/privacy/">Privacy</a> · <a href="/security/">Security</a> · <a href="/about/">About us</a> · <a href="/contact/">Contact</a></p>
 </footer>
 <script src="/config.js" integrity="sha384-BasY2Usb2Z/O/OHBmdeG+zOP6FDqKEuLc7+2ADPbZXXxAOu38KAtiqNu/tMsWJ+9" crossorigin="anonymous"></script>
-<script src="/forms.js" integrity="sha384-2QmT2nQwms92leNr15QC7ZTgoYyRvHkEAgfO59VGRxsDEYZHaorGtKure/jnuyKT" crossorigin="anonymous"></script>
+<script src="/forms.js" integrity="sha384-Wgh7eSuAK/Ut3Pe26XUzdbNlrUux5ZB8xF0dn6L3aAHrMiTCyzwE11l0thlrhTC+" crossorigin="anonymous"></script>
 <script src="/report.js" integrity="sha384-l2/vMMIAFVypPHc7ahWuo4aLAte86lFcPi+ziHIIqSY299DNjzY1TehIxN4xsXVs" crossorigin="anonymous"></script>
 <script src="/checklist.js" integrity="sha384-BFbbKhtXWtNAD4XxPAJezZyT+be+zM7gBWOA42iNYzCouOdHfU/W0D2+YSYxThFq" crossorigin="anonymous"></script>
+<script src="/questions/engine.js" integrity="sha384-eibWeAgzcu2PCYyvrnkofztC+2PfWymtFORRPsc/T1/T2TlO+oLgUJGeCULZhUKu" crossorigin="anonymous"></script>
+<script src="/questions/loader.js" integrity="sha384-446oPl6I6tJGZfBzUWtj2MyIAmXJe2F9bO5kubS4M7YklQXt1lBnSamreNkkTWSz" crossorigin="anonymous"></script>
 <script src="/ui.js" integrity="sha384-1jE67bRdK6s55k8WY5W9spZeaxtXRE98d1/FNj3s7GVJ+0JD+yWg4uB9Cd3ad5i6" crossorigin="anonymous"></script>
 </body>
 </html>
