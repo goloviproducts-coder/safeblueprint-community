@@ -31,6 +31,24 @@ function overLimit() {
   }
   return false;
 }
+var IG_URL = "https://www.instagram.com/aibuzzcrew/";
+var ISSUES_URL = "https://github.com/goloviproducts-coder/safeblueprint-community/issues";
+function link(href, text) {
+  var a = document.createElement("a");
+  a.href = href;
+  a.rel = "noopener";
+  a.textContent = text;
+  return a;
+}
+function showUnavailable(status) {
+  status.replaceChildren(
+    document.createTextNode("Our contact form is temporarily unavailable. Please message us on "),
+    link(IG_URL, "Instagram"),
+    document.createTextNode(" or open an issue on "),
+    link(ISSUES_URL, "GitHub"),
+    document.createTextNode(".")
+  );
+}
 function showThanks(lead, rest) {
   form.replaceChildren();
   var p = document.createElement("p");
@@ -112,20 +130,16 @@ form.addEventListener("submit", async function (event) {
       body: JSON.stringify(body)
     });
     var payload = await response.json().catch(function () { return {}; });
-    if (response.status === 503) {
-      status.textContent = ACTIVATION_MESSAGE;
-      button.disabled = !consent.checked;
-      return;
-    }
     if (payload && payload.success === "true") {
       showThanks("Thanks.", " We'll reply to that work email. This form did not include any checklist or inventory answers.");
       return;
     }
-    status.textContent = "Thanks for trying. That request did not go through. Please try again in a minute.";
+    showUnavailable(status);
+    button.disabled = !consent.checked;
+    return;
   } catch (err) {
-    status.textContent = offlineNow()
-      ? "You're offline. Sending needs a connection."
-      : "Thanks for trying. The request could not be reached. Please try again in a minute.";
+    if (offlineNow()) status.textContent = "You're offline. Sending needs a connection.";
+    else showUnavailable(status);
   }
   refreshContact();
 });

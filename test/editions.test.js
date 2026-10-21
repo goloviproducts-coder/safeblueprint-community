@@ -84,3 +84,18 @@ test("contact function rejects localhost origins in production", async () => {
     assert.equal(r.status, 403);
   }
 });
+
+test("hosted contact page offers Instagram and GitHub fallbacks without revealing an email", () => {
+  const { build } = require("../scripts/build-edition.js");
+  const out = build("hosted", path.join(require("os").tmpdir(), "sb-hosted-fallback"));
+  const html = fs.readFileSync(path.join(out, "contact", "index.html"), "utf8");
+  const js = fs.readFileSync(path.join(out, "contact.js"), "utf8");
+  for (const s of [html, js]) {
+    assert.ok(s.includes("https://www.instagram.com/aibuzzcrew/"));
+    assert.ok(s.includes("https://github.com/goloviproducts-coder/safeblueprint-community/issues"));
+    assert.doesNotMatch(s, /[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/);
+  }
+  assert.match(js, /Our contact form is temporarily unavailable\. Please message us on /);
+  const self = build("selfhost", path.join(require("os").tmpdir(), "sb-self-fallback"));
+  assert.ok(!fs.readFileSync(path.join(self, "contact", "index.html"), "utf8").includes("instagram.com/aibuzzcrew"));
+});
