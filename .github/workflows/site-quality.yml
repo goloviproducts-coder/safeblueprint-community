@@ -36,7 +36,8 @@ jobs:
           node-version: 22
       - name: Lighthouse (report only)
         run: |
-          npx --yes serve@14.2.6 site -l 3000 &
+          npm ci --ignore-scripts --no-audit --no-fund
+          npx --no-install serve site -l 3000 &
           sleep 5
           npx --yes @lhci/cli@0.15.1 collect --url=http://localhost:3000/ --url=http://localhost:3000/ai-security-checklist/ --numberOfRuns=1
           npx --yes @lhci/cli@0.15.1 upload --target=filesystem --outputDir=lhci

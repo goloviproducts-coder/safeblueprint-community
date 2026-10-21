@@ -19,7 +19,8 @@ jobs:
           node-version: 22
       - name: Serve site locally
         run: |
-          npx --yes serve@14.2.6 site -l 3000 &
+          npm ci --ignore-scripts --no-audit --no-fund
+          npx --no-install serve site -l 3000 &
           for i in $(seq 1 30); do curl -sf http://localhost:3000/ >/dev/null && break; sleep 1; done
       - name: ZAP baseline (passive)
         uses: zaproxy/action-baseline@de8ad967d3548d44ef623df22cf95c3b0baf8b25 # v0.15.0
