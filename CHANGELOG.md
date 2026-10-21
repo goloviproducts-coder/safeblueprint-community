@@ -12,6 +12,9 @@ All notable changes to this project are documented here. Format: [Keep a Changel
 - `docs/CUSTOMISING.md` guide for non-developers.
 - `npm test` (node:test) and a `tests` CI workflow; `scripts/update-hashes.js` refreshes SRI and SHA256SUMS.
 
+### General
+- Published governance (who decides and how), a public roadmap, and a promise to acknowledge security reports within 72 hours with a published-advisories process
+
 ## [1.0.0] - 2026-10-22
 ### Added
 - First community release: APP 1.7 automated-decision readiness inventory, AI security checklist, three-part report (leaders, delivery team, security architects), portfolio view, PDF/JSON/Markdown exports.
