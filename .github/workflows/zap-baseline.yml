@@ -1,0 +1,42 @@
+name: zap-baseline
+on:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  zap:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Harden runner
+        uses: step-security/harden-runner@dc2769abcc0fcfbadfc1df54081c1608579ef6b2 # v2.22.2
+        with:
+          egress-policy: audit
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+      - name: Serve site locally
+        run: |
+          npx --yes serve@14.2.6 site -l 3000 &
+          for i in $(seq 1 30); do curl -sf http://localhost:3000/ >/dev/null && break; sleep 1; done
+      - name: ZAP baseline (passive)
+        uses: zaproxy/action-baseline@de8ad967d3548d44ef623df22cf95c3b0baf8b25 # v0.15.0
+        with:
+          target: http://localhost:3000/
+          rules_file_name: .zap/rules.tsv
+          cmd_options: "-I -j"
+          allow_issue_writing: false
+          fail_action: false
+          artifact_name: zap-baseline-report
+      - name: Fail on High risk alerts
+        run: |
+          test -f report_json.json || { echo "No ZAP JSON report"; exit 1; }
+          high=$(jq '[.site[].alerts[] | select(.riskcode == "3")] | length' report_json.json)
+          {
+            echo "## ZAP baseline"
+            jq -r '.site[].alerts[] | "- \(.riskdesc): \(.name) (\(.pluginid))"' report_json.json
+          } >> "$GITHUB_STEP_SUMMARY"
+          echo "High risk alerts: $high"
+          test "$high" -eq 0

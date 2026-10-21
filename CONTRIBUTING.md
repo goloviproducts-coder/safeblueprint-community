@@ -86,6 +86,21 @@ A PR is approved when all of the following hold (mirrors the PR template checkli
 ## Security scans on your PR
 Required to pass: `test` (unit tests + hashes current), `verify` (checksums + no outbound calls), CodeQL, Semgrep, Gitleaks, Trivy, dependency review and zizmor. HTML validation must pass too; Lighthouse is report-only. If a scanner flags a false positive, explain it in the PR rather than disabling the rule. New workflows must pin actions to a full commit SHA, use least-privilege `permissions`, set `persist-credentials: false` and never use `pull_request_target`. The `security-review` label triggers an optional AI review (off until the maintainers add an API key).
 
+## Threat model gate
+`THREAT_MODEL.md` and `docs/threat-model/safeblueprint.json` (OWASP Threat Dragon v2) describe how SafeBlueprint can be attacked and what stops it. The `threat-model-gate` check runs `scripts/threat-model-gate.js` on every PR. It **fails** when the PR changes a security-sensitive area and neither threat model file changed:
+- `site/_headers`, `nginx.conf`, `Dockerfile`, `docker-compose.yml`
+- `.github/workflows/**`, `.github/dependabot.yml`, `.github/CODEOWNERS`
+- `site/schema/**`, `site/questions/loader.js`, `site/questions/engine.js`
+- export code (`site/report.js`, `site/forms.js`) and `site/sw.js`
+- any changed `site/**/*.js` that uses `fetch(`, `XMLHttpRequest`, `FileReader`, `localStorage`, `sessionStorage`, `indexedDB`, `navigator.sendBeacon`, `import(`, `WebSocket`, `EventSource`, `postMessage` or `innerHTML`
+
+To pass: add or update the relevant threats and mitigations (edit the JSON in Threat Dragon, then mirror the table in `THREAT_MODEL.md`), **or** ask a maintainer to review and apply the `threat-model-reviewed` label. The label only counts if a user with admin or maintain permission applied it. The JSON must parse, and the job summary lists the areas that were triggered. Tests: `test/threat-model-gate.test.js`.
+
+## Extra scanners
+- **harden-runner** (egress audit) runs first in every job except container jobs (semgrep), where it isn't supported.
+- **OSV-Scanner** checks dependencies on PRs and weekly.
+- **ZAP baseline** passively scans `npx serve site` on PRs and fails on any High-risk alert. Tune false positives in `.zap/rules.tsv` with a reason. Header alerts are ignored locally because `serve` does not apply `site/_headers`; production headers are set in `_headers` and `nginx.conf`.
+
 ## Commit style
 - Conventional prefixes: `feat:`, `fix:`, `docs:`, `mapping:`, `pattern:`, `i18n:`, `chore:`.
 - Imperative, under 72 chars: `mapping: add OWASP LLM08 controls to PAT-03`.

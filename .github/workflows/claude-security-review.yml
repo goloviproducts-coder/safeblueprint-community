@@ -16,6 +16,10 @@ jobs:
     env:
       HAS_KEY: ${{ secrets.ANTHROPIC_API_KEY != '' }}
     steps:
+      - name: Harden runner
+        uses: step-security/harden-runner@dc2769abcc0fcfbadfc1df54081c1608579ef6b2 # v2.22.2
+        with:
+          egress-policy: audit
       - if: env.HAS_KEY != 'true'
         run: echo "ANTHROPIC_API_KEY not set; skipping."
       - if: env.HAS_KEY == 'true'
