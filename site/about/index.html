@@ -19,7 +19,7 @@
 <link rel="icon" href="data:,">
 <link rel="manifest" href="/manifest.webmanifest">
 <meta name="theme-color" content="#14213D">
-<link rel="stylesheet" href="/app.css" integrity="sha384-ozcuaizrqCjsWBV1A9mCSs6pW/FSC81xfYndxzZp5dsj9e4lAY/MeXbR2zuuKFFe" crossorigin="anonymous">
+<link rel="stylesheet" href="/app.css" integrity="sha384-FPOJ8ZSU35mBUyCZ5/3V7YeTLenb6j4794pMNodl3HvQ7Ci6v3oPEGhLqqpAmaHy" crossorigin="anonymous">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' blob:; img-src 'self' data:; connect-src 'self'; form-action 'self'; base-uri 'none'; object-src 'none'; worker-src 'self'; manifest-src 'self'">
 </head>
 <body>
@@ -47,6 +47,72 @@
 </div>
 <main class="split">
 <article class="card" id="about">
+<section class="wis" id="what-is" aria-labelledby="wis-h">
+  <p class="side-kicker">What is SafeBlueprint</p>
+  <h2 id="wis-h">See where your AI decisions really stand, and what to fix first.</h2>
+  <p class="wis-lead">SafeBlueprint is a free, open-source check that links each AI or automated decision to one honest portfolio view, then turns the gaps into a short, prioritised plan. Not legal advice.</p>
+  <div class="wis-grid">
+    <div class="wis-item">
+      <h3>1. The gap it fills</h3>
+      <p><strong>Often the big picture and the underlying issues don't match.</strong> A dashboard says AI is under control. Inside single decisions sit hidden gaps: no human review, vendor AI features nobody listed, missing privacy notices.</p>
+      <ul class="take">
+        <li><strong>Why now:</strong> from 10 December 2026, APP 1.7 asks organisations to explain in their privacy policy when a computer program makes or substantially informs significant decisions about people.<sup><a href="#src-1">1</a></sup></li>
+        <li>Adoption is ahead of governance: one survey found 82% of organisations use AI agents but only 44% have policies to secure them.<sup><a href="#src-4">4</a></sup></li>
+        <li>Big governance platforms are built for large, funded programs. Small and mid-sized teams need a lighter first step.<sup><a href="#src-5">5</a></sup></li>
+      </ul>
+    </div>
+    <div class="wis-item">
+      <h3>2. Visibility that matches reality</h3>
+      <p>Each decision's gaps roll up into the portfolio view, so the leaders' picture reflects what is really happening.</p>
+      <ul class="take">
+        <li>One view of every initiative and its AI type: rules, machine learning, generative AI, agents, vendor features.</li>
+        <li>Gaps are shown per decision, not averaged away.</li>
+      </ul>
+    </div>
+    <div class="wis-item">
+      <h3>3. A plan you can act on</h3>
+      <ul class="take">
+        <li>Prioritised actions, each traced back to a specific initiative and owner.</li>
+        <li>Aligned with the six practices in Australia's Guidance for AI Adoption<sup><a href="#src-2">2</a></sup> and ASD's AI security guidance.<sup><a href="#src-3">3</a></sup></li>
+        <li>Export a plain report to share with leaders or your privacy team.</li>
+      </ul>
+    </div>
+    <div class="wis-item">
+      <h3>4. Where it fits</h3>
+      <p>The on-ramp before a GRC or runtime platform. Use it to find and size the work; use bigger tools later if you need them.</p>
+      <ol class="wis-steps"><li>Find your decisions</li><li>See the gaps</li><li>Plan and act</li><li>Scale up if needed</li></ol>
+    </div>
+    <div class="wis-item">
+      <h3>5. Who it's for</h3>
+      <ul class="take">
+        <li>Product owners shipping AI features</li>
+        <li>Security and privacy leads</li>
+        <li>Risk and compliance teams</li>
+        <li>Founders and executives</li>
+      </ul>
+      <p class="help">Built for non-finance organisations. It is not designed for banking, superannuation or fintech.</p>
+    </div>
+    <div class="wis-item">
+      <h3>6. Why trust it</h3>
+      <ul class="take">
+        <li>Free and open source (Apache-2.0)</li>
+        <li>Runs on your device; answers stay in your browser</li>
+        <li>Nothing you enter is captured without your consent</li>
+        <li>Self-host it on your own infrastructure</li>
+      </ul>
+    </div>
+  </div>
+  <h3>Sources</h3>
+  <ol class="wis-src help">
+    <li id="src-1"><a href="https://www.oaic.gov.au/news/media-centre/new-resources-on-transparency-for-use-of-ai-and-automated-decision-making" rel="noopener">OAIC: New resources on transparency for use of AI and automated decision-making</a> and <a href="https://www.oaic.gov.au/privacy/australian-privacy-principles/australian-privacy-principles-guidelines/chapter-1-app-1-open-and-transparent-management-of-personal-information" rel="noopener">APP 1 Guidelines</a></li>
+    <li id="src-2"><a href="https://www.ai.gov.au/staying-safe-and-responsible/essential-ai-practices/guidance-ai-adoption-implementation-guidance" rel="noopener">National AI Centre: Guidance for AI Adoption</a> (updates the <a href="https://www.industry.gov.au/publications/voluntary-ai-safety-standard/introduction-standard" rel="noopener">Voluntary AI Safety Standard</a>)</li>
+    <li id="src-3"><a href="https://www.cyber.gov.au/business-government/secure-design/artificial-intelligence/ai-data-security" rel="noopener">ASD's ACSC: AI data security</a> and <a href="https://www.cyber.gov.au/publication/deploying-ai-systems-securely" rel="noopener">Deploying AI systems securely</a></li>
+    <li id="src-4"><a href="https://www.sailpoint.com/press-releases/sailpoint-ai-agent-adoption-report" rel="noopener">SailPoint: AI agent adoption report (May 2025)</a></li>
+    <li id="src-5">Enterprise platforms such as <a href="https://www.onetrust.com/" rel="noopener">OneTrust</a>, <a href="https://www.credo.ai/" rel="noopener">Credo AI</a>, <a href="https://www.holisticai.com/" rel="noopener">Holistic AI</a> and <a href="https://www.vanta.com/" rel="noopener">Vanta</a> are subscription products aimed at broader governance programs.</li>
+  </ol>
+  <p class="help">General information only. Not legal advice.</p>
+</section>
+  <h2>About us</h2>
   <p>This is a free, private tool that helps teams get ready for APP 1.7. It is built by a small team of security practitioners.</p>
   <p>Your answers stay in your browser. We don't store or send them.</p>
   <p>SafeBlueprint is open source under Apache-2.0 and maintained with the community on <a href="https://github.com/goloviproducts-coder/safeblueprint-community" rel="noopener">GitHub</a>. Anyone can read the code, host their own copy, or suggest a change.</p>
