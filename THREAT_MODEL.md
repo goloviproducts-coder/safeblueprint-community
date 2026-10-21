@@ -46,6 +46,9 @@ CI/CD --signed release, attestations--> Repository --zip/image--> Self-host serv
 | T19 | Contact function (hosted only) | Information disclosure | Contact details sent to a third party or leaked in logs | Medium | Resend only; recipient and key from Pages env (CONTACT_TO, RESEND_API_KEY); 503 when unset; origin allow-list; strict field limits; emails redacted in logs; self-host edition has no function. | APP11, OWASP-ASVS-14.4 | Mitigated |
 | T20 | CI/CD deploy | Elevation of privilege | Unreviewed code deployed to production | High | Deploy only from main (PR + required checks); production environment needs maintainer approval; secrets scoped to the environment; pinned wrangler-action; smoke tests after deploy; setup-node package cache disabled in the deploy job to prevent cache poisoning; production contact function accepts only the pages.dev origins (no localhost). | SLSA-L2, OWASP-CICD-SEC-1 | Mitigated |
 
+## Verification
+Mitigations above are tested continuously: browser security tests (`test/security/`) prove malicious packs cannot run script or break reports, CSP violations fail the build, and full tool runs and exports make zero cross-origin requests. Nuclei and ZAP scan the served site; Nikto and header checks scan the self-host container. See CONTRIBUTING.md, "Penetration tests".
+
 ## When to update
 Update this file **and** the Threat Dragon JSON when a change touches a security-sensitive area: security headers, nginx/Docker, workflows, schemas, the question loader, export code, the service worker, or browser code that uses network, storage or DOM-injection APIs. The `threat-model-gate` check enforces this (see CONTRIBUTING.md).
 

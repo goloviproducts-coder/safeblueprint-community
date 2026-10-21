@@ -1,0 +1,59 @@
+name: zap-full-scan
+on:
+  schedule:
+    - cron: "33 2 * * 0"
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  zap-full:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - name: Harden runner
+        uses: step-security/harden-runner@dc2769abcc0fcfbadfc1df54081c1608579ef6b2 # v2.22.2
+        with:
+          egress-policy: audit
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+      - run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Serve site locally
+        run: |
+          npx --no-install serve site -l 3000 &
+          for i in $(seq 1 30); do curl -sf http://localhost:3000/ >/dev/null \&\& break; sleep 1; done
+      - name: ZAP full scan (active)
+        uses: zaproxy/action-full-scan@3c58388149901b9a03b7718852c5ba889646c27c # v0.13.0
+        with:
+          target: http://localhost:3000/
+          rules_file_name: .zap/rules.tsv
+          cmd_options: "-I -j"
+          allow_issue_writing: false
+          fail_action: false
+          artifact_name: zap-full-scan-report
+      - name: Open an issue on High risk alerts
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          test -f report_json.json || { echo "No ZAP JSON report"; exit 1; }
+          high=$(jq '[.site[].alerts[] | select(.riskcode == "3")] | length' report_json.json)
+          { echo "## ZAP full scan"; jq -r '.site[].alerts[] | "- \(.riskdesc): \(.name) (\(.pluginid))"' report_json.json; } >> "$GITHUB_STEP_SUMMARY"
+          echo "High risk alerts: $high"
+          if [ "$high" -gt 0 ]; then
+            body=$(jq -r '"High risk alerts from the ZAP full scan:\n\n" + ([.site[].alerts[] | select(.riskcode == "3") | "- \(.name) (\(.pluginid)): \(.instances | length) instance(s)"] | join("\n"))' report_json.json)
+            gh issue create --repo "$REPO" --title "ZAP full scan: $high High risk alert(s)" --label security --body "$body
+
+          Run: $RUN_URL" || gh issue create --repo "$REPO" --title "ZAP full scan: $high High risk alert(s)" --body "$body
+
+          Run: $RUN_URL"
+            exit 1
+          fi

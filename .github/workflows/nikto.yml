@@ -1,0 +1,56 @@
+name: nikto
+on:
+  pull_request:
+    paths: [Dockerfile, nginx.conf, docker-compose.yml, .github/workflows/nikto.yml]
+  schedule:
+    - cron: "51 3 * * 1"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  nikto:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Harden runner
+        uses: step-security/harden-runner@dc2769abcc0fcfbadfc1df54081c1608579ef6b2 # v2.22.2
+        with:
+          egress-policy: audit
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Nikto 2.6.1 (pinned commit)
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: sullo/nikto
+          ref: d201dac320fc5187eac75e723dd07a716196ec5a # 2.6.1
+          path: .nikto
+          persist-credentials: false
+      - name: Build and run the self-host image
+        run: |
+          docker build -t safeblueprint-selfhost:ci .
+          docker run -d --name sb -p 8080:8080 --read-only --tmpfs /tmp --cap-drop ALL --security-opt no-new-privileges:true safeblueprint-selfhost:ci
+          for i in $(seq 1 30); do curl -sf http://localhost:8080/ >/dev/null && break; sleep 1; done
+          curl -sI http://localhost:8080/ | tee headers.txt
+      - name: Nikto scan of the nginx container
+        run: |
+          sudo apt-get install -y -qq libjson-perl >/dev/null
+          perl .nikto/program/nikto.pl -h http://localhost:8080 -ask no -nointeractive -maxtime 10m -Format json -output nikto.json || true
+          n=$(jq '[.[]?.vulnerabilities[]?] | length' nikto.json 2>/dev/null || echo 0)
+          { echo "## Nikto (self-host image)"; echo "Items: $n"; jq -r '.[]?.vulnerabilities[]? | "- \(.id): \(.msg) (\(.url))"' nikto.json 2>/dev/null; } >> "$GITHUB_STEP_SUMMARY"
+          echo "items=$n"
+      - name: Required headers present on the self-host server
+        run: |
+          for h in content-security-policy x-content-type-options x-frame-options referrer-policy permissions-policy cross-origin-opener-policy; do
+            grep -qi "^$h:" headers.txt || { echo "::error::Missing header $h from nginx.conf"; exit 1; }
+          done
+          ! grep -qi '^server: .*[0-9]' headers.txt || { echo "::error::nginx version disclosed"; exit 1; }
+      - if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: nikto-report
+          path: |
+            nikto.json
+            headers.txt
+          retention-days: 30
+      - if: always()
+        run: docker logs sb || true
