@@ -7,7 +7,8 @@
   "scripts": {
     "test": "node --test test/*.test.js",
     "build:default-pack": "node scripts/build-default-pack.js",
-    "test:security": "playwright test"
+    "test:security": "playwright test",
+    "privacy-proof": "playwright test test/security/privacy-proof.spec.js --reporter=list"
   },
   "engines": {
     "node": ">=20"

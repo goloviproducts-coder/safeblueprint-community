@@ -56,6 +56,16 @@
     <li><b>Offline support caches only site files.</b> The service worker does not cache what you type or a form post.</li>
   </ul>
 
+  <h2>What we never collect</h2>
+  <ul class="guard">
+    <li>Your answers, notes or organisation name.</li>
+    <li>Question packs or files you load.</li>
+    <li>Your reports or exports.</li>
+    <li>Cookies, analytics, tracking pixels, fingerprints or advertising IDs.</li>
+    <li>An account, login or password. There are none.</li>
+  </ul>
+  <p>The only thing that leaves your device is a contact form message you choose to send, after you consent. Anyone can check this with the open-source privacy proof test, which runs the whole tool and every export and fails if any request goes to another site.</p>
+
   <h2>Protections in place</h2>
   <ul class="take">
     <li>Strict Content-Security-Policy on the response, with no unsafe-inline. Scripts are same-origin files. Styles are same-origin files, plus a blob stylesheet used only for the print footer reference and classification.</li>

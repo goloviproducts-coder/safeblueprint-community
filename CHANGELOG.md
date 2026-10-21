@@ -12,6 +12,10 @@ All notable changes to this project are documented here. Format: [Keep a Changel
 - `docs/CUSTOMISING.md` guide for non-developers.
 - `npm test` (node:test) and a `tests` CI workflow; `scripts/update-hashes.js` refreshes SRI and SHA256SUMS.
 
+### Privacy
+- Plain "What we never collect" list in the README and on the security page
+- Privacy proof anyone can run (npm run privacy-proof): a full run, a custom pack run and every export make zero requests to other sites
+
 ## [1.0.0] - 2026-10-22
 ### Added
 - First community release: APP 1.7 automated-decision readiness inventory, AI security checklist, three-part report (leaders, delivery team, security architects), portfolio view, PDF/JSON/Markdown exports.
