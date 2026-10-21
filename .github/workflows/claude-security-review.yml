@@ -1,0 +1,30 @@
+name: claude-security-review
+# Off until an ANTHROPIC_API_KEY repo secret is added. Runs only when the
+# 'security-review' label is added to a PR from this repository (not forks).
+on:
+  pull_request:
+    types: [labeled]
+permissions:
+  contents: read
+jobs:
+  review:
+    if: github.event.label.name == 'security-review' && github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    env:
+      HAS_KEY: ${{ secrets.ANTHROPIC_API_KEY != '' }}
+    steps:
+      - if: env.HAS_KEY != 'true'
+        run: echo "ANTHROPIC_API_KEY not set; skipping."
+      - if: env.HAS_KEY == 'true'
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 2
+          persist-credentials: false
+      - if: env.HAS_KEY == 'true'
+        uses: anthropics/claude-code-security-review@0c6a49f1fa56a1d472575da86a94dbc1edb78eda # main 2026-10
+        with:
+          comment-pr: true
+          claude-api-key: ${{ secrets.ANTHROPIC_API_KEY }}

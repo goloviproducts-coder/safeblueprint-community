@@ -1,5 +1,7 @@
 # SafeBlueprint Community Edition
 
+[![CodeQL](https://github.com/goloviproducts-coder/safeblueprint-community/actions/workflows/codeql.yml/badge.svg)](https://github.com/goloviproducts-coder/safeblueprint-community/actions/workflows/codeql.yml) [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/goloviproducts-coder/safeblueprint-community/badge)](https://scorecard.dev/viewer/?uri=github.com/goloviproducts-coder/safeblueprint-community) [![checksums](https://github.com/goloviproducts-coder/safeblueprint-community/actions/workflows/checksums.yml/badge.svg)](https://github.com/goloviproducts-coder/safeblueprint-community/actions/workflows/checksums.yml)
+
 Free, self-hostable AI decision-readiness and AI security checklist. **Everything runs on your device**: no accounts, no tracking, no external calls, nothing you type leaves the browser unless you choose to save an export.
 
 Hosted version: https://safeblueprint.pages.dev
@@ -31,6 +33,9 @@ Full sample (fictional company): [docs/samples/sample-portfolio.pdf](docs/sample
 
 ## Contributing
 We welcome bug reports, framework mapping updates, new security patterns, wording fixes and translations. Read [CONTRIBUTING.md](CONTRIBUTING.md) and our [Code of Conduct](CODE_OF_CONDUCT.md). Look for `good first issue`.
+
+## Security scans
+Every PR runs: checksum + no-outbound-calls check, CodeQL (JavaScript and Actions), Semgrep, Gitleaks (full history), Trivy (config + filesystem), dependency review, zizmor (workflow linting) and HTML validation. Lighthouse runs report-only. OpenSSF Scorecard runs on `main` weekly. All actions are pinned to commit SHAs with least-privilege permissions. An optional AI security review runs when a maintainer adds the `security-review` label; it is **off until an `ANTHROPIC_API_KEY` secret is added**.
 
 ## Security
 See [SECURITY.md](SECURITY.md). Please don't open public issues for vulnerabilities.
