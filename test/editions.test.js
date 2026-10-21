@@ -86,16 +86,21 @@ test("contact function rejects localhost origins in production", async () => {
 });
 
 test("hosted contact page offers Instagram and GitHub fallbacks without revealing an email", () => {
-  const { build } = require("../scripts/build-edition.js");
-  const out = build("hosted", path.join(require("os").tmpdir(), "sb-hosted-fallback"));
+  const IG = "https://www.instagram.com/aibuzzcrew/";
+  const GH = "https://github.com/goloviproducts-coder/safeblueprint-community/issues";
+  const out = build("hosted", fs.mkdtempSync(path.join(os.tmpdir(), "sb-hosted-")));
   const html = fs.readFileSync(path.join(out, "contact", "index.html"), "utf8");
   const js = fs.readFileSync(path.join(out, "contact.js"), "utf8");
-  for (const s of [html, js]) {
-    assert.ok(s.includes("https://www.instagram.com/aibuzzcrew/"));
-    assert.ok(s.includes("https://github.com/goloviproducts-coder/safeblueprint-community/issues"));
-    assert.doesNotMatch(s, /[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/);
-  }
+  const hrefs = [...html.matchAll(/<a href="([^"]+)"/g)].map((m) => m[1]);
+  assert.ok(hrefs.some((h) => h === IG));
+  assert.ok(hrefs.some((h) => h === GH));
+  const consts = Object.fromEntries([...js.matchAll(/var (IG_URL|ISSUES_URL) = "([^"]+)";/g)].map((m) => [m[1], m[2]]));
+  assert.equal(consts.IG_URL, IG);
+  assert.equal(consts.ISSUES_URL, GH);
+  for (const s of [html, js]) assert.doesNotMatch(s, /[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/);
   assert.match(js, /Our contact form is temporarily unavailable\. Please message us on /);
-  const self = build("selfhost", path.join(require("os").tmpdir(), "sb-self-fallback"));
-  assert.ok(!fs.readFileSync(path.join(self, "contact", "index.html"), "utf8").includes("instagram.com/aibuzzcrew"));
+  assert.match(js, /response\.status === 429/);
+  const self = build("selfhost", fs.mkdtempSync(path.join(os.tmpdir(), "sb-self-")));
+  const selfHrefs = [...fs.readFileSync(path.join(self, "contact", "index.html"), "utf8").matchAll(/<a href="([^"]+)"/g)].map((m) => m[1]);
+  assert.ok(!selfHrefs.some((h) => h === IG));
 });

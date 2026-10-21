@@ -134,9 +134,18 @@ form.addEventListener("submit", async function (event) {
       showThanks("Thanks.", " We'll reply to that work email. This form did not include any checklist or inventory answers.");
       return;
     }
-    showUnavailable(status);
-    button.disabled = !consent.checked;
-    return;
+    if (response.status >= 500) {
+      showUnavailable(status);
+      button.disabled = !consent.checked;
+      return;
+    }
+    if (response.status === 429) {
+      status.textContent = WAIT_MESSAGE;
+    } else if (response.status === 400 || response.status === 413) {
+      status.textContent = "Please check the form fields and try again.";
+    } else {
+      status.textContent = "Thanks for trying. That request did not go through. Please try again in a minute.";
+    }
   } catch (err) {
     if (offlineNow()) status.textContent = "You're offline. Sending needs a connection.";
     else showUnavailable(status);
