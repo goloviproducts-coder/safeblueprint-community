@@ -1,19 +1,49 @@
 {
+  "edition": "selfhost",
+  "_edition": "selfhost = contact form off, nothing sent anywhere. hosted = the safeblueprint.pages.dev build (set by scripts/build-edition.js).",
   "questionPack": "/questions/default.csv",
   "_questionPack": "Self-hosters: point this at your own pack, for example /questions/acme.csv. Same-site paths only.",
   "_status": "Only questionPack is active. The other fields document a planned feature.",
   "_purpose": "Future custom templates: map report sections to your own owners and control IDs.",
   "version": "0.0-draft",
-  "organisation": { "name": "" },
+  "organisation": {
+    "name": ""
+  },
   "owners": [
-    { "role": "Accountable executive", "name": "", "team": "" },
-    { "role": "Privacy officer", "name": "", "team": "" },
-    { "role": "Security architect", "name": "", "team": "" }
+    {
+      "role": "Accountable executive",
+      "name": "",
+      "team": ""
+    },
+    {
+      "role": "Privacy officer",
+      "name": "",
+      "team": ""
+    },
+    {
+      "role": "Security architect",
+      "name": "",
+      "team": ""
+    }
   ],
   "control_mappings": [
-    { "safeblueprint_id": "SB-ADM-01", "your_control_id": "", "notes": "" },
-    { "safeblueprint_id": "SB-HUM-01", "your_control_id": "", "notes": "" },
-    { "safeblueprint_id": "SB-SUP-01", "your_control_id": "", "notes": "" }
+    {
+      "safeblueprint_id": "SB-ADM-01",
+      "your_control_id": "",
+      "notes": ""
+    },
+    {
+      "safeblueprint_id": "SB-HUM-01",
+      "your_control_id": "",
+      "notes": ""
+    },
+    {
+      "safeblueprint_id": "SB-SUP-01",
+      "your_control_id": "",
+      "notes": ""
+    }
   ],
-  "export": { "grc_format": "none" }
+  "export": {
+    "grc_format": "none"
+  }
 }

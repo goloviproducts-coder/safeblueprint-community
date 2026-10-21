@@ -30,7 +30,7 @@ jobs:
           VER="${TAG#v}"
           NAME="safeblueprint-selfhost-${VER}"
           mkdir -p "dist/${NAME}"
-          cp -a site Dockerfile docker-compose.yml nginx.conf INSTALL.md VERSION SHA256SUMS.txt LICENSE README.md "dist/${NAME}/"
+          cp -a site Dockerfile docker-compose.yml nginx.conf INSTALL.md VERSION SHA256SUMS.txt LICENSE NOTICE README.md "dist/${NAME}/"
           (cd dist && zip -qrX "${NAME}.zip" "${NAME}")
           echo "NAME=${NAME}" >> "$GITHUB_ENV"
       - name: Install syft (checksum verified)

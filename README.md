@@ -57,5 +57,8 @@ See [SECURITY.md](SECURITY.md). Please don't open public issues for vulnerabilit
 ## Not legal advice
 SafeBlueprint is a readiness aid, not legal advice. You own your content and outputs; check obligations with a qualified adviser.
 
+## Credit
+Apache-2.0 requires you to keep the LICENSE and NOTICE files with any copy or fork. A visible "Built with SafeBlueprint" link back to this repository is appreciated but not required. Under section 6 of the licence, the SafeBlueprint name may not be used to endorse or promote forks without permission.
+
 ## License
 Apache-2.0 - see [LICENSE](LICENSE).
