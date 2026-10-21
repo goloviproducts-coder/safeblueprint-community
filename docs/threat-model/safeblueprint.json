@@ -1,5 +1,5 @@
 {
-  "version": "2.2.0",
+  "version": "2.2.1",
   "summary": {
     "title": "SafeBlueprint Community Edition",
     "owner": "SafeBlueprint maintainers",
@@ -443,7 +443,7 @@
                   "severity": "High",
                   "type": "Tampering",
                   "description": "A malicious action version could alter releases or steal tokens.",
-                  "mitigation": "All actions pinned to full SHAs; allowed-actions list; SHA pinning required; harden-runner egress audit; zizmor lint; read-only default token. Controls: SLSA-L2, OWASP-CICD-SEC-8",
+                  "mitigation": "All actions pinned to full SHAs; allowed-actions list; SHA pinning required; harden-runner egress audit; zizmor lint; read-only default token; release notes come only from the reviewed CHANGELOG.md on the signed tag, never from PR or issue input. Controls: SLSA-L2, OWASP-CICD-SEC-8",
                   "modelType": "STRIDE",
                   "score": ""
                 },
