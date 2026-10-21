@@ -67,3 +67,14 @@ Nowhere. Answers stay in the browser tab and are not saved to local storage, ses
 ## Updates
 
 Each release has a new `VERSION` and `SHA256SUMS.txt`. To update, replace the whole `site/` folder (do not mix files from two releases), check the checksums, and reload. The offline cache clears itself when the new version loads.
+
+## Verify a release
+
+Each GitHub Release ships the zip, SPDX and CycloneDX SBOMs, a `SHA256SUMS` file, and signed build-provenance and SBOM attestations.
+
+```bash
+gh release download v1.0.0 --repo goloviproducts-coder/safeblueprint-community
+sha256sum -c SHA256SUMS
+gh attestation verify safeblueprint-selfhost-1.0.0.zip --repo goloviproducts-coder/safeblueprint-community
+```
+Both must pass before you deploy. After unzipping, `sha256sum -c SHA256SUMS.txt` inside the folder checks every file.
