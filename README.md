@@ -23,6 +23,19 @@ docker compose up -d           # Docker + nginx, see INSTALL.md
 ```
 Or copy `site/` to any static host (intranet, S3, Azure Static Web Apps). Serve from the site root. Verify integrity with `sha256sum -c SHA256SUMS.txt`. Details: [INSTALL.md](INSTALL.md).
 
+## One-command run (Docker)
+From a clone of this repo:
+```bash
+docker build -t safeblueprint . && docker run --rm -p 8080:8080 --read-only --tmpfs /tmp --cap-drop ALL --security-opt no-new-privileges safeblueprint
+```
+Open http://localhost:8080. Stop it with Ctrl+C.
+
+## Works offline
+SafeBlueprint makes no calls to the internet, so it works on an air-gapped laptop or intranet once you have the files.
+- **Serve it locally** (`npx serve site`, the Docker command above, or any static web server) and it works with no internet connection. Checked by blocking every request that is not to the local server: both checklists load and run, and nothing was blocked because nothing tried to leave.
+- **Opening `index.html` directly from the folder (double-click, `file://`) is not supported.** Pages load their scripts and styles from the site root and the security policy requires a web server, so the page appears without questions. Use any local static server instead.
+- After the first visit, the hosted site also keeps working offline through its service worker.
+
 ## Verify a release
 
 Each GitHub Release ships the zip, SPDX and CycloneDX SBOMs, a `SHA256SUMS` file, and signed build-provenance and SBOM attestations.
