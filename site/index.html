@@ -21,6 +21,7 @@
 <meta name="theme-color" content="#14213D">
 <link rel="stylesheet" href="/app.css" integrity="sha384-ozcuaizrqCjsWBV1A9mCSs6pW/FSC81xfYndxzZp5dsj9e4lAY/MeXbR2zuuKFFe" crossorigin="anonymous">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' blob:; img-src 'self' data:; connect-src 'self'; form-action 'self'; base-uri 'none'; object-src 'none'; worker-src 'self'; manifest-src 'self'">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"SafeBlueprint","url":"https://safeblueprint.pages.dev/","applicationCategory":"BusinessApplication","operatingSystem":"Any (web browser)","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"AUD"},"license":"https://www.apache.org/licenses/LICENSE-2.0","codeRepository":"https://github.com/goloviproducts-coder/safeblueprint-community"}</script>
 </head>
 <body>
 <a class="skip" href="#wizard">Skip to the inventory</a>
@@ -36,6 +37,7 @@
     <a href="/security/">Security</a>
     <a href="/about/">About us</a>
     <a href="/contact/">Contact</a>
+    <a href="https://github.com/goloviproducts-coder/safeblueprint-community" rel="noopener">GitHub</a>
   </nav>
 </header>
 <div class="hero exec-hero">
@@ -76,7 +78,7 @@
     <div class="why-row">
       <article class="vcard">
         <h3>Notices</h3>
-        <p><a href="/privacy/#notices">The OAIC can issue infringement notices.</a></p>
+        <p><a href="/privacy/#notices">The OAIC can investigate and take enforcement action.</a></p>
       </article>
       <article class="vcard">
         <h3>Deadline</h3>
@@ -117,6 +119,16 @@
         <span class="sample-caption">Sample report</span>
       </a>
     </div>
+  </section>
+  <section aria-labelledby="oss-heading">
+    <h2 id="oss-heading" class="pitch-title">Free and open source</h2>
+    <ul class="take">
+      <li>It runs on your device. Your answers are not sent anywhere.</li>
+      <li>It is free under the Apache-2.0 licence.</li>
+      <li>The code is public. Every change is scanned with CodeQL, Semgrep, Gitleaks, Trivy and OpenSSF Scorecard.</li>
+      <li>You can host it inside your own network. See the <a href="https://github.com/goloviproducts-coder/safeblueprint-community#readme" rel="noopener">install guide</a>.</li>
+      <li>Releases come with checksums you can verify. See <a href="https://github.com/goloviproducts-coder/safeblueprint-community/releases" rel="noopener">releases</a>.</li>
+    </ul>
   </section>
 </div>
 <div class="workspace">
@@ -294,13 +306,13 @@
     <p>No. We never see your initiative names or answers. They stay in your browser for this visit and are not stored or sent. This self-hosted edition has no forms that send data.</p>
   </details>
   <details>
-    <summary>What can a penalty look like?</summary>
-    <p>Infringement notices of up to about A$21,840 per breach for companies may apply (per OAIC). That is a general figure, not a prediction for you. See <a href="https://www.oaic.gov.au/about-the-OAIC/our-regulatory-approach/privacy-regulatory-action-policy/infringement-notices">OAIC infringement notices</a>. This is not legal advice.</p>
+    <summary>What happens if we're not ready?</summary>
+    <p>If you are not ready, the OAIC can investigate and take enforcement action. What it does depends on the facts. See <a href="https://www.oaic.gov.au/about-the-OAIC/our-regulatory-approach/privacy-regulatory-action-policy/infringement-notices">OAIC regulatory action</a>. This is not legal advice.</p>
   </details>
 </section>
 </main>
 <footer>
-  <p class="footline">© 2026 · Beta · Not legal advice · <a href="/privacy/">Privacy</a> · <a href="/security/">Security</a> · <a href="/about/">About us</a> · <a href="/contact/">Contact</a></p>
+  <p class="footline">© 2026 · Beta · Not legal advice · <a href="/privacy/">Privacy</a> · <a href="/contact/">Contact</a> · <a href="https://github.com/goloviproducts-coder/safeblueprint-community" rel="noopener">Open source</a></p>
 </footer>
 <script src="/config.js" integrity="sha384-BasY2Usb2Z/O/OHBmdeG+zOP6FDqKEuLc7+2ADPbZXXxAOu38KAtiqNu/tMsWJ+9" crossorigin="anonymous"></script>
 <script src="/forms.js" integrity="sha384-Wgh7eSuAK/Ut3Pe26XUzdbNlrUux5ZB8xF0dn6L3aAHrMiTCyzwE11l0thlrhTC+" crossorigin="anonymous"></script>

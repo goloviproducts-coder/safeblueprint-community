@@ -17,9 +17,16 @@ This site is a static beta at https://safeblueprint.pages.dev/. It does not give
 
 - APP 1.7 transparency obligation starts 10 December 2026. Source: OAIC fact sheet https://www.oaic.gov.au/__data/assets/pdf_file/0021/269013/APP-1.7-1.9-Transparency-Obligation-Fact-Sheet.PDF
 - APP Guidelines, Chapter 1: https://www.oaic.gov.au/privacy/australian-privacy-principles/australian-privacy-principles-guidelines/chapter-1-app-1-open-and-transparent-management-of-personal-information
-- Infringement notices: about A$21,840 per breach for companies, a general OAIC figure, not a prediction. https://www.oaic.gov.au/about-the-OAIC/our-regulatory-approach/privacy-regulatory-action-policy/infringement-notices
+- If an organisation is not ready, the OAIC can investigate and take enforcement action. No amounts are given. Not legal advice. https://www.oaic.gov.au/about-the-OAIC/our-regulatory-approach/privacy-regulatory-action-policy/infringement-notices
 - Credit-like scoring is outside the ADM inventory.
 - Australia has no mandatory AI guardrails for business. The government will not proceed at this time. Existing laws still apply. The voluntary Guidance for AI Adoption (October 2025) has six practices: https://www.ai.gov.au/staying-safe-and-responsible/essential-ai-practices/guidance-ai-adoption-implementation-guidance
+
+## Open source
+
+- Code: https://github.com/goloviproducts-coder/safeblueprint-community (Apache-2.0). Community maintained on GitHub.
+- Every pull request is scanned: CodeQL, Semgrep, Gitleaks, Trivy, dependency review, OpenSSF Scorecard.
+- Self-host inside your network: see the README. Release checksums and build attestations from v1.0.0: https://github.com/goloviproducts-coder/safeblueprint-community/releases
+- Private vulnerability reports: https://github.com/goloviproducts-coder/safeblueprint-community/security/advisories/new
 
 ## Optional
 
