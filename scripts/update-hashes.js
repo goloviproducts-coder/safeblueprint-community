@@ -8,9 +8,9 @@ const root = path.join(__dirname, "..");
 const site = path.join(root, "site");
 // Every path must resolve inside the given base directory.
 function inside(base, p) {
-  const r = path.resolve(p);
-  if (r !== base && !r.startsWith(base + path.sep)) throw new Error("Refusing path outside " + base + ": " + p);
-  return r;
+  const rel = path.relative(base, p);
+  if (rel.startsWith("..") || path.isAbsolute(rel)) throw new Error("Refusing path outside " + base + ": " + p);
+  return p;
 }
 function walk(dir) {
   return fs.readdirSync(dir, { withFileTypes: true }).flatMap((d) => {
@@ -35,6 +35,10 @@ walk(site).filter((f) => f.endsWith(".html")).forEach((file) => {
 const listed = ["Dockerfile", "docker-compose.yml", "nginx.conf", "INSTALL.md", "VERSION"].map((f) => "./" + f)
   .concat(walk(site).map((f) => "./" + path.relative(root, f).split(path.sep).join("/")))
   .sort();
-const sums = listed.map((f) => crypto.createHash("sha256").update(fs.readFileSync(inside(root, path.resolve(root, f)))).digest("hex") + "  " + f).join("\n") + "\n";
+const sums = listed.map((f) => {
+  if (f.indexOf("..") !== -1) throw new Error("Refusing path with ..: " + f);
+  const abs = inside(root, path.resolve(root, f));
+  return crypto.createHash("sha256").update(fs.readFileSync(abs)).digest("hex") + "  " + f;
+}).join("\n") + "\n";
 fs.writeFileSync(path.join(root, "SHA256SUMS.txt"), sums);
 console.log("SRI updated in " + changed + " HTML file(s); SHA256SUMS.txt lists " + listed.length + " files.");
