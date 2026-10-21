@@ -28,3 +28,7 @@ test("markdown escapes pipes in user text", () => {
   const p = E.loadPack("id,pack,section,question,type,risk_if,finding_text\nQ1,p,S,Q,yesno,no,a|b\n", "x.csv");
   assert.ok(E.toMarkdown(E.reportModel(p, { Q1: "no" })).includes("a\\|b"));
 });
+test("markdown escapes backslashes before pipes", () => {
+  const p = E.loadPack("id,pack,section,question,type,risk_if,finding_text\nQ1,p,S,Q,yesno,no,a\\|b\n", "x.csv");
+  assert.ok(E.toMarkdown(E.reportModel(p, { Q1: "no" })).includes("a\\\\\\|b"));
+});

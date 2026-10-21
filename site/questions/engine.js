@@ -278,7 +278,7 @@
     };
   }
 
-  function mdCell(v) { return String(v == null ? "" : v).replace(/\|/g, "\\|").replace(/[\r\n]+/g, " "); }
+  function mdCell(v) { return String(v == null ? "" : v).replace(/\\/g, "\\\\").replace(/\|/g, "\\|").replace(/[\r\n]+/g, " "); }
   function toMarkdown(model) {
     var L = [];
     L.push("# " + mdCell(model.pack.name) + " readiness report", "");

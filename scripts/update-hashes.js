@@ -8,7 +8,7 @@ const root = path.join(__dirname, "..");
 const site = path.join(root, "site");
 function walk(dir) {
   return fs.readdirSync(dir, { withFileTypes: true }).flatMap((d) => {
-    const p = path.join(dir, d.name);
+    const p = path.join(dir, d.name); // nosemgrep: path-join-resolve-traversal -- names come from readdirSync of the repo, not user input
     return d.isDirectory() ? walk(p) : [p];
   });
 }
@@ -16,7 +16,8 @@ let changed = 0;
 walk(site).filter((f) => f.endsWith(".html")).forEach((file) => {
   const html = fs.readFileSync(file, "utf8");
   const next = html.replace(/<(script|link)\b([^>]*?)\b(src|href)="(\/[^"]+)"([^>]*?)integrity="[^"]*"/g, (m, tag, a, attr, url, b) => {
-    const target = path.join(site, url.split("?")[0]);
+    const target = path.resolve(site, "." + url.split("?")[0]); // nosemgrep: path-join-resolve-traversal -- checked to stay inside site/ below
+    if (!target.startsWith(site + path.sep)) throw new Error("Refusing path outside site/: " + url);
     if (!fs.existsSync(target)) throw new Error("Missing " + url + " referenced in " + file);
     const sri = "sha384-" + crypto.createHash("sha384").update(fs.readFileSync(target)).digest("base64");
     return "<" + tag + a + attr + '="' + url + '"' + b + 'integrity="' + sri + '"';
