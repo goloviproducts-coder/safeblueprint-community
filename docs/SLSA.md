@@ -8,10 +8,10 @@ SafeBlueprint releases meet **[SLSA v1.0 Build Level 2](https://slsa.dev/spec/v1
 | Build L1: provenance exists | `.github/workflows/release.yml` builds the release zip and SBOMs in GitHub Actions and creates a provenance statement with `actions/attest-build-provenance`. |
 | Build L2: hosted build platform | The build runs on a GitHub-hosted runner, not a developer machine. |
 | Build L2: signed provenance | The provenance is signed with a short-lived Sigstore certificate tied to this repository's workflow identity (OIDC), and recorded in the public transparency log. |
-| SBOM | SPDX and CycloneDX SBOMs are generated and attested with `actions/attest-sbom`. |
+| SBOM | SPDX and CycloneDX SBOMs are generated and attached to the release; the SPDX SBOM is attested with `actions/attest-sbom`. |
 
 ## Why not Level 3 yet
-Level 3 needs the build to run in an isolated, reusable workflow so that the release job cannot tamper with its own provenance. Today the build and the attestation run in the same job. Moving the build into a separate reusable workflow is on the [roadmap](../ROADMAP.md) and will be done through a reviewed pull request.
+Level 3 needs the build to run in an isolated, reusable workflow so that the release job cannot tamper with its own provenance. Today the build and the attestation run in the same job. Moving the build into a separate reusable workflow is planned and will be done through a reviewed pull request.
 
 ## Why we do not use slsa-github-generator
 The `slsa-framework/slsa-github-generator` reusable workflows must be referenced by version tag, not by commit SHA, for their provenance to verify. This repository requires every action to be pinned to a full commit SHA, so adding the generator would weaken that rule. GitHub artifact attestations give the same signed SLSA provenance without that exception.
