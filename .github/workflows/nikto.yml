@@ -33,7 +33,7 @@ jobs:
           curl -sI http://localhost:8080/ | tee headers.txt
       - name: Nikto scan of the nginx container
         run: |
-          sudo apt-get install -y -qq libjson-perl >/dev/null
+          sudo apt-get install -y -qq libjson-perl libxml-writer-perl >/dev/null
           perl .nikto/program/nikto.pl -h http://localhost:8080 -ask no -nointeractive -maxtime 10m -Format json -output nikto.json || true
           n=$(jq '[.[]?.vulnerabilities[]?] | length' nikto.json 2>/dev/null || echo 0)
           { echo "## Nikto (self-host image)"; echo "Items: $n"; jq -r '.[]?.vulnerabilities[]? | "- \(.id): \(.msg) (\(.url))"' nikto.json 2>/dev/null; } >> "$GITHUB_STEP_SUMMARY"

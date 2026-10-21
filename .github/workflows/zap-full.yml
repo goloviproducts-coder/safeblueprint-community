@@ -24,11 +24,12 @@ jobs:
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: 22
+          package-manager-cache: false
       - run: npm ci --ignore-scripts --no-audit --no-fund
       - name: Serve site locally
         run: |
           npx --no-install serve site -l 3000 &
-          for i in $(seq 1 30); do curl -sf http://localhost:3000/ >/dev/null \&\& break; sleep 1; done
+          for i in $(seq 1 30); do curl -sf http://localhost:3000/ >/dev/null && break; sleep 1; done
       - name: ZAP full scan (active)
         uses: zaproxy/action-full-scan@3c58388149901b9a03b7718852c5ba889646c27c # v0.13.0
         with:
