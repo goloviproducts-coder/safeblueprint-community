@@ -21,7 +21,7 @@ SafeBlueprint never collects, stores or sends:
 - cookies, analytics, tracking pixels, fingerprints or advertising IDs
 - an account, login or password (there are none)
 
-Everything runs in your browser on your device. The only thing that ever leaves it is a contact form message you choose to send on the hosted site, after you consent. Check it yourself: `npm ci && npx playwright install chromium && npm run privacy-proof` runs the whole tool, saves every export, and fails if any request goes to another origin.
+Everything runs in your browser on your device. The only content of yours that leaves your device is a contact form message you choose to send on the hosted site, after you consent. Like any website, the host still sees normal request data such as your IP address and browser type when you load a page. Check it yourself: `npm ci && npx playwright install chromium && npm run privacy-proof` runs the whole tool, saves every export, and fails if any request goes to another origin.
 
 ## Customise the questions
 Load your own questions (your policies, control IDs and owners) from a CSV or JSON file. It stays on your device. Plain guide: [docs/CUSTOMISING.md](docs/CUSTOMISING.md). Template: [site/questions/template.csv](site/questions/template.csv). Example: [examples/acme-pack.csv](examples/acme-pack.csv).

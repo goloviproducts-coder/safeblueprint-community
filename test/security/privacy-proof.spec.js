@@ -13,7 +13,7 @@ async function saveAll(page, selectors) {
   }
 }
 
-test("privacy proof: full checklist run, custom pack run and every export make zero requests to other origins", async ({ page }) => {
+test("privacy proof: full checklist run, custom pack run and every export make zero requests to other origins", async ({ page, baseURL }) => {
   const g = await guard(page);
   const origins = new Set();
   page.on("request", (r) => { const u = new URL(r.url()); if (u.protocol.startsWith("http")) origins.add(u.origin); });
@@ -27,8 +27,10 @@ test("privacy proof: full checklist run, custom pack run and every export make z
   await page.click("#see-results");
   await expect(page.locator("#out")).toBeVisible();
   await saveAll(page, ["#out .save-html", "#out .csv-tasks"]);
-  await page.evaluate(() => { window.print = () => {}; });
-  await page.click("#out .save-pdf").catch(() => {});
+  // PDF export uses the browser's print dialog; record that it was opened, without leaving the device.
+  await page.evaluate(() => { window.__printed = 0; window.print = () => { window.__printed += 1; }; });
+  await page.click("#out .save-pdf");
+  await expect.poll(() => page.evaluate(() => window.__printed), { message: "PDF export opened the print dialog" }).toBeGreaterThan(0);
 
   // 2. A custom question pack loaded from a local file: run it and save JSON, Markdown and HTML.
   const csv = fs.readFileSync(path.join(__dirname, "..", "..", "examples", "acme-pack.csv"), "utf8");
@@ -52,5 +54,5 @@ test("privacy proof: full checklist run, custom pack run and every export make z
 
   await g.check();
   console.log("Origins contacted during the whole run: " + [...origins].join(", "));
-  expect([...origins]).toEqual(["http://localhost:4173"]);
+  expect([...origins]).toEqual([new URL(baseURL).origin]);
 });
