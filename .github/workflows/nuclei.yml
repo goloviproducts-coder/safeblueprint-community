@@ -1,0 +1,56 @@
+name: nuclei
+on:
+  pull_request:
+permissions:
+  contents: read
+env:
+  NUCLEI_IMAGE: projectdiscovery/nuclei:v3.11.1@sha256:582d5546902e67052097cb2d07296c642d50a1afc5e44623cb038845df9a32eb
+jobs:
+  nuclei:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - name: Harden runner
+        uses: step-security/harden-runner@dc2769abcc0fcfbadfc1df54081c1608579ef6b2 # v2.22.2
+        with:
+          egress-policy: audit
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Nuclei templates v10.5.0 (pinned commit)
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: projectdiscovery/nuclei-templates
+          ref: f8b8b8dcd70d93826c3767e1829ef8243af9f03b # v10.5.0
+          path: .nuclei-templates
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+          package-manager-cache: false
+      - run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Serve site locally
+        run: |
+          npx --no-install serve site -l 3000 &
+          for i in $(seq 1 30); do curl -sf http://localhost:3000/ >/dev/null && break; sleep 1; done
+      - name: Nuclei scan (medium and above fail)
+        run: |
+          docker run --rm --network host -v "$PWD:/work" -w /work "$NUCLEI_IMAGE" \
+            -u http://localhost:3000 \
+            -t .nuclei-templates/http/exposures -t .nuclei-templates/http/misconfiguration -t .nuclei-templates/http/vulnerabilities/generic \
+            -severity medium,high,critical -disable-update-check -ni -silent -no-color \
+            -se nuclei.sarif -jsonl -o nuclei.jsonl || true
+          test -f nuclei.sarif || echo '{"version":"2.1.0","$schema":"https://json.schemastore.org/sarif-2.1.0.json","runs":[{"tool":{"driver":{"name":"nuclei"}},"results":[]}]}' > nuclei.sarif
+          n=$(test -s nuclei.jsonl && wc -l < nuclei.jsonl || echo 0)
+          { echo "## Nuclei"; echo "Findings (medium+): $n"; test -s nuclei.jsonl && jq -r '"- \(.info.severity): \(.info.name) (\(.["template-id"])) \(.["matched-at"])"' nuclei.jsonl; } >> "$GITHUB_STEP_SUMMARY"
+          echo "Findings: $n"
+          echo "count=$n" >> "$GITHUB_ENV"
+      - if: always()
+        uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
+        with:
+          sarif_file: nuclei.sarif
+          category: nuclei
+      - name: Fail on medium+ findings
+        run: test "${count:-0}" -eq 0
