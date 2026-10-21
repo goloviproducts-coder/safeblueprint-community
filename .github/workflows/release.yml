@@ -56,6 +56,10 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           TAG: ${{ github.ref_name }}
         run: |
+          VER="${TAG#v}"
+          awk -v v="$VER" '$0 ~ "^## \\[" v "\\]" {f=1; next} /^## \[/ && f {exit} f' CHANGELOG.md > notes.md
+          grep -q '^### Features' notes.md || { echo "CHANGELOG.md has no section for $VER" >&2; exit 1; }
+          printf '\nVerify the download: `gh attestation verify %s.zip --repo %s && sha256sum -c SHA256SUMS`\n' "$NAME" "$GITHUB_REPOSITORY" >> notes.md
           gh release create "$TAG" --repo "$GITHUB_REPOSITORY" --title "SafeBlueprint $TAG" --verify-tag \
-            --notes "Self-hosted edition. Verify with: gh attestation verify ${NAME}.zip --repo ${GITHUB_REPOSITORY} && sha256sum -c SHA256SUMS" \
+            --notes-file notes.md \
             "dist/${NAME}.zip" "dist/${NAME}.spdx.json" "dist/${NAME}.cdx.json" dist/SHA256SUMS

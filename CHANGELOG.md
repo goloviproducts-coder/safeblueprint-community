@@ -1,22 +1,60 @@
 # Changelog
 
-All notable changes to this project are documented here. Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versions follow [Semantic Versioning](https://semver.org/).
+All notable changes to this project are documented here. Each release uses six plain-English headings: Features, Issues fixed, Interfaces updated, Security fixes, Privacy, General (see docs/RELEASE_NOTES_TEMPLATE.md). The release workflow publishes the matching section as the GitHub release notes. Versions follow [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
-### Added
-- Customisable question packs: load your own CSV or JSON questions on the AI security checklist page. Files are read on your device and never uploaded.
-- `site/questions/default.csv` / `default.json`: the built-in APP 1.7 inventory (12 questions) and AI security checklist (14 questions), with weights, severities and control mappings. Built-in tool behaviour is unchanged.
-- Pack schema `site/schema/questions/v1.json`, template `site/questions/template.csv`, example `examples/acme-pack.csv`.
-- Pack reports show the pack name, version and SHA-256 in document control, with JSON, Markdown and HTML exports.
-- `config.json` `questionPack` lets self-hosters preload their own pack.
-- `docs/CUSTOMISING.md` guide for non-developers.
-- `npm test` (node:test) and a `tests` CI workflow; `scripts/update-hashes.js` refreshes SRI and SHA256SUMS.
+### Features
+- _None yet_
+
+### Issues fixed
+- _None yet_
+
+### Interfaces updated
+- _None yet_
+
+### Security fixes
+- _None yet_
+
+### Privacy
+- _None yet_
+
+### General
+- _None yet_
 
 ## [1.0.0] - 2026-10-22
-### Added
-- First community release: APP 1.7 automated-decision readiness inventory, AI security checklist, three-part report (leaders, delivery team, security architects), portfolio view, PDF/JSON/Markdown exports.
-- Self-hosting pack: Dockerfile, docker-compose, nginx config, INSTALL guide, SHA256SUMS.
-- Signed release with SBOMs (SPDX, CycloneDX) and build provenance attestations.
+### Features
+- APP 1.7 automated-decision readiness inventory and AI security checklist
+- Three-part report written for leaders, delivery teams and security architects
+- Portfolio view to compare several systems side by side
+- Custom question packs: load your own questions from CSV or JSON, with weights and control mappings
+- Exports to PDF, JSON, Markdown and HTML
+
+### Issues fixed
+- Removed a penalty figure from the guidance (we do not quote penalty amounts)
+- Fixed the automated security scans so every scan runs on every change
+
+### Interfaces updated
+- Two editions: hosted (safeblueprint.pages.dev) and self-hosted (localhost or your own infrastructure)
+- About page and FAQ updated for both editions and the open-source project
+- Step-by-step guide for creating your own question packs
+
+### Security fixes
+- Every change is checked by code, secret, dependency and container scans before it can merge
+- Automated penetration tests (ZAP, Nuclei, Nikto) and browser security tests
+- Threat model check required on every change
+- Signed commits, protected main branch and owner approval for every live deploy
+- Signed release with software bills of materials (SBOMs) and build provenance
+
+### Privacy
+- Answers stay on your device and are never uploaded
+- Removed the third-party form service (FormSubmit); no contact email is shown on the site
+- Nothing you enter is captured without your consent
+
+### General
+- Open source under Apache-2.0, maintained on GitHub
+- NOTICE file and a polite request to credit SafeBlueprint when you reuse it
+- Contributing guide, security policy and issue templates
+- Self-hosting pack: Docker, docker-compose, nginx and install guide
 
 [Unreleased]: https://github.com/goloviproducts-coder/safeblueprint-community/compare/v1.0.0...HEAD
 [1.0.0]: https://github.com/goloviproducts-coder/safeblueprint-community/releases/tag/v1.0.0
