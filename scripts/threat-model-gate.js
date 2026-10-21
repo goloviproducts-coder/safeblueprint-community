@@ -32,8 +32,8 @@ function evaluate(changed, opts) {
   const reviewed = Boolean(opts && opts.reviewed);
   const reader = (f) => {
     const abs = safePath(root, f);
-    if (!abs || !fs.existsSync(abs) || fs.statSync(abs).isDirectory()) return "";
-    return fs.readFileSync(abs, "utf8");
+    if (!abs) return "";
+    try { return fs.readFileSync(abs, "utf8"); } catch (e) { return ""; } // missing (deleted) file or directory
   };
   const files = changed.map((f) => f.trim()).filter(Boolean);
   const triggered = [];
