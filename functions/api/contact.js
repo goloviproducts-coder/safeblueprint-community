@@ -29,7 +29,6 @@ function json(body, status) {
 function allowedOrigin(origin) {
   if (origin === "https://safeblueprint.pages.dev") return true;
   if (/^https:\/\/[a-z0-9-]+\.safeblueprint\.pages\.dev$/i.test(origin)) return true;
-  if (/^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/i.test(origin)) return true;
   return false;
 }
 

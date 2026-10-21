@@ -33,6 +33,15 @@ function updateSri(out) {
     if (next !== html) fs.writeFileSync(file, next);
   });
 }
+// <!--edition:selfhost-->A<!--edition:hosted B--><!--/edition--> keeps A for selfhost, B for hosted.
+function applyEditionText(out, edition) {
+  const re = /<!--edition:selfhost-->([\s\S]*?)<!--edition:hosted ([\s\S]*?)--><!--\/edition-->/g;
+  walk(out, out).filter((f) => f.endsWith(".html")).forEach((file) => {
+    const html = fs.readFileSync(file, "utf8");
+    const next = html.replace(re, (m, a, b) => (edition === "hosted" ? b : a));
+    if (next !== html) fs.writeFileSync(file, next);
+  });
+}
 function build(edition, outDir) {
   if (EDITIONS.indexOf(edition) === -1) throw new Error("Edition must be one of: " + EDITIONS.join(", "));
   const out = path.resolve(outDir || path.join(root, "dist", edition));
@@ -44,6 +53,7 @@ function build(edition, outDir) {
   const cfg = JSON.parse(fs.readFileSync(cfgPath, "utf8"));
   cfg.edition = edition;
   fs.writeFileSync(cfgPath, JSON.stringify(cfg, null, 2) + "\n");
+  applyEditionText(out, edition);
   updateSri(out);
   return out;
 }

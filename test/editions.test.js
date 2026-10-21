@@ -64,3 +64,23 @@ test("contact function: 503 without Resend config, Resend only, recipient from C
   assert.equal((await mod.onRequestPost({ request: bad, env: {} })).status, 403);
   assert.ok(!/formsubmit/i.test(fs.readFileSync(path.join(__dirname, "..", "functions", "api", "contact.js"), "utf8")));
 });
+
+test("edition-aware text: selfhost says internal admin, hosted points to the form", () => {
+  const os = require("os");
+  const { build } = require("../scripts/build-edition.js");
+  const s = build("selfhost", fs.mkdtempSync(path.join(os.tmpdir(), "s-")));
+  const h = build("hosted", fs.mkdtempSync(path.join(os.tmpdir(), "h-")));
+  const sa = fs.readFileSync(path.join(s, "about", "index.html"), "utf8");
+  const ha = fs.readFileSync(path.join(h, "about", "index.html"), "utf8");
+  assert.match(sa, /contact your internal admin/); assert.doesNotMatch(sa, /contact form<\/a> if you need/);
+  assert.match(ha, /contact form<\/a> if you need a reply/); assert.doesNotMatch(ha, /internal admin/);
+  assert.ok(ha.includes("instagram.com/aibuzzcrew"));
+  assert.doesNotMatch(fs.readFileSync(path.join(h, "index.html"), "utf8"), /no forms that send data/);
+});
+test("contact function rejects localhost origins in production", async () => {
+  const { onRequestPost } = await import(path.join(__dirname, "..", "functions", "api", "contact.js"));
+  for (const o of ["http://localhost:8788", "http://127.0.0.1:3000"]) {
+    const r = await onRequestPost({ request: new Request("https://safeblueprint.pages.dev/api/contact", { method: "POST", headers: { Origin: o, "Content-Type": "application/json" }, body: "{}" }), env: { RESEND_API_KEY: "x", CONTACT_TO: "a@b.c" } });
+    assert.equal(r.status, 403);
+  }
+});
