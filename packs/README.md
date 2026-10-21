@@ -22,7 +22,7 @@ For the internal-controls template, replace each `ORG-...` control ID with your 
 ## Contribute a pack
 1. Copy a pack folder and rename it (lowercase, hyphens only).
 2. Edit `pack.csv`. Keep the `# name:` and `# version:` lines. Every question should have a plain finding and action.
-3. Edit `meta.json`: `id` (same as the folder), `sector`, `contributors` (how you want to be credited; a name or GitHub handle, never an email address), `reviewed_by`, `status` (`draft` until reviewed) and `licence` (`Apache-2.0`).
+3. Edit `meta.json`: `id` (same as the folder), `sector`, `contributors` (how you want to be credited; a name or GitHub handle, never an email address), `status` (`draft` until reviewed) and `licence` (`Apache-2.0`).
 4. Run `npm test`. The pack validation test loads every pack with the same rules the browser uses.
 5. Open a pull request with signed, DCO signed-off commits.
 
@@ -36,6 +36,6 @@ For the internal-controls template, replace each `ORG-...` control ID with your 
 1. The automated checks validate the pack and run the full test suite.
 2. The automated reviewer checks the wording against the rules above.
 3. A subject-matter reviewer is invited where possible (for example a clinician for health packs).
-4. The maintainer gives final approval and sets `status` to `reviewed`.
+4. The maintainer gives final approval, then sets `status` to `reviewed` and adds `reviewed_by`.
 
 Contributors are credited in `meta.json`, in the table above and in the release notes.

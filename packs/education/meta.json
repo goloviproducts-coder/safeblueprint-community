@@ -1,8 +1,9 @@
 {
   "id": "education",
   "sector": "education",
-  "contributors": ["SafeBlueprint contributors"],
-  "reviewed_by": "Maintainer",
-  "status": "reviewed",
+  "contributors": [
+    "SafeBlueprint contributors"
+  ],
+  "status": "draft",
   "licence": "Apache-2.0"
 }
