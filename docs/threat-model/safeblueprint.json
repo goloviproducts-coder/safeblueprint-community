@@ -479,7 +479,7 @@
                   "severity": "Medium",
                   "type": "Repudiation",
                   "description": "Headers, workflows or loader change silently.",
-                  "mitigation": "Threat-model gate requires a model update or maintainer label; CODEOWNERS; 1 approval and conversation resolution. Controls: ISO42001-8.1",
+                  "mitigation": "Threat-model gate (run from the base branch) requires a model update or a maintainer label applied after the latest push; CODEOWNERS; 1 approval and conversation resolution. Controls: ISO42001-8.1",
                   "modelType": "STRIDE",
                   "score": ""
                 }
