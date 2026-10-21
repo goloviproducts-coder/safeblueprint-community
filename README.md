@@ -13,6 +13,9 @@ Hosted version: https://safeblueprint.pages.dev
 - **Portfolio view** - group decisions across initiatives by AI type.
 - Exports to PDF, JSON (schema in `site/schema/report/`) and Markdown, ready to feed into GRC or AI tools.
 
+## Customise the questions
+Load your own questions (your policies, control IDs and owners) from a CSV or JSON file. It stays on your device. Plain guide: [docs/CUSTOMISING.md](docs/CUSTOMISING.md). Template: [site/questions/template.csv](site/questions/template.csv). Example: [examples/acme-pack.csv](examples/acme-pack.csv).
+
 ## Quick start
 ```bash
 npx serve site                 # local, http://localhost:3000
@@ -43,10 +46,10 @@ Both must pass before you deploy. After unzipping, `sha256sum -c SHA256SUMS.txt`
 Full sample (fictional company): [docs/samples/sample-portfolio.pdf](docs/samples/sample-portfolio.pdf)
 
 ## Contributing
-We welcome bug reports, framework mapping updates, new security patterns, wording fixes and translations. Read [CONTRIBUTING.md](CONTRIBUTING.md) and our [Code of Conduct](CODE_OF_CONDUCT.md). Look for `good first issue`.
+We welcome bug reports, framework mapping updates, new security patterns, question packs, wording fixes and translations. Read [CONTRIBUTING.md](CONTRIBUTING.md) and our [Code of Conduct](CODE_OF_CONDUCT.md). Look for `good first issue`.
 
 ## Security scans
-Every PR runs: checksum + no-outbound-calls check, CodeQL (JavaScript and Actions), Semgrep, Gitleaks (full history), Trivy (config + filesystem), dependency review, zizmor (workflow linting) and HTML validation. Lighthouse runs report-only. OpenSSF Scorecard runs on `main` weekly. All actions are pinned to commit SHAs with least-privilege permissions. An optional AI security review runs when a maintainer adds the `security-review` label; it is **off until an `ANTHROPIC_API_KEY` secret is added**.
+Every PR runs: unit tests (`npm test`), checksum + no-outbound-calls check, CodeQL (JavaScript and Actions), Semgrep, Gitleaks (full history), Trivy (config + filesystem), dependency review, zizmor (workflow linting) and HTML validation. Lighthouse runs report-only. OpenSSF Scorecard runs on `main` weekly. All actions are pinned to commit SHAs with least-privilege permissions. An optional AI security review runs when a maintainer adds the `security-review` label; it is **off until an `ANTHROPIC_API_KEY` secret is added**.
 
 ## Security
 See [SECURITY.md](SECURITY.md). Please don't open public issues for vulnerabilities.
