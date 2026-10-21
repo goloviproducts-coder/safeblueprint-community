@@ -1,0 +1,26 @@
+# SafeBlueprint
+
+> Free, private, browser-only tools for the 10 December 2026 Australian APP 1.7 deadline and for a first AI security review. Initiative names and answers stay in the browser and are not stored or sent.
+
+This site is a static beta at https://safeblueprint.pages.dev/. It does not give legal advice and does not determine compliance. It is built by a small team of security practitioners.
+
+## Pages
+
+- [Home: ADM inventory](https://safeblueprint.pages.dev/): One automated decision at a time. A one-page leader brief, plus a full record for the delivery team and a pattern match for security architects. Two or more decisions add a portfolio view grouped by initiative and AI type.
+- [AI Security Checklist](https://safeblueprint.pages.dev/ai-security-checklist/): Fourteen questions, a 0–100 score from eight risk checks, and a Now / Next / Later roadmap.
+- [Privacy](https://safeblueprint.pages.dev/privacy/): What stays in the browser, and what a consented email can include.
+- [Security](https://safeblueprint.pages.dev/security/): How a visit is protected, what was tested, and how to report a vulnerability.
+- [About us](https://safeblueprint.pages.dev/about/): Who builds the tools. The Instagram link lives only on this page.
+- [Contact](https://safeblueprint.pages.dev/contact/): Lead form. It does not include tool answers.
+
+## Key facts
+
+- APP 1.7 transparency obligation starts 10 December 2026. Source: OAIC fact sheet https://www.oaic.gov.au/__data/assets/pdf_file/0021/269013/APP-1.7-1.9-Transparency-Obligation-Fact-Sheet.PDF
+- APP Guidelines, Chapter 1: https://www.oaic.gov.au/privacy/australian-privacy-principles/australian-privacy-principles-guidelines/chapter-1-app-1-open-and-transparent-management-of-personal-information
+- Infringement notices: about A$21,840 per breach for companies, a general OAIC figure, not a prediction. https://www.oaic.gov.au/about-the-OAIC/our-regulatory-approach/privacy-regulatory-action-policy/infringement-notices
+- Credit-like scoring is outside the ADM inventory.
+- Australia has no mandatory AI guardrails for business. The government will not proceed at this time. Existing laws still apply. The voluntary Guidance for AI Adoption (October 2025) has six practices: https://www.ai.gov.au/staying-safe-and-responsible/essential-ai-practices/guidance-ai-adoption-implementation-guidance
+
+## Optional
+
+- [Full notes for models](https://safeblueprint.pages.dev/llms-full.txt)

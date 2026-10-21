@@ -1,0 +1,2 @@
+# Self-hosted edition. Report issues to your internal security team.
+Preferred-Languages: en

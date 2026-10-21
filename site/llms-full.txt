@@ -1,0 +1,96 @@
+# SafeBlueprint — full notes
+
+This site (https://safeblueprint.pages.dev/) is a free, private static beta that helps teams get ready for APP 1.7. It is built by a small team of security practitioners. GitHub Pages is not used. The public host is Cloudflare Pages. The only Instagram link is on https://safeblueprint.pages.dev/about/.
+
+Nothing a visitor types into a tool is stored or sent. There is no local storage, session storage, cookie, or answer in the URL. To work offline, the browser keeps a copy of the site's own files. It never stores anything you type. The self-hosted edition makes no outbound posts. Save as PDF, Download HTML, Copy tasks, and Download CSV stay on the device. Copy tasks leaves out the initiative name. The CSV file includes it only because that file stays on the device.
+
+This file is background for answer engines. It is not legal advice. The tools do not determine compliance and do not guarantee any audit outcome.
+
+## ADM inventory (home)
+
+Purpose: a free automated decision-making (ADM) inventory for the 10 December 2026 APP 1.7 deadline.
+
+Flow: the visitor inventories ONE decision at a time. Several decisions can sit in one visit. Two or more open a portfolio view.
+
+Fields kept in the browser only:
+
+- Decision name (free text, never sent). A blank name becomes "Initiative Unknown" on the report.
+- Initiative (optional free text, never sent). Several decisions can share one name. A blank initiative becomes "Initiative Unknown".
+- AI type (optional): Rules/scoring model, Machine learning model, Generative AI / LLM assistant, LLM agent with tools, Vendor AI feature in a SaaS product, or Not sure. Blank uses the architecture notes: an LLM agent, then a model that reads internal documents, then a named supplier, otherwise Not sure. It does not change the verdict and it is not one of the 12 scored questions.
+- Organisation name (optional, never stored or sent). A blank name is left blank. It is not sent.
+- Automated Reference Number, generated in the browser as ADM-YYYYMMDD-XXXX when the decision starts. It is not a form field.
+- Timestamp in local time with the time zone, set when the visitor asks for the report. It is not a form field.
+
+The reference and timestamp appear in a document control table under the report title, and in Copy tasks and the CSV. They are not form fields.
+
+Guided questions:
+
+- Decision type: hiring or recruitment screening; tenancy applications; eligibility for a service, benefit or place; pricing offered to a person; content or account moderation; health triage; fraud flags on a person. Credit-like scoring is out of scope.
+- Whether personal information is used (Yes / No / Not sure)
+- Whether the program decides, substantially contributes, a person decides, or not sure
+- Whether the decision could significantly affect rights or interests
+- Whether a person can review or override the outcome
+- Whether the affected person can ask for a review
+- Who supplies the program (free text; blank means not sure)
+- Whether the supplier has explained how it works
+- Applicability screen: turnover over A$3 million; health service provider; trading in personal information; Commonwealth contractor
+
+Plain verdict:
+
+- Likely in scope: the decision lines up (personal information, program decides or substantially contributes, significant effect) AND at least one applicability answer is Yes.
+- Unlikely: a clear No on personal information, on the program's role, or on significant effect; OR the decision lines up but all four applicability answers are No (likely exemption — not a legal conclusion).
+- Unclear: a Not sure on the decision itself, or the decision lines up and applicability is Not sure with no Yes.
+
+Output: an Automated Decision Record in plain text and tables. The person filling it in is the builder. The report is what they take to leaders. Part A, "For leaders", is the one-page brief: a plain verdict, an At a glance table, what leaders need to approve or fund, the next 3 actions with owner and due, and the risk if nothing is done. No penalty amounts. Part B, "For the delivery team", groups the answers, maps frameworks in a table, and lists inventory, obligations, risks, ownership, evidence, and re-review triggers. Part C, "For security architects: pattern match", matches answers to reference patterns (PAT-01 to PAT-05). Each row names the business attribute it protects. Patterns are reference guidance, not a certification or legal advice. Document control is the last page: reference, version, generated time, classification, answer fingerprint, optional Prepared for and Prepared by role (only if filled, and only on the saved report), blank sign-off lines, and a next review 12 months on. The reference and the generated timestamp are in saved outputs only. Optional architecture notes (LLM agent, internal documents) stay in the browser and do not change the verdict. When the visit has two or more decisions, Part A adds a Portfolio view after At a glance: counts by AI type, decision type, supplier, verdict, and readiness; an initiative by pattern table (PAT-01 to PAT-05); the top cross-cutting gaps; and actions shared across initiatives. The leader summary for that visit is still one page and shows the counts and the top gaps. A single decision does not show the portfolio. A Leader summary (1 page) download sits beside the full record. Every printed page carries the reference, classification, and page number. The last page adds two lines only: "Powered by SafeBlueprint 2026" and "General guidance only, not legal or compliance advice. No guarantee of any audit outcome. The content of this report belongs to the user." Nothing in the export is stored or sent.
+
+The same record can be downloaded as JSON (schema https://safeblueprint.pages.dev/schema/report/v1.1.json, and version 1.0 files still load) or Markdown, or copied as a prompt for the visitor's own AI assistant. JSON, Markdown, and CSV include the AI type, the initiative, and a portfolio summary when two or more decisions are in the visit. A warning tells them to check that tool's data settings. Loading a saved JSON file restores the visit after a refresh. The file stays on the device.
+
+A session-only list of decisions from this visit can be saved as a register. With two or more decisions the register is the portfolio. Refreshing clears it until the JSON file is loaded again.
+
+Visible promise: "We never see your initiative names or answers."
+
+## What APP 1.7 is, in the site's own words
+
+From 10 December 2026, an APP entity's privacy policy has to describe certain decisions a computer program makes or substantially shapes, where personal information is used and the decision could significantly affect someone's rights or interests. OAIC treats "computer program" broadly, including rule-based processes, AI, machine learning, and other software. APP 1.8 sets out what that description should cover.
+
+It applies to APP entities. Many small businesses under A$3 million annual turnover are exempt unless another test applies (health service provider, trading in personal information, Commonwealth contracted service provider) or the business opts in. Enterprise customers may still ask. OAIC expects the organisation that uses the program to own the disclosure, so a vendor may still need to explain the software at a high level.
+
+Infringement notices of up to about A$21,840 per breach for companies may apply (per OAIC). That is a general figure, not a prediction.
+
+Official sources:
+
+- OAIC fact sheet, APP 1.7–1.9 transparency obligation (PDF): https://www.oaic.gov.au/__data/assets/pdf_file/0021/269013/APP-1.7-1.9-Transparency-Obligation-Fact-Sheet.PDF
+- OAIC APP Guidelines, Chapter 1 (APP 1): https://www.oaic.gov.au/privacy/australian-privacy-principles/australian-privacy-principles-guidelines/chapter-1-app-1-open-and-transparent-management-of-personal-information
+- OAIC infringement notices: https://www.oaic.gov.au/about-the-OAIC/our-regulatory-approach/privacy-regulatory-action-policy/infringement-notices
+
+## AI security checklist
+
+URL: https://safeblueprint.pages.dev/ai-security-checklist/
+
+Fourteen questions on one page. Score 0–100 from eight risk inputs (training, RAG, prompt injection, agent actions, MFA, keys, logging, governance). Buyer, model, system-prompt secrets, vector-store access, agent least privilege, and human approval do not reduce the score. Tiles are red, amber, or green. The result includes "Your next 3 actions", due seven days from the day of the check. The Now column shows five items until "Show all". An optional "Selling into the EU?" card asks provider or deployer, Annex III use, and EU users. It can say high-risk duties from 2 December 2027 and transparency duties now. Not legal advice. Mappings, where used, follow public names only:
+
+- OWASP Top 10 for LLM Applications (2025), including LLM01, LLM02, LLM03, LLM04, LLM05, LLM06, LLM07, LLM08, LLM09, LLM10
+- Guidance for AI Adoption (October 2025), six practices: decide who is accountable; understand impacts and plan accordingly; measure and manage risks; share essential information; test and monitor; maintain human control
+- Australia has no mandatory AI guardrails for business. The government will not proceed at this time. Existing laws still apply.
+- Essential Eight
+- NIST AI RMF 1.0 (GOVERN, MAP, MEASURE, MANAGE)
+- NIST AI 600-1 action identifiers such as MS-2.7-007 and GV-6.1-009
+- ISO/IEC 42001:2023 themes only (AI policy, risk management, data governance, transparency, monitoring, lifecycle). Annex A numbers are not cited.
+- Regulation (EU) 2024/1689 articles, labelled as applying if you sell into the EU. High-risk articles are labelled high-risk.
+- MITRE ATLAS technique IDs such as AML.T0051 (LLM Prompt Injection), AML.T0053, AML.T0070
+
+Disclaimer on that page: "General guidance only, not legal or compliance advice. No guarantee of any audit outcome."
+
+SABSA is a trademark of The SABSA Institute. The tool is independent and not endorsed by it.
+
+## Contact and privacy
+
+The privacy note is https://safeblueprint.pages.dev/privacy/. The contact form is https://safeblueprint.pages.dev/contact/. It asks for name, work email, company, role, company size, what you need (ADM disclosure help, AI security review, playbook, or other), and a message. Consent starts unticked. The post does not include tool answers.
+
+A playbook form on each tool page can include a short results summary only when a second box is ticked. The ADM summary is verdict plus decision type, not the initiative name.
+
+Deletion requests go through the contact form at https://safeblueprint.pages.dev/contact/, handled in line with the Australian Privacy Act. The privacy note is not legal advice. Security reports use the same form. See https://safeblueprint.pages.dev/security/.
+
+## Crawling
+
+robots.txt allows all crawlers, including GPTBot, ClaudeBot, PerplexityBot, Google-Extended, and OAI-SearchBot. The FAQ and the APP 1.7 explainer are in the HTML, not only injected by script.

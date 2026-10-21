@@ -1,0 +1,17 @@
+{
+  "_status": "NOT YET ACTIVE. This file is ignored by the current release. It documents a planned feature.",
+  "_purpose": "Future custom templates: map report sections to your own owners and control IDs.",
+  "version": "0.0-draft",
+  "organisation": { "name": "" },
+  "owners": [
+    { "role": "Accountable executive", "name": "", "team": "" },
+    { "role": "Privacy officer", "name": "", "team": "" },
+    { "role": "Security architect", "name": "", "team": "" }
+  ],
+  "control_mappings": [
+    { "safeblueprint_id": "SB-ADM-01", "your_control_id": "", "notes": "" },
+    { "safeblueprint_id": "SB-HUM-01", "your_control_id": "", "notes": "" },
+    { "safeblueprint_id": "SB-SUP-01", "your_control_id": "", "notes": "" }
+  ],
+  "export": { "grc_format": "none" }
+}

@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Security | SafeBlueprint</title>
+<meta name="description" content="How this site protects a visit, which controls are in place, what was tested on 21 Oct 2026, and how to report a vulnerability.">
+<link rel="canonical" href="https://safeblueprint.pages.dev/security/">
+<meta property="og:title" content="Security | SafeBlueprint">
+<meta property="og:description" content="How this site protects a visit, which controls are in place, what was tested on 21 Oct 2026, and how to report a vulnerability.">
+<meta property="og:url" content="https://safeblueprint.pages.dev/security/">
+<meta property="og:image" content="https://safeblueprint.pages.dev/og-image.png">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="en_AU">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Security | SafeBlueprint">
+<meta name="twitter:description" content="How this site protects a visit, which controls are in place, what was tested on 21 Oct 2026, and how to report a vulnerability.">
+<meta name="twitter:image" content="https://safeblueprint.pages.dev/og-image.png">
+<link rel="icon" href="data:,">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="theme-color" content="#14213D">
+<link rel="stylesheet" href="/app.css" integrity="sha384-lx500xV3bTIEzZnwN1jrfV03z5LdlA5SMGVSNHj5Z806NtVLPfwyCFshRwxW+lJI" crossorigin="anonymous">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' blob:; img-src 'self' data:; connect-src 'self'; form-action 'self'; base-uri 'none'; object-src 'none'; worker-src 'self'; manifest-src 'self'">
+</head>
+<body>
+<a class="skip" href="#security">Skip to security</a>
+<header class="topbar">
+  <a class="logo" href="/">Safe<span>Blueprint</span></a>
+  <span class="badge">Beta</span>
+  <span class="net-pill" id="net-pill" hidden></span>
+  <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="primary-nav">Menu</button>
+  <nav class="menu" id="primary-nav" aria-label="Primary">
+    <a href="/">Home</a>
+    <a href="/ai-security-checklist/">AI Security Checklist</a>
+    <a href="/privacy/">Privacy</a>
+    <a href="/security/" aria-current="page">Security</a>
+    <a href="/about/">About us</a>
+    <a href="/contact/">Contact</a>
+  </nav>
+</header>
+<div class="hero">
+  <div class="hero-inner">
+    <h1>Security</h1>
+    <p>What this beta does to protect a visit. It is not a certification.</p>
+  </div>
+</div>
+<main class="split">
+<article class="card" id="security">
+  <h2>How we protect you</h2>
+  <ul class="guard">
+    <li><b>The tool runs in your browser.</b> The checks do not need an account.</li>
+    <li><b>No accounts, storage, cookies, or tracking.</b> Answers are not written to storage and are not sent with the page.</li>
+    <li><b>No outbound posts.</b> The self-hosted edition has no forms that send data and no server relay.</li>
+    <li><b>No third-party scripts.</b> Scripts and styles are files on this site. The print footer is a stylesheet the browser builds for the reference and classification. It is not loaded from another site.</li>
+    <li><b>Offline support caches only site files.</b> The service worker does not cache what you type or a form post.</li>
+  </ul>
+
+  <h2>Protections in place</h2>
+  <ul class="take">
+    <li>Strict Content-Security-Policy on the response, with no unsafe-inline. Scripts are same-origin files. Styles are same-origin files, plus a blob stylesheet used only for the print footer reference and classification.</li>
+    <li>HSTS: max-age 63072000, includeSubDomains, preload.</li>
+    <li>Permissions-Policy denies camera, microphone, geolocation, payment, USB, and interest-cohort.</li>
+    <li>Cross-Origin-Opener-Policy and Cross-Origin-Resource-Policy are same-origin.</li>
+    <li>X-Frame-Options DENY, and CSP frame-ancestors none on the response header. The meta policy does not repeat frame-ancestors, because a meta element ignores it.</li>
+    <li>X-Content-Type-Options nosniff.</li>
+    <li>Referrer-Policy strict-origin-when-cross-origin.</li>
+    <li>Subresource Integrity (sha384) on local CSS and JavaScript.</li>
+    <li>Output escaping. Names and other text you type are written as text, not as HTML.</li>
+    <li>CSV and TSV formula-injection guard. A cell that starts with =, +, -, @, a tab, or a carriage return is prefixed with a quote.</li>
+    <li>Input limits, and control characters are stripped.</li>
+    <li>Honeypot and a three-second wait before the first form submit.</li>
+    <li>The repository is private. A release is reviewed before it is published.</li>
+  </ul>
+
+  <h2>How we test</h2>
+  <p>Last run 21 Oct 2026. These rows describe that run. They are not a promise about a later change.</p>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Tool</th><th>What it checks</th><th>Last run</th><th>Result</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>OWASP ZAP 2.16.1</td><td>Baseline passive scan</td><td>21 Oct 2026</td><td>Passive baseline completed. Issues from this release are listed below.</td></tr>
+        <tr><td>Nuclei 3.3.7</td><td>Misconfiguration and exposure templates</td><td>21 Oct 2026</td><td>Those templates were run.</td></tr>
+        <tr><td>testssl.sh</td><td>TLS</td><td>21 Oct 2026</td><td>Grade A+</td></tr>
+        <tr><td>Semgrep</td><td>JavaScript, XSS, and secrets rules</td><td>21 Oct 2026</td><td>0 findings</td></tr>
+        <tr><td>Gitleaks 8.21.2</td><td>Secrets in the repository</td><td>21 Oct 2026</td><td>No secrets</td></tr>
+        <tr><td>Lighthouse and axe</td><td>Accessibility</td><td>21 Oct 2026</td><td>Accessibility 100. No WCAG 2.2 AA violations.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Found and fixed (21 Oct 2026)</h2>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Issue</th><th>Severity</th><th>Status</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Email exposed in page source</td><td>Medium</td><td>Fixed (server relay)</td></tr>
+        <tr><td>CSP allowed inline scripts and was meta-only</td><td>Medium</td><td>Fixed</td></tr>
+        <tr><td>CSV formula injection</td><td>Medium</td><td>Fixed</td></tr>
+        <tr><td>Missing HSTS, Permissions-Policy, COOP/CORP</td><td>Low</td><td>Fixed</td></tr>
+        <tr><td>Wildcard CORS header</td><td>Low</td><td>Fixed</td></tr>
+        <tr><td>frame-ancestors ignored in meta</td><td>Low</td><td>Fixed</td></tr>
+        <tr><td>Cloudflare edge BREACH and LUCKY13 notes, marked potential. The pages do not hold secrets.</td><td>Note</td><td>Accepted</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Threat model summary</h2>
+  <p>There are no accounts to spoof. The contact form is the only contact route, and the mailbox is not in the source. Pages load only same-origin CSS and JavaScript, with subresource integrity, and user text is not assigned as HTML. A form post is a message you chose to send. The site does not keep a server-side audit log. Initiative names and answers stay in memory for the visit. They are not put in storage, cookies, or the address. Copy tasks leaves the initiative name out. A playbook summary, if you tick the optional box, does not include that name. Form spam is limited by a honeypot, a short wait, length limits, and the same checks on the relay. There is no role to escalate. The service worker caches listed site files only. The notes for models are our own static description, not a channel a visitor can write to. This summary is not a penetration test.</p>
+
+  <h2>Report a vulnerability</h2>
+  <p>Use the <a href="/contact/">contact form</a>. Include the page, what you saw, and how to reproduce it. Do not include passwords or customer data. The contact file for researchers is <a href="/.well-known/security.txt">/.well-known/security.txt</a>.</p>
+  <p>Good-faith research that avoids privacy harm, downtime, and other people's data is welcome. We will not take legal action over that research. Please tell us first and give us a reasonable time to fix the issue before you publish details.</p>
+</article>
+<aside class="side card">
+  <h2>In short</h2>
+  <ul class="take">
+    <li>Answers stay in this browser.</li>
+    <li>Forms post only to this site, after consent.</li>
+    <li>The mailbox is not on the page.</li>
+    <li>This page is not a certificate.</li>
+  </ul>
+  <p><a href="/contact/">Report a vulnerability</a></p>
+</aside>
+</main>
+<footer>
+  <p class="footline">© 2026 · Beta · Not legal advice · <a href="/privacy/">Privacy</a> · <a href="/security/">Security</a> · <a href="/about/">About us</a> · <a href="/contact/">Contact</a></p>
+</footer>
+<script src="/ui.js" integrity="sha384-1jE67bRdK6s55k8WY5W9spZeaxtXRE98d1/FNj3s7GVJ+0JD+yWg4uB9Cd3ad5i6" crossorigin="anonymous"></script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+name: Framework / pattern update
+description: Update a control mapping or propose a security pattern
+labels: [mapping]
+body:
+  - type: input
+    id: framework
+    attributes: { label: Framework and version (e.g. OWASP LLM Top 10 2025) }
+    validations: { required: true }
+  - type: input
+    id: source
+    attributes: { label: Official source link }
+    validations: { required: true }
+  - type: textarea
+    id: change
+    attributes: { label: Proposed change }

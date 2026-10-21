@@ -1,0 +1,109 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://safeblueprint.pages.dev/schema/report/v1.json",
+  "title": "SafeBlueprint Report v1",
+  "description": "Machine-readable SafeBlueprint report. Generated on the visitor's device; the content belongs to the user. Not legal advice.",
+  "type": "object",
+  "required": ["schemaVersion", "document", "scope", "decisions", "findings", "actions", "disclaimer"],
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": {"const": "1.0"},
+    "document": {
+      "type": "object",
+      "required": ["reference", "generatedAt", "classification", "version", "answerFingerprint", "generator"],
+      "properties": {
+        "reference": {"type": "string", "pattern": "^(ADM|AIS|RPT)-[0-9]{8}-[A-Z0-9]{4}$"},
+        "generatedAt": {"type": "string", "format": "date-time"},
+        "timeZone": {"type": "string"},
+        "classification": {"enum": ["Internal", "Confidential"]},
+        "version": {"type": "string"},
+        "answerFingerprint": {"type": "string", "pattern": "^[0-9a-f]{16}$"},
+        "nextReview": {"type": "string", "format": "date"},
+        "generator": {"const": "Powered by SafeBlueprint 2026"},
+        "preparedFor": {"type": "string"},
+        "preparedByRole": {"enum": ["Developer", "Product owner", "Solution architect", "Security architect", "Other"]},
+        "signOff": {"type": "object", "properties": {"preparedBy": {"type": "string"}, "reviewedBy": {"type": "string"}, "approvedBy": {"type": "string"}}}
+      }
+    },
+    "scope": {
+      "type": "object",
+      "required": ["jurisdictions"],
+      "properties": {
+        "organisation": {"type": "string"},
+        "jurisdictions": {"type": "array", "items": {"enum": ["AU", "EU", "Other"]}},
+        "applicability": {"type": "object", "properties": {
+          "turnoverOver3m": {"$ref": "#/$defs/ynu"}, "healthServiceProvider": {"$ref": "#/$defs/ynu"},
+          "tradesInPersonalInformation": {"$ref": "#/$defs/ynu"}, "commonwealthContractor": {"$ref": "#/$defs/ynu"}}}
+      }
+    },
+    "decisions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "decisionType", "usesPersonalInformation", "programRole", "significantEffect", "verdict"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^DEC-[0-9]{3}$"},
+          "name": {"type": "string"},
+          "decisionType": {"enum": ["hiring", "tenancy", "eligibility", "pricing", "moderation", "health-triage", "fraud-flag", "other"]},
+          "system": {"type": "object", "properties": {"vendor": {"type": "string"}, "model": {"type": "string"}, "kind": {"enum": ["rules", "ml", "llm", "agent", "unknown"]}}},
+          "usesPersonalInformation": {"$ref": "#/$defs/ynu"},
+          "programRole": {"enum": ["decides", "substantially-contributes", "person-decides", "not-sure"]},
+          "significantEffect": {"$ref": "#/$defs/ynu"},
+          "humanReview": {"$ref": "#/$defs/ynu"},
+          "verdict": {"enum": ["likely-in-scope", "unlikely", "unclear"]},
+          "reasons": {"type": "array", "items": {"type": "string"}, "maxItems": 3},
+          "app18Draft": {"type": "string", "description": "Suggested privacy-policy wording, for the user to edit."},
+          "owner": {"$ref": "#/$defs/raci"}
+        }
+      }
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "title", "status", "severity", "mappings"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^SB-[A-Z]{3}-[0-9]{2}$", "description": "Stable SafeBlueprint control ID, unchanged across versions."},
+          "title": {"type": "string"},
+          "decisionRef": {"type": "string"},
+          "status": {"enum": ["met", "partial", "gap", "not-applicable", "unknown"]},
+          "severity": {"enum": ["high", "medium", "low"]},
+          "mappings": {"type": "array", "minItems": 1, "items": {
+            "type": "object", "required": ["framework", "id"],
+            "properties": {
+              "framework": {"enum": ["APP", "OAIC-guidance", "AU-GfAA-2025", "AU-VAISS-2024", "ISO42001", "NIST-AI-RMF", "NIST-AI-600-1", "OWASP-LLM-2025", "MITRE-ATLAS", "ASD-E8", "ASD-AI", "EU-AI-Act"]},
+              "id": {"type": "string"}, "label": {"type": "string"}}}},
+          "threats": {"type": "array", "items": {"type": "string"}},
+          "evidence": {"type": "array", "items": {"type": "object", "properties": {"item": {"type": "string"}, "held": {"$ref": "#/$defs/ynu"}}}}
+        }
+      }
+    },
+    "actions": {
+      "type": "array",
+      "items": {"type": "object", "required": ["id", "text", "findingRefs"],
+        "properties": {"id": {"type": "string", "pattern": "^ACT-[0-9]{2}$"}, "text": {"type": "string"},
+          "findingRefs": {"type": "array", "items": {"type": "string"}},
+          "owner": {"$ref": "#/$defs/raci"}, "due": {"type": "string", "format": "date"},
+          "priority": {"enum": ["now", "next", "later"]}}}
+    },
+    "patterns": {"type": "array", "items": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "name"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^PAT-[0-9]{2}$"},
+        "name": {"type": "string"},
+        "decisionRef": {"type": "string"},
+        "attribute": {"type": "string"},
+        "why": {"type": "string"},
+        "trustBoundary": {"type": "string"},
+        "controls": {"type": "array", "items": {"type": "string"}},
+        "status": {"enum": ["met", "gap", "unknown"]}
+      }}},
+    "reReviewTriggers": {"type": "array", "items": {"type": "string"}},
+    "disclaimer": {"const": "General guidance only, not legal or compliance advice. No guarantee of any audit outcome. The content of this report belongs to the user."}
+  },
+  "$defs": {
+    "ynu": {"enum": ["yes", "no", "not-sure"]},
+    "raci": {"type": "object", "properties": {"responsible": {"type": "string"}, "accountable": {"type": "string"}, "consulted": {"type": "string"}, "informed": {"type": "string"}}}
+  }
+}

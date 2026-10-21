@@ -1,0 +1,19 @@
+name: checksums
+on:
+  pull_request:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - name: Verify SHA256SUMS
+        run: sha256sum -c SHA256SUMS.txt
+      - name: No external calls
+        run: |
+          ! grep -rEn 'https?://' site --include=*.js | grep -v 'safeblueprint.pages.dev' | grep -vE '//\s' || (echo "External URL in JS"; exit 1)

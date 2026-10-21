@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SafeBlueprint Beta: AI security checklist</title>
+<meta name="description" content="Free AI security checklist. A 0–100 score, red amber green tiles, and a Now Next Later roadmap. Answers stay in your browser.">
+<link rel="canonical" href="https://safeblueprint.pages.dev/ai-security-checklist/">
+<meta property="og:title" content="SafeBlueprint Beta: AI security checklist">
+<meta property="og:description" content="Fourteen plain questions. A board-ready roadmap mapped to OWASP LLM 2025, the Guidance for AI Adoption, NIST, ISO 42001 themes, the EU AI Act, and MITRE ATLAS.">
+<meta property="og:url" content="https://safeblueprint.pages.dev/ai-security-checklist/">
+<meta property="og:image" content="https://safeblueprint.pages.dev/og-image.png">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="en_AU">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="SafeBlueprint Beta: AI security checklist">
+<meta name="twitter:description" content="Fourteen plain questions. A board-ready roadmap mapped to OWASP LLM 2025, the Guidance for AI Adoption, NIST, ISO 42001 themes, the EU AI Act, and MITRE ATLAS.">
+<meta name="twitter:image" content="https://safeblueprint.pages.dev/og-image.png">
+<link rel="icon" href="data:,">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="theme-color" content="#14213D">
+<link rel="stylesheet" href="/app.css" integrity="sha384-lx500xV3bTIEzZnwN1jrfV03z5LdlA5SMGVSNHj5Z806NtVLPfwyCFshRwxW+lJI" crossorigin="anonymous">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' blob:; img-src 'self' data:; connect-src 'self'; form-action 'self'; base-uri 'none'; object-src 'none'; worker-src 'self'; manifest-src 'self'">
+</head>
+<body>
+<a class="skip" href="#check">Skip to the checklist</a>
+<header class="topbar">
+  <a class="logo" href="/">Safe<span>Blueprint</span></a>
+  <span class="badge" id="beta-badge">Beta</span>
+  <span class="net-pill" id="net-pill" hidden></span>
+  <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="primary-nav">Menu</button>
+  <nav class="menu" id="primary-nav" aria-label="Primary">
+    <a href="/">Home</a>
+    <a href="/ai-security-checklist/" aria-current="page">AI Security Checklist</a>
+    <a href="/privacy/">Privacy</a>
+    <a href="/security/">Security</a>
+    <a href="/about/">About us</a>
+    <a href="/contact/">Contact</a>
+  </nav>
+</header>
+<div class="hero exec-hero">
+  <div class="hero-inner">
+    <p class="deadline-chip" id="deadline-chip">10 Dec 2026</p>
+    <h1>Know where an AI product stands before a security review.</h1>
+    <p class="hero-role">Fill this in as the builder; take the report to your leaders.</p>
+    <p class="hero-lead">A free, private check for heads of AI and risk. Fourteen questions, a score, and the next 3 actions.</p>
+    <p class="quiet-line"><span class="quiet">Free, private, and works offline after your first visit.</span></p>
+    <div class="hero-actions">
+      <a class="btn" href="#check">Start the checklist</a>
+      <a class="btn secondary" href="/">ADM disclosure check</a>
+    </div>
+  </div>
+</div>
+<main>
+<div class="workspace">
+<section class="card" id="check">
+  <label class="field" for="org-name">Organisation name</label>
+  <input id="org-name" type="text" maxlength="120" autocomplete="organization">
+  <p class="help">Optional. Stays in this browser and is not stored or sent.</p>
+  <label class="field" for="prepared-for">Prepared for</label>
+  <input id="prepared-for" type="text" maxlength="120" autocomplete="off" placeholder="CTO, Leadership team">
+  <p class="help">Optional. Shown on the saved report only if you fill it in. Not stored or sent.</p>
+  <label class="field" for="prepared-role">Prepared by role</label>
+  <select id="prepared-role">
+    <option value="">Leave blank</option>
+    <option>Developer</option>
+    <option>Product owner</option>
+    <option>Solution architect</option>
+    <option>Security architect</option>
+    <option>Other</option>
+  </select>
+  <p class="help">Optional. Shown on the saved report only if you fill it in. Not stored or sent.</p>
+  <label class="field" for="doc-version">Version</label>
+  <input id="doc-version" type="text" maxlength="20" autocomplete="off" value="1.0">
+  <fieldset class="inline-choice">
+    <legend>Classification</legend>
+    <label class="opt"><input type="radio" name="doc-class" value="Internal" checked> <span>Internal</span></label>
+    <label class="opt"><input type="radio" name="doc-class" value="Confidential"> <span>Confidential</span></label>
+  </fieldset>
+  <fieldset class="inline-choice">
+    <legend>Report length</legend>
+    <label class="opt"><input type="radio" name="report-mode" value="summary" checked> <span>Leader summary (1 page)</span></label>
+    <label class="opt"><input type="radio" name="report-mode" value="full"> <span>Full record</span></label>
+  </fieldset>
+  <p class="count" id="answered-count">0 of 14 answered</p>
+  <div class="qcards" id="qcards"></div>
+  <p class="gentle" id="assume-note">Unanswered questions count as a middle answer.</p>
+  <button class="btn" id="see-results" type="button">See my results</button>
+  <p class="privacy-note">Your answers stay in your browser. We don't store or send them. A playbook request includes a short summary of your results only if you tick the optional box.</p>
+  <p>Australia has no mandatory AI guardrails for business. The government will not proceed at this time. Existing laws still apply. The <a href="https://www.ai.gov.au/staying-safe-and-responsible/essential-ai-practices/guidance-ai-adoption-implementation-guidance">Guidance for AI Adoption</a> (October 2025) sets out six voluntary practices.</p>
+  <p class="disclaimer">General guidance only, not legal or compliance advice. No guarantee of any audit outcome. SABSA is a trademark of The SABSA Institute; this tool is independent and not endorsed by it.</p>
+  <section class="eu-card" id="eu-card">
+    <h2>Selling into the EU?</h2>
+    <p class="help">Optional. Not legal advice. Nothing is stored or sent.</p>
+    <fieldset class="qcard">
+      <legend>Are you a provider or a deployer?</legend>
+      <div class="chips">
+        <label class="opt"><input type="radio" name="eu-role" value="provider"><span>Provider</span></label>
+        <label class="opt"><input type="radio" name="eu-role" value="deployer"><span>Deployer</span></label>
+        <label class="opt"><input type="radio" name="eu-role" value="not-sure"><span>Not sure</span></label>
+      </div>
+    </fieldset>
+    <fieldset class="qcard">
+      <legend>Is this an Annex III use, such as hiring?</legend>
+      <div class="chips">
+        <label class="opt"><input type="radio" name="eu-annex" value="yes"><span>Yes</span></label>
+        <label class="opt"><input type="radio" name="eu-annex" value="no"><span>No</span></label>
+        <label class="opt"><input type="radio" name="eu-annex" value="not-sure"><span>Not sure</span></label>
+      </div>
+    </fieldset>
+    <fieldset class="qcard">
+      <legend>Do people in the EU use it?</legend>
+      <div class="chips">
+        <label class="opt"><input type="radio" name="eu-users" value="yes"><span>Yes</span></label>
+        <label class="opt"><input type="radio" name="eu-users" value="no"><span>No</span></label>
+        <label class="opt"><input type="radio" name="eu-users" value="not-sure"><span>Not sure</span></label>
+      </div>
+    </fieldset>
+    <p id="eu-out" aria-live="polite"></p>
+    <p>Regulation (EU) 2026/1744, in force 27 July 2026, moves Annex III high-risk duties to 2 December 2027 and Annex I duties to 2 August 2028. <a href="https://eur-lex.europa.eu/eli/reg/2026/1744/oj/eng">Regulation (EU) 2026/1744</a>. <a href="https://digital-strategy.ec.europa.eu/en/policies/regulatory-framework-ai">EU AI Act policy page</a>.</p>
+  </section>
+</section>
+<aside class="side card noprint" id="live">
+  <p class="side-kicker" id="side-head">Score so far</p>
+  <p class="side-score" id="side-score" aria-live="polite">—</p>
+  <p id="side-count">0 of 14 answered</p>
+  <p class="side-verdict" id="side-verdict">Eight checks set the score. Buyer and model do not.</p>
+  <h2>Answers</h2>
+  <ul class="live-answers" id="live-answers"><li class="empty">None yet. Picks show up here.</li></ul>
+  <p class="side-note">Your results include your next 3 actions.</p>
+</aside>
+<div class="workspace-rest">
+<section class="card report-card" id="out" hidden></section>
+<section class="card noprint playbook" id="ai-playbook" hidden>
+  <h2>Want a playbook?</h2>
+  <p>Email yourself a tailored playbook, or <a href="/contact/">contact us</a>. The contact form does not include your answers.</p>
+  <form id="ai-play-form" data-summary="ai" data-tool="AI security checklist" method="post" action="#ai-playbook">
+    <label class="field" for="play-email">Email</label>
+    <input id="play-email" type="email" name="email" required placeholder="Work email" maxlength="160" autocomplete="email">
+    <input class="hp" type="text" name="_honey" tabindex="-1" autocomplete="off" aria-hidden="true">
+    <label class="block"><input type="checkbox" name="consent"> I agree to being emailed the playbook and beta updates. Unsubscribe anytime.</label>
+    <label class="block"><input type="checkbox" name="include"> Include my checklist results so the playbook is tailored to me</label>
+    <p><b>What we'll send:</b></p>
+    <div class="send-preview" id="ai-preview"></div>
+    <button class="btn" type="submit" disabled>Send the playbook request</button>
+    <p class="status" role="status"></p>
+  </form>
+</section>
+</div>
+</div>
+</main>
+<footer>
+  <p class="footline">© 2026 · Beta · Not legal advice · <a href="/privacy/">Privacy</a> · <a href="/security/">Security</a> · <a href="/about/">About us</a> · <a href="/contact/">Contact</a></p>
+</footer>
+<script src="/config.js" integrity="sha384-BasY2Usb2Z/O/OHBmdeG+zOP6FDqKEuLc7+2ADPbZXXxAOu38KAtiqNu/tMsWJ+9" crossorigin="anonymous"></script>
+<script src="/forms.js" integrity="sha384-2QmT2nQwms92leNr15QC7ZTgoYyRvHkEAgfO59VGRxsDEYZHaorGtKure/jnuyKT" crossorigin="anonymous"></script>
+<script src="/report.js" integrity="sha384-l2/vMMIAFVypPHc7ahWuo4aLAte86lFcPi+ziHIIqSY299DNjzY1TehIxN4xsXVs" crossorigin="anonymous"></script>
+<script src="/checklist.js" integrity="sha384-BFbbKhtXWtNAD4XxPAJezZyT+be+zM7gBWOA42iNYzCouOdHfU/W0D2+YSYxThFq" crossorigin="anonymous"></script>
+<script src="/ui.js" integrity="sha384-1jE67bRdK6s55k8WY5W9spZeaxtXRE98d1/FNj3s7GVJ+0JD+yWg4uB9Cd3ad5i6" crossorigin="anonymous"></script>
+</body>
+</html>
