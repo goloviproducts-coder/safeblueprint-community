@@ -108,6 +108,16 @@ To pass: add or update the relevant threats and mitigations (edit the JSON in Th
 - Build either with `node scripts/build-edition.js hosted|selfhost`.
 - Every merge to `main` runs `deploy.yml`, which waits for a maintainer to approve the `production` environment, builds the hosted edition, deploys it to Cloudflare Pages and smoke-tests it.
 
+## Penetration tests
+| What | When | Fails on |
+|---|---|---|
+| `security-tests`: Playwright browser tests in `test/security/` (malicious CSV/JSON packs with script tags, `onerror`, `javascript:` URLs, formula injection, huge and deeply nested files; CSP violations; zero cross-origin requests during full tool runs and exports) | every PR | any injected script running, a CSP violation, or any request to another origin |
+| `nuclei` (pinned image digest, templates v10.5.0) against `serve site` | every PR | any medium, high or critical finding |
+| `nikto` against the Docker image built from `Dockerfile` | PRs touching Dockerfile, nginx.conf or compose, and weekly | missing security headers or nginx version disclosure (Nikto items are reported in the job summary) |
+| ZAP full (active) scan against `serve site` | weekly, on `v*` tags, or manually | any High alert; it also opens an issue |
+
+Run the browser tests locally with `npm ci && npx playwright install chromium && npm run test:security`. Add a test for any new way user content reaches the page or an export.
+
 ## Commit style
 - Conventional prefixes: `feat:`, `fix:`, `docs:`, `mapping:`, `pattern:`, `i18n:`, `chore:`.
 - Imperative, under 72 chars: `mapping: add OWASP LLM08 controls to PAT-03`.
