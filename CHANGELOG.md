@@ -13,6 +13,7 @@ All notable changes to this project are documented here. Format: [Keep a Changel
 - `npm test` (node:test) and a `tests` CI workflow; `scripts/update-hashes.js` refreshes SRI and SHA256SUMS.
 
 ### General
+- One-command Docker run and clear offline instructions (serve locally; opening the file directly is not supported)
 - Documented the release supply-chain level (SLSA Build Level 2) and how to verify it
 
 ## [1.0.0] - 2026-10-22
