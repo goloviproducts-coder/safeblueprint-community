@@ -1,0 +1,28 @@
+name: semgrep
+on:
+  pull_request:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  semgrep:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+    container:
+      image: semgrep/semgrep:1.182.0
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      # Excluded false positives: canonical <link> is metadata, not a loaded resource
+      # (all scripts/styles carry SRI); Django CSRF rule does not apply to a static,
+      # client-only site whose forms never submit to a server.
+      - run: semgrep scan --exclude-rule html.security.audit.missing-integrity.missing-integrity --exclude-rule python.django.security.django-no-csrf-token.django-no-csrf-token --config p/default --config p/javascript --config p/secrets --sarif --output semgrep.sarif --error --metrics=off
+      - if: always()
+        uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
+        with:
+          sarif_file: semgrep.sarif
+          category: semgrep

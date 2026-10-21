@@ -39,6 +39,9 @@ sha256sum -c SHA256SUMS.txt
 ```
 CI runs `sha256sum -c` on every PR; it fails if you forget.
 
+## Security scans on your PR
+Required to pass: `verify` (checksums + no outbound calls), CodeQL, Semgrep, Gitleaks, Trivy, dependency review and zizmor. HTML validation must pass too; Lighthouse is report-only. If a scanner flags a false positive, explain it in the PR rather than disabling the rule. New workflows must pin actions to a full commit SHA, use least-privilege `permissions`, set `persist-credentials: false` and never use `pull_request_target`. The `security-review` label triggers an optional AI review (off until the maintainers add an API key).
+
 ## Commit style
 - Conventional prefixes: `feat:`, `fix:`, `docs:`, `mapping:`, `pattern:`, `i18n:`, `chore:`.
 - Imperative, under 72 chars: `mapping: add OWASP LLM08 controls to PAT-03`.
