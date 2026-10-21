@@ -14,6 +14,11 @@ jobs:
           persist-credentials: false
       - name: Verify SHA256SUMS
         run: sha256sum -c SHA256SUMS.txt
-      - name: No external calls
+      - name: No outbound network calls
         run: |
-          ! grep -rEn 'https?://' site --include=*.js | grep -v 'safeblueprint.pages.dev' | grep -vE '//\s' || (echo "External URL in JS"; exit 1)
+          # Reference links are fine; flag code that loads or calls an absolute host.
+          pat_js='(fetch|importScripts|sendBeacon|EventSource|WebSocket|XMLHttpRequest|import)\s*\(?\s*["'"'"'`](https?:|wss?:)?//'
+          pat_html='<(script|link|img|iframe)[^>]+(src|href)=["'"'"'](https?:)?//'
+          if grep -rEn "$pat_js" site --include=*.js; then echo "Outbound call in JS"; exit 1; fi
+          if grep -rEn "$pat_html" site --include=*.html | grep -Ev 'rel="?(canonical|noopener)'; then echo "External resource in HTML"; exit 1; fi
+          echo "No outbound calls found"
