@@ -494,6 +494,18 @@
                   "mitigation": "Deploy only from main (PR + required checks); production environment needs maintainer approval; secrets scoped to the environment; pinned wrangler-action; smoke tests after deploy; setup-node package cache disabled in the deploy job to prevent cache poisoning; production contact function accepts only the pages.dev origins (no localhost). Controls: SLSA-L2, OWASP-CICD-SEC-1",
                   "modelType": "STRIDE",
                   "score": ""
+                },
+                {
+                  "id": "da06c638-96e3-59ed-832a-f6d128394c10",
+                  "number": 21,
+                  "title": "Release zip differs from the reviewed source",
+                  "status": "Mitigated",
+                  "severity": "Medium",
+                  "type": "Tampering",
+                  "description": "A compromised or non-deterministic release build could ship files that do not match the tagged commit.",
+                  "mitigation": "scripts/build-release.sh builds from the git tree only (git archive) with SOURCE_DATE_EPOCH from the commit time, sorted entries, fixed 0644/0755 permissions and no extra attributes; the reproducible-build check builds twice and compares hashes on every PR; the release job rebuilds and fails if the two builds differ; anyone can rebuild and compare with SHA256SUMS (docs/VERIFY.md). Controls: SLSA-L3-reproducible, OWASP-CICD-SEC-9",
+                  "modelType": "STRIDE",
+                  "score": ""
                 }
               ],
               "hasOpenThreats": false,

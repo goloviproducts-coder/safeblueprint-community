@@ -3,6 +3,20 @@
 All notable changes to this project are documented here. Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versions follow [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
+### Features
+- Reproducible release builds: anyone can rebuild the self-host zip from the tagged commit and get an identical file.
+- "Verify this release" guide (docs/VERIFY.md) with one-command checks for checksums, build provenance, the SBOM and the signed tag.
+### Issues fixed
+- None in this change.
+### Interfaces updated
+- Security page links to the verify guide (plain link, no new network calls).
+### Security fixes
+- Release workflow builds the zip twice and refuses to publish if the builds differ; a new check does the same on every pull request.
+- Threat model updated for the release build changes.
+### Privacy
+- No change: nothing new is collected or sent.
+### General
+- Public signing key published in the repo for tag verification.
 ### Added
 - Customisable question packs: load your own CSV or JSON questions on the AI security checklist page. Files are read on your device and never uploaded.
 - `site/questions/default.csv` / `default.json`: the built-in APP 1.7 inventory (12 questions) and AI security checklist (14 questions), with weights, severities and control mappings. Built-in tool behaviour is unchanged.

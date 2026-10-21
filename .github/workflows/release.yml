@@ -23,15 +23,16 @@ jobs:
           persist-credentials: false
       - name: Verify source checksums
         run: sha256sum -c SHA256SUMS.txt
-      - name: Build zip
+      - name: Build zip (reproducible, built twice)
         env:
           TAG: ${{ github.ref_name }}
         run: |
           VER="${TAG#v}"
+          scripts/build-release.sh "$VER" dist
+          scripts/build-release.sh "$VER" /tmp/rebuild
           NAME="safeblueprint-selfhost-${VER}"
-          mkdir -p "dist/${NAME}"
-          cp -a site Dockerfile docker-compose.yml nginx.conf INSTALL.md VERSION SHA256SUMS.txt LICENSE NOTICE README.md "dist/${NAME}/"
-          (cd dist && zip -qrX "${NAME}.zip" "${NAME}")
+          cmp "dist/${NAME}.zip" "/tmp/rebuild/${NAME}.zip" || { echo "Release zip is not reproducible" >&2; exit 1; }
+          mkdir -p "dist/${NAME}" && (cd dist && unzip -q "${NAME}.zip")
           echo "NAME=${NAME}" >> "$GITHUB_ENV"
       - name: Install syft (checksum verified)
         run: |
@@ -57,5 +58,5 @@ jobs:
           TAG: ${{ github.ref_name }}
         run: |
           gh release create "$TAG" --repo "$GITHUB_REPOSITORY" --title "SafeBlueprint $TAG" --verify-tag \
-            --notes "Self-hosted edition. Verify with: gh attestation verify ${NAME}.zip --repo ${GITHUB_REPOSITORY} && sha256sum -c SHA256SUMS" \
+            --notes "Self-hosted edition. Verify with: gh attestation verify ${NAME}.zip --repo ${GITHUB_REPOSITORY} && sha256sum -c SHA256SUMS. Full steps: docs/VERIFY.md" \
             "dist/${NAME}.zip" "dist/${NAME}.spdx.json" "dist/${NAME}.cdx.json" dist/SHA256SUMS
