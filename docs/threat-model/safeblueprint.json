@@ -1,0 +1,716 @@
+{
+  "version": "2.2.0",
+  "summary": {
+    "title": "SafeBlueprint Community Edition",
+    "owner": "SafeBlueprint maintainers",
+    "description": "STRIDE threat model for the on-device web app, local pack loader, exports, self-host server and CI/CD supply chain. Keep in sync with THREAT_MODEL.md.",
+    "id": 0
+  },
+  "detail": {
+    "contributors": [
+      {
+        "name": "SafeBlueprint maintainers"
+      }
+    ],
+    "diagrams": [
+      {
+        "id": 0,
+        "title": "SafeBlueprint data flow",
+        "diagramType": "STRIDE",
+        "placeholder": "New STRIDE diagram description",
+        "thumbnail": "./public/content/images/thumbnail.stride.jpg",
+        "version": "2.2.0",
+        "cells": [
+          {
+            "id": "d744f892-3edd-586a-b345-acc11c94bf9c",
+            "shape": "trust-boundary-box",
+            "position": {
+              "x": 20,
+              "y": 20
+            },
+            "size": {
+              "width": 760,
+              "height": 300
+            },
+            "zIndex": -1,
+            "attrs": {
+              "label": {
+                "text": "Browser trust boundary"
+              }
+            },
+            "data": {
+              "type": "tm.Boundary",
+              "name": "Browser trust boundary",
+              "isTrustBoundary": true,
+              "hasOpenThreats": false
+            }
+          },
+          {
+            "id": "591fa344-c558-5bcc-a23f-26d55b8e1a90",
+            "shape": "trust-boundary-box",
+            "position": {
+              "x": 20,
+              "y": 360
+            },
+            "size": {
+              "width": 360,
+              "height": 180
+            },
+            "zIndex": -1,
+            "attrs": {
+              "label": {
+                "text": "Self-host trust boundary"
+              }
+            },
+            "data": {
+              "type": "tm.Boundary",
+              "name": "Self-host trust boundary",
+              "isTrustBoundary": true,
+              "hasOpenThreats": false
+            }
+          },
+          {
+            "id": "6e943216-526f-590e-8a44-44da0baa72e0",
+            "shape": "trust-boundary-box",
+            "position": {
+              "x": 420,
+              "y": 360
+            },
+            "size": {
+              "width": 360,
+              "height": 180
+            },
+            "zIndex": -1,
+            "attrs": {
+              "label": {
+                "text": "Supply chain trust boundary"
+              }
+            },
+            "data": {
+              "type": "tm.Boundary",
+              "name": "Supply chain trust boundary",
+              "isTrustBoundary": true,
+              "hasOpenThreats": false
+            }
+          },
+          {
+            "id": "fcb3c693-f7cf-5055-a2d4-fd68d3b214a1",
+            "shape": "actor",
+            "position": {
+              "x": 60,
+              "y": 80
+            },
+            "size": {
+              "width": 160,
+              "height": 80
+            },
+            "zIndex": 1,
+            "attrs": {
+              "text": {
+                "text": "Visitor (browser user)"
+              }
+            },
+            "data": {
+              "type": "tm.Actor",
+              "name": "Visitor (browser user)",
+              "description": "Developer, product owner or architect answering questions",
+              "outOfScope": false,
+              "reasonOutOfScope": "",
+              "threats": [],
+              "hasOpenThreats": false,
+              "isTrustBoundary": false,
+              "providesAuthentication": false
+            }
+          },
+          {
+            "id": "f20c3607-cdae-51c5-83b3-2574bfba2b8d",
+            "shape": "process",
+            "position": {
+              "x": 320,
+              "y": 80
+            },
+            "size": {
+              "width": 160,
+              "height": 80
+            },
+            "zIndex": 1,
+            "attrs": {
+              "text": {
+                "text": "SafeBlueprint web app (browser)"
+              }
+            },
+            "data": {
+              "type": "tm.Process",
+              "name": "SafeBlueprint web app (browser)",
+              "description": "Static HTML/JS running fully on the device",
+              "outOfScope": false,
+              "reasonOutOfScope": "",
+              "threats": [
+                {
+                  "id": "2fdb7acb-ec70-5a56-8d6a-8119a71e6794",
+                  "number": 1,
+                  "title": "Script injection via answers or pack text",
+                  "status": "Mitigated",
+                  "severity": "High",
+                  "type": "Tampering",
+                  "description": "User-supplied text rendered into the page or report could run script (XSS).",
+                  "mitigation": "All user and pack text is set with textContent or escaped (esc()); no eval; CSP script-src 'self' with SRI on every script. Controls: OWASP-ASVS-5.3, CWE-79",
+                  "modelType": "STRIDE",
+                  "score": ""
+                },
+                {
+                  "id": "7495e9c2-03de-5c6d-b532-37dfe261fe1d",
+                  "number": 2,
+                  "title": "Answers leave the device",
+                  "status": "Mitigated",
+                  "severity": "High",
+                  "type": "Information disclosure",
+                  "description": "Telemetry, analytics or third-party loads could send answers elsewhere.",
+                  "mitigation": "No analytics or third-party loads; CSP default-src/connect-src 'self'; CI verify job and ZAP baseline check for outbound calls. Controls: APP1.7, APP11, OWASP-LLM02",
+                  "modelType": "STRIDE",
+                  "score": ""
+                },
+                {
+                  "id": "4d60a1a9-67f7-56c0-8367-35504394e46e",
+                  "number": 3,
+                  "title": "Look-alike or modified copy of the tool",
+                  "status": "Mitigated",
+                  "severity": "Medium",
+                  "type": "Spoofing",
+                  "description": "A tampered copy could collect data.",
+                  "mitigation": "Signed releases, SLSA provenance and SBOM attestations; SHA256SUMS; SRI hashes. Controls: SLSA-L2, ASD-E8-APPCTRL",
+                  "modelType": "STRIDE",
+                  "score": ""
+                },
+                {
+                  "id": "0ae80db7-581b-5ffc-8e0e-9f401e352b6b",
+                  "number": 4,
+                  "title": "Very large or deeply nested pack freezes the tab",
+                  "status": "Mitigated",
+                  "severity": "Low",
+                  "type": "Denial of service",
+                  "description": "A crafted file could exhaust memory or CPU.",
+                  "mitigation": "1 MB file limit, 500 question limit, 2000 character cell limit; parser is linear with no recursion. Controls: CWE-400",
+                  "modelType": "STRIDE",
+                  "score": ""
+                }
+              ],
+              "hasOpenThreats": false,
+              "isTrustBoundary": false,
+              "handlesCardPayment": false,
+              "handlesGoodsOrServices": false,
+              "isWebApplication": true,
+              "privilegeLevel": ""
+            }
+          },
+          {
+            "id": "6a5d73aa-9b42-574e-a473-dc6ac3ad47da",
+            "shape": "process",
+            "position": {
+              "x": 320,
+              "y": 220
+            },
+            "size": {
+              "width": 160,
+              "height": 80
+            },
+            "zIndex": 1,
+            "attrs": {
+              "text": {
+                "text": "Local file loader (question packs)"
+              }
+            },
+            "data": {
+              "type": "tm.Process",
+              "name": "Local file loader (question packs)",
+              "description": "FileReader reads a CSV/JSON chosen by the user; validated against schema v1",
+              "outOfScope": false,
+              "reasonOutOfScope": "",
+              "threats": [
+                {
+                  "id": "88bb38d5-4d52-5909-a9be-af0139874175",
+                  "number": 5,
+                  "title": "Malicious pack content (HTML, formulas, javascript: URLs)",
+                  "status": "Mitigated",
+                  "severity": "Medium",
+                  "type": "Tampering",
+                  "description": "A shared pack could carry script, HTML or spreadsheet formulas.",
+                  "mitigation": "Pack text only rendered via textContent; links are never created from pack data; strict field validation with row/column errors. Controls: CWE-79, CWE-1236",
+                  "modelType": "STRIDE",
+                  "score": ""
+                },
+                {
+                  "id": "b086f45f-84f3-5991-889f-f812334cb7e9",
+                  "number": 6,
+                  "title": "Unclear which pack produced a report",
+                  "status": "Mitigated",
+                  "severity": "Low",
+                  "type": "Repudiation",
+                  "description": "Reports could be produced with an altered pack.",
+                  "mitigation": "Report document control shows pack name, version and SHA-256 of the exact file. Controls: ISO42001-7.5",
+                  "modelType": "STRIDE",
+                  "score": ""
+                },
+                {
+                  "id": "7b1ff97b-d4c4-531f-ab05-78192e01d68c",
+                  "number": 7,
+                  "title": "Pack loaded from another origin via config",
+                  "status": "Mitigated",
+                  "severity": "Medium",
+                  "type": "Elevation of privilege",
+                  "description": "config.json questionPack could point to a remote pack.",
+                  "mitigation": "Only same-site paths matching a strict pattern are fetched; CSP connect-src 'self'. Controls: CWE-918",
+                  "modelType": "STRIDE",
+                  "score": ""
+                }
+              ],
+              "hasOpenThreats": false,
+              "isTrustBoundary": false,
+              "handlesCardPayment": false,
+              "handlesGoodsOrServices": false,
+              "isWebApplication": false,
+              "privilegeLevel": ""
+            }
+          },
+          {
+            "id": "e012a58a-bfed-58d0-932f-0d6397ad092a",
+            "shape": "store",
+            "position": {
+              "x": 580,
+              "y": 140
+            },
+            "size": {
+              "width": 160,
+              "height": 80
+            },
+            "zIndex": 1,
+            "attrs": {
+              "text": {
+                "text": "Exports (PDF, HTML, JSON, Markdown, CSV)"
+              }
+            },
+            "data": {
+              "type": "tm.Store",
+              "name": "Exports (PDF, HTML, JSON, Markdown, CSV)",
+              "description": "Files saved to the user's device",
+              "outOfScope": false,
+              "reasonOutOfScope": "",
+              "threats": [
+                {
+                  "id": "7cf38729-cd8a-524d-91b5-c4c687ca98f0",
+                  "number": 8,
+                  "title": "Formula injection in CSV exports",
+                  "status": "Mitigated",
+                  "severity": "Medium",
+                  "type": "Tampering",
+                  "description": "Cells starting with = + - @ could run formulas in Excel.",
+                  "mitigation": "formulaSafe() prefixes risky cells with an apostrophe. Controls: CWE-1236",
+                  "modelType": "STRIDE",
+                  "score": ""
+                },
+                {
+                  "id": "6f3bc3cd-3460-5a0d-8c85-dc7876eaa21c",
+                  "number": 9,
+                  "title": "Saved reports contain sensitive answers",
+                  "status": "NotApplicable",
+                  "severity": "Medium",
+                  "type": "Information disclosure",
+                  "description": "Exported files may be shared beyond the intended audience.",
+                  "mitigation": "Classification label on every page; user owns content; files never leave the device unless the user shares them. Controls: APP11, ISO42001-A.7 (Risk accepted.)",
+                  "modelType": "STRIDE",
+                  "score": ""
+                },
+                {
+                  "id": "bd370992-cae9-5ac7-91ec-78c022675f45",
+                  "number": 10,
+                  "title": "Markdown/HTML injection in exported files",
+                  "status": "Mitigated",
+                  "severity": "Low",
+                  "type": "Tampering",
+                  "description": "User text could alter Markdown tables or HTML exports.",
+                  "mitigation": "Markdown cells escape backslashes and pipes; HTML export serialises DOM built with textContent. Controls: CWE-116",
+                  "modelType": "STRIDE",
+                  "score": ""
+                }
+              ],
+              "hasOpenThreats": false,
+              "isTrustBoundary": false,
+              "isALog": false,
+              "isEncrypted": false,
+              "isSigned": false,
+              "storesCredentials": false,
+              "storesInventory": false
+            }
+          },
+          {
+            "id": "02dd3b23-1e9b-5ec5-a5c5-932c39d98edd",
+            "shape": "process",
+            "position": {
+              "x": 80,
+              "y": 420
+            },
+            "size": {
+              "width": 160,
+              "height": 80
+            },
+            "zIndex": 1,
+            "attrs": {
+              "text": {
+                "text": "Self-host server (nginx / static host)"
+              }
+            },
+            "data": {
+              "type": "tm.Process",
+              "name": "Self-host server (nginx / static host)",
+              "description": "Serves the static files on the customer's network",
+              "outOfScope": false,
+              "reasonOutOfScope": "",
+              "threats": [
+                {
+                  "id": "bc46b362-ddf5-59f4-86ef-ed486b78f183",
+                  "number": 11,
+                  "title": "Missing security headers",
+                  "status": "Mitigated",
+                  "severity": "Medium",
+                  "type": "Information disclosure",
+                  "description": "Without CSP, HSTS, framing protection the site is easier to attack.",
+                  "mitigation": "nginx.conf and site/_headers set CSP, HSTS, X-Frame-Options, nosniff, Referrer-Policy, Permissions-Policy, COOP/CORP. Controls: OWASP-ASVS-14.4, ASD-E8-HARDEN",
+                  "modelType": "STRIDE",
+                  "score": ""
+                },
+                {
+                  "id": "abcaca80-aba0-50e5-970f-7b3c7fbbaaec",
+                  "number": 12,
+                  "title": "Modified files on the server",
+                  "status": "Mitigated",
+                  "severity": "Medium",
+                  "type": "Tampering",
+                  "description": "An attacker or mistake changes the served files.",
+                  "mitigation": "SHA256SUMS.txt and SRI; verify with sha256sum -c; container runs read-only static content. Controls: ASD-E8-APPCTRL",
+                  "modelType": "STRIDE",
+                  "score": ""
+                },
+                {
+                  "id": "857788fd-bbfc-52f6-a5c2-367fe98b55db",
+                  "number": 13,
+                  "title": "Vulnerable base image",
+                  "status": "Mitigated",
+                  "severity": "Medium",
+                  "type": "Elevation of privilege",
+                  "description": "nginx base image CVEs.",
+                  "mitigation": "Image pinned by digest; Dependabot docker updates; Trivy scan on PR. Controls: ASD-E8-PATCH",
+                  "modelType": "STRIDE",
+                  "score": ""
+                }
+              ],
+              "hasOpenThreats": false,
+              "isTrustBoundary": false,
+              "handlesCardPayment": false,
+              "handlesGoodsOrServices": false,
+              "isWebApplication": true,
+              "privilegeLevel": ""
+            }
+          },
+          {
+            "id": "cdec040e-a9a6-5f26-a9aa-d2b58ff67fd7",
+            "shape": "process",
+            "position": {
+              "x": 460,
+              "y": 420
+            },
+            "size": {
+              "width": 160,
+              "height": 80
+            },
+            "zIndex": 1,
+            "attrs": {
+              "text": {
+                "text": "CI/CD (GitHub Actions)"
+              }
+            },
+            "data": {
+              "type": "tm.Process",
+              "name": "CI/CD (GitHub Actions)",
+              "description": "Builds, scans and releases",
+              "outOfScope": false,
+              "reasonOutOfScope": "",
+              "threats": [
+                {
+                  "id": "3d33af38-2974-5842-a291-87ac25d12fe3",
+                  "number": 14,
+                  "title": "Compromised third-party action",
+                  "status": "Mitigated",
+                  "severity": "High",
+                  "type": "Tampering",
+                  "description": "A malicious action version could alter releases or steal tokens.",
+                  "mitigation": "All actions pinned to full SHAs; allowed-actions list; SHA pinning required; harden-runner egress audit; zizmor lint; read-only default token. Controls: SLSA-L2, OWASP-CICD-SEC-8",
+                  "modelType": "STRIDE",
+                  "score": ""
+                },
+                {
+                  "id": "de3972b2-bb45-568b-814a-6f71fcef160c",
+                  "number": 15,
+                  "title": "Untrusted PR code with secrets",
+                  "status": "Mitigated",
+                  "severity": "High",
+                  "type": "Elevation of privilege",
+                  "description": "Fork PRs could exfiltrate secrets.",
+                  "mitigation": "No pull_request_target; persist-credentials false; fork workflow approval for external contributors; AI review only for same-repo PRs. Controls: OWASP-CICD-SEC-4",
+                  "modelType": "STRIDE",
+                  "score": ""
+                },
+                {
+                  "id": "e8ef82cd-1b52-5cb2-ac81-d27a85819647",
+                  "number": 16,
+                  "title": "Unverified commits or tags",
+                  "status": "Mitigated",
+                  "severity": "Medium",
+                  "type": "Spoofing",
+                  "description": "Forged commits or release tags.",
+                  "mitigation": "Signed commits required on main; tag ruleset restricts v* to admins; provenance attestations. Controls: SLSA-L2",
+                  "modelType": "STRIDE",
+                  "score": ""
+                },
+                {
+                  "id": "aa3cc8f4-7ed0-5683-820c-69cfd3ff92c7",
+                  "number": 17,
+                  "title": "Security-sensitive change without review",
+                  "status": "Mitigated",
+                  "severity": "Medium",
+                  "type": "Repudiation",
+                  "description": "Headers, workflows or loader change silently.",
+                  "mitigation": "Threat-model gate requires a model update or maintainer label; CODEOWNERS; 1 approval and conversation resolution. Controls: ISO42001-8.1",
+                  "modelType": "STRIDE",
+                  "score": ""
+                }
+              ],
+              "hasOpenThreats": false,
+              "isTrustBoundary": false,
+              "handlesCardPayment": false,
+              "handlesGoodsOrServices": false,
+              "isWebApplication": false,
+              "privilegeLevel": ""
+            }
+          },
+          {
+            "id": "12177bb8-1418-5555-83eb-c2e17e2d1e95",
+            "shape": "store",
+            "position": {
+              "x": 640,
+              "y": 420
+            },
+            "size": {
+              "width": 160,
+              "height": 80
+            },
+            "zIndex": 1,
+            "attrs": {
+              "text": {
+                "text": "Source repository"
+              }
+            },
+            "data": {
+              "type": "tm.Store",
+              "name": "Source repository",
+              "description": "GitHub repo and releases",
+              "outOfScope": false,
+              "reasonOutOfScope": "",
+              "threats": [
+                {
+                  "id": "5dc8f169-9a5a-578d-b159-5fcf5158b6ff",
+                  "number": 18,
+                  "title": "Secrets committed",
+                  "status": "Mitigated",
+                  "severity": "Medium",
+                  "type": "Information disclosure",
+                  "description": "Keys pushed to the repo.",
+                  "mitigation": "Secret scanning with push protection; Gitleaks full-history scan. Controls: CWE-798",
+                  "modelType": "STRIDE",
+                  "score": ""
+                }
+              ],
+              "hasOpenThreats": false,
+              "isTrustBoundary": false,
+              "isALog": false,
+              "isEncrypted": false,
+              "isSigned": true,
+              "storesCredentials": false,
+              "storesInventory": false
+            }
+          },
+          {
+            "id": "8087c3e9-4d07-56f5-bd86-f295b521daec",
+            "shape": "flow",
+            "zIndex": 2,
+            "source": {
+              "cell": "fcb3c693-f7cf-5055-a2d4-fd68d3b214a1"
+            },
+            "target": {
+              "cell": "f20c3607-cdae-51c5-83b3-2574bfba2b8d"
+            },
+            "labels": [
+              "Answers, file choice"
+            ],
+            "data": {
+              "type": "tm.Flow",
+              "name": "Answers, file choice",
+              "description": "",
+              "outOfScope": false,
+              "reasonOutOfScope": "",
+              "protocol": "local",
+              "isEncrypted": false,
+              "isPublicNetwork": false,
+              "hasOpenThreats": false,
+              "isBidirectional": false,
+              "isTrustBoundary": false,
+              "threats": []
+            }
+          },
+          {
+            "id": "a4aa659c-7381-591d-a3c6-5fb3f7e1a000",
+            "shape": "flow",
+            "zIndex": 2,
+            "source": {
+              "cell": "6a5d73aa-9b42-574e-a473-dc6ac3ad47da"
+            },
+            "target": {
+              "cell": "f20c3607-cdae-51c5-83b3-2574bfba2b8d"
+            },
+            "labels": [
+              "Validated pack"
+            ],
+            "data": {
+              "type": "tm.Flow",
+              "name": "Validated pack",
+              "description": "",
+              "outOfScope": false,
+              "reasonOutOfScope": "",
+              "protocol": "local",
+              "isEncrypted": false,
+              "isPublicNetwork": false,
+              "hasOpenThreats": false,
+              "isBidirectional": false,
+              "isTrustBoundary": false,
+              "threats": []
+            }
+          },
+          {
+            "id": "ce618d76-b051-5ca0-aac8-c05531b2a5f8",
+            "shape": "flow",
+            "zIndex": 2,
+            "source": {
+              "cell": "f20c3607-cdae-51c5-83b3-2574bfba2b8d"
+            },
+            "target": {
+              "cell": "e012a58a-bfed-58d0-932f-0d6397ad092a"
+            },
+            "labels": [
+              "Saved reports"
+            ],
+            "data": {
+              "type": "tm.Flow",
+              "name": "Saved reports",
+              "description": "",
+              "outOfScope": false,
+              "reasonOutOfScope": "",
+              "protocol": "local",
+              "isEncrypted": false,
+              "isPublicNetwork": false,
+              "hasOpenThreats": false,
+              "isBidirectional": false,
+              "isTrustBoundary": false,
+              "threats": []
+            }
+          },
+          {
+            "id": "e8f8d4df-1cf9-57e0-be63-7d9ed7ff962b",
+            "shape": "flow",
+            "zIndex": 2,
+            "source": {
+              "cell": "02dd3b23-1e9b-5ec5-a5c5-932c39d98edd"
+            },
+            "target": {
+              "cell": "f20c3607-cdae-51c5-83b3-2574bfba2b8d"
+            },
+            "labels": [
+              "Static files over HTTPS"
+            ],
+            "data": {
+              "type": "tm.Flow",
+              "name": "Static files over HTTPS",
+              "description": "",
+              "outOfScope": false,
+              "reasonOutOfScope": "",
+              "protocol": "HTTPS",
+              "isEncrypted": true,
+              "isPublicNetwork": true,
+              "hasOpenThreats": false,
+              "isBidirectional": false,
+              "isTrustBoundary": false,
+              "threats": []
+            }
+          },
+          {
+            "id": "f9a60c06-dd6f-5deb-b1b9-a9c6d47433be",
+            "shape": "flow",
+            "zIndex": 2,
+            "source": {
+              "cell": "cdec040e-a9a6-5f26-a9aa-d2b58ff67fd7"
+            },
+            "target": {
+              "cell": "12177bb8-1418-5555-83eb-c2e17e2d1e95"
+            },
+            "labels": [
+              "Signed releases, attestations"
+            ],
+            "data": {
+              "type": "tm.Flow",
+              "name": "Signed releases, attestations",
+              "description": "",
+              "outOfScope": false,
+              "reasonOutOfScope": "",
+              "protocol": "local",
+              "isEncrypted": false,
+              "isPublicNetwork": true,
+              "hasOpenThreats": false,
+              "isBidirectional": false,
+              "isTrustBoundary": false,
+              "threats": []
+            }
+          },
+          {
+            "id": "82435096-e3d8-5435-9bcf-1955e4bbb4c5",
+            "shape": "flow",
+            "zIndex": 2,
+            "source": {
+              "cell": "12177bb8-1418-5555-83eb-c2e17e2d1e95"
+            },
+            "target": {
+              "cell": "02dd3b23-1e9b-5ec5-a5c5-932c39d98edd"
+            },
+            "labels": [
+              "Release zip / image"
+            ],
+            "data": {
+              "type": "tm.Flow",
+              "name": "Release zip / image",
+              "description": "",
+              "outOfScope": false,
+              "reasonOutOfScope": "",
+              "protocol": "local",
+              "isEncrypted": false,
+              "isPublicNetwork": false,
+              "hasOpenThreats": false,
+              "isBidirectional": false,
+              "isTrustBoundary": false,
+              "threats": []
+            }
+          }
+        ]
+      }
+    ],
+    "diagramTop": 1,
+    "reviewer": "",
+    "threatTop": 18
+  }
+}
