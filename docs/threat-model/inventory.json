@@ -602,6 +602,13 @@
             "deployments": "write"
           }
         },
+        "deploy-production-auto": {
+          "environment": "(block)",
+          "permissions": {
+            "contents": "read",
+            "deployments": "write"
+          }
+        },
         "deploy-staging": {
           "environment": "(block)",
           "permissions": {
@@ -611,7 +618,9 @@
         },
         "source": {
           "permissions": {
-            "contents": "read"
+            "contents": "read",
+            "issues": "read",
+            "pull-requests": "read"
           }
         }
       },
