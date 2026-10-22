@@ -1,0 +1,9 @@
+{
+  "id": "education",
+  "sector": "education",
+  "contributors": [
+    "SafeBlueprint contributors"
+  ],
+  "status": "draft",
+  "licence": "Apache-2.0"
+}

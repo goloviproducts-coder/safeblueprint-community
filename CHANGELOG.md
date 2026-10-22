@@ -3,7 +3,7 @@
 All notable changes to this project are documented here. Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versions follow [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
-### Added
+### Features
 - Customisable question packs: load your own CSV or JSON questions on the AI security checklist page. Files are read on your device and never uploaded.
 - `site/questions/default.csv` / `default.json`: the built-in APP 1.7 inventory (12 questions) and AI security checklist (14 questions), with weights, severities and control mappings. Built-in tool behaviour is unchanged.
 - Pack schema `site/schema/questions/v1.json`, template `site/questions/template.csv`, example `examples/acme-pack.csv`.
@@ -11,6 +11,10 @@ All notable changes to this project are documented here. Format: [Keep a Changel
 - `config.json` `questionPack` lets self-hosters preload their own pack.
 - `docs/CUSTOMISING.md` guide for non-developers.
 - `npm test` (node:test) and a `tests` CI workflow; `scripts/update-hashes.js` refreshes SRI and SHA256SUMS.
+- Community question pack library with health, education and public sector starter packs, plus a template for your own internal control IDs
+
+### General
+- Pack contribution and review process with contributor credit; every pack is validated automatically
 
 ### General
 - One-command Docker run and clear offline instructions (serve locally; opening the file directly is not supported)
