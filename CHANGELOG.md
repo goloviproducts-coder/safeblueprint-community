@@ -9,6 +9,8 @@ All notable changes to this project are documented here. Each release uses six p
 - Community question pack library: health, education and public sector starter packs, plus a template for your own internal control IDs
 - Public security dashboard showing the live status of every security check
 - Pull request previews: each PR gets its own temporary preview link, posted on the PR and hidden from search engines
+- Reproducible release builds: anyone can rebuild the self-host zip from the tagged commit and get an identical file
+- "Verify this release" guide (docs/VERIFY.md) with one-command checks for checksums, build provenance, the SBOM and the signed tag
 
 ### Issues fixed
 - Removed a penalty figure from the guidance (we do not quote penalty amounts)
@@ -18,6 +20,7 @@ All notable changes to this project are documented here. Each release uses six p
 - Two editions: hosted (safeblueprint.pages.dev) and self-hosted (localhost or your own infrastructure)
 - About page and FAQ updated for both editions and the open-source project
 - Step-by-step guide for creating your own question packs
+- Security page links to the verify guide (plain link, no new network calls)
 
 ### Security fixes
 - Threat model check required on every change
@@ -26,6 +29,7 @@ All notable changes to this project are documented here. Each release uses six p
 - Automated fuzz testing of the question-pack loader to catch crashes from unusual or hostile files
 - Pull request previews are only built for branches in this repository; forks never get previews or deploy credentials
 - Every release and rollback checks the tag is signed, verified by GitHub and on main before deploying
+- Release workflow builds the zip twice and refuses to publish if the builds differ; a new check does the same on every pull request
 
 ### Privacy
 - Removed the third-party form service (FormSubmit); no contact email is shown on the site
@@ -43,6 +47,8 @@ All notable changes to this project are documented here. Each release uses six p
 - Release, preview, staging and rollback steps documented in docs/RELEASING.md
 - Documented the release supply-chain level (SLSA Build Level 2) and how to verify it
 - Published governance (who decides and how), a public roadmap, and a promise to acknowledge security reports within 72 hours with a published-advisories process
+- Public signing key published in the repo for tag verification
+- Maintainer shown by GitHub handle only in GOVERNANCE.md
 
 ## [1.0.0] - 2026-10-22
 ### Features

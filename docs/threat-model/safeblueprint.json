@@ -530,6 +530,18 @@
                   "mitigation": "Production deploys only from vX.Y.Z tags; release, deploy-production and rollback verify via the GitHub API that the tag is annotated, GitHub-verified and on main; v* tag ruleset admin-only; tags signed locally by the maintainer (no CI signing key); maintainer-only Release gate; rollback is read-only on git, checks out the exact tag commit, verifies SHA256SUMS and needs production approval. Controls: SLSA-L2, OWASP-CICD-SEC-1, OWASP-CICD-SEC-9",
                   "modelType": "STRIDE",
                   "score": ""
+                },
+                {
+                  "id": "da06c638-96e3-59ed-832a-f6d128394c10",
+                  "number": 21,
+                  "title": "Release zip differs from the reviewed source",
+                  "status": "Mitigated",
+                  "severity": "Medium",
+                  "type": "Tampering",
+                  "description": "A compromised or non-deterministic release build could ship files that do not match the tagged commit.",
+                  "mitigation": "scripts/build-release.sh builds from the git tree only (git archive) with SOURCE_DATE_EPOCH from the commit time, sorted entries, fixed 0644/0755 permissions and no extra attributes; the reproducible-build check builds twice and compares hashes on every PR; the release job rebuilds and fails if the two builds differ; anyone can rebuild and compare with SHA256SUMS (docs/VERIFY.md). Controls: SLSA-L2 (reproducible build), OWASP-CICD-SEC-9",
+                  "modelType": "STRIDE",
+                  "score": ""
                 }
               ],
               "hasOpenThreats": false,
