@@ -1,7 +1,7 @@
 name: threat-model-gate
 on:
   pull_request:
-    types: [opened, synchronize, reopened]
+    types: [opened, synchronize, reopened, labeled, unlabeled]
 permissions:
   contents: read
 jobs:
@@ -40,6 +40,8 @@ jobs:
           # PR author login is set by GitHub and cannot be changed by the PR. Only used to let
           # Dependabot manifest-only updates pass without a hand-written threat row.
           PR_AUTHOR: ${{ github.event.pull_request.user.login }}
+          # Transition only: main's old gate script still reads this. Remove after this PR merges.
+          REVIEWED_LABEL: ${{ contains(github.event.pull_request.labels.*.name, 'threat-model-reviewed') }}
         run: |
           git diff --name-only "$BASE_SHA...$HEAD_SHA" > "$RUNNER_TEMP/changed.txt"
           # Content before the PR is read from the merge base, so the classifier compares real changes.
