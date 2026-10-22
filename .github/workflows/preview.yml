@@ -44,7 +44,10 @@ jobs:
         run: node scripts/build-edition.js hosted dist/hosted
       - name: Mark preview as noindex
         run: |
-          printf '\n/*\n  X-Robots-Tag: noindex, nofollow\n' >> dist/hosted/_headers
+          # Add noindex inside every existing rule: a second /* block would replace the security headers.
+          sed -i '/^  X-Frame-Options: DENY$/a\  X-Robots-Tag: noindex, nofollow' dist/hosted/_headers
+          [ "$(grep -c '^  X-Robots-Tag: noindex' dist/hosted/_headers)" = "$(grep -c '^  X-Frame-Options: DENY' dist/hosted/_headers)" ]
+          grep -q '^  Content-Security-Policy:' dist/hosted/_headers
           grep -q 'X-Robots-Tag: noindex' dist/hosted/_headers
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/wrangler-action@953926a2e2182532811c01a25e53647d93bf07c0 # v4.1.3
