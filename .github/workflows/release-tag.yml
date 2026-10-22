@@ -1,0 +1,62 @@
+name: Release
+# Maintainer-only release gate. Computes the next version from the latest v* tag, checks that main HEAD
+# is GitHub-verified and that CHANGELOG/VERSION were promoted to it (scripts/prepare-release.js),
+# then prints the signed-tag command. CI does not create the tag: tags are signed with the
+# maintainer's key, the v* tag ruleset allows only admins, and tags pushed by GITHUB_TOKEN would not
+# trigger the release build. See docs/RELEASING.md.
+on:
+  workflow_dispatch:
+    inputs:
+      bump:
+        description: "Version bump"
+        required: true
+        type: choice
+        options: [patch, minor, major]
+permissions:
+  contents: read
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    environment: release
+    permissions:
+      contents: read
+    steps:
+      - name: Harden runner
+        uses: step-security/harden-runner@dc2769abcc0fcfbadfc1df54081c1608579ef6b2 # v2.22.2
+        with:
+          egress-policy: audit
+      - name: Only the maintainer may run this
+        env:
+          ACTOR: ${{ github.actor }}
+          REF: ${{ github.ref }}
+        run: |
+          [ "$ACTOR" = "goloviproducts-coder" ] || { echo "::error::Only the maintainer can run releases"; exit 1; }
+          [ "$REF" = "refs/heads/main" ] || { echo "::error::Run this from main"; exit 1; }
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Compute version and check main is ready
+        env:
+          BUMP: ${{ inputs.bump }}
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          head=$(git rev-parse HEAD)
+          latest=$(git tag -l 'v*' --sort=-v:refname | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | head -1 || true)
+          cur=$(node -e 'const {nextVersion}=require("./scripts/prepare-release.js");process.stdout.write(nextVersion([process.argv[1]],process.argv[2]))' "${latest:-v0.0.0}" "$BUMP")
+          prev=$(node -e 'const f=require("fs");const m=f.readFileSync("CHANGELOG.md","utf8").match(/^## \[(\d+\.\d+\.\d+)\]/m);process.stdout.write(m?m[1]:"")')
+          echo "Latest tag: ${latest:-none}; requested $BUMP -> $cur; newest CHANGELOG version: ${prev:-none}"
+          [ "$prev" = "$cur" ] || { echo "::error::CHANGELOG has no [$cur] section yet. Run 'node scripts/prepare-release.js $BUMP' in a PR to main first."; exit 1; }
+          head -1 VERSION | grep -q " $cur$" || { echo "::error::VERSION is not $cur"; exit 1; }
+          git rev-parse -q --verify "refs/tags/v$cur" >/dev/null && { echo "::error::v$cur already exists"; exit 1; }
+          [ "$(gh api "repos/$REPO/commits/$head" -q .commit.verification.verified)" = "true" ] || { echo "::error::main HEAD is not a verified commit"; exit 1; }
+          {
+            echo "## Ready to release v$cur"
+            echo "main HEAD: \`$head\` (verified). Tag it locally with your signing key:"
+            echo '```'
+            echo "git fetch origin && git tag -s v$cur -m \"SafeBlueprint v$cur\" $head && git push origin v$cur"
+            echo '```'
+            echo "The tag push runs **release** (zip, SBOMs, SHA256SUMS, attestations, notes from CHANGELOG) and **deploy** (staging, then production after your approval)."
+          } >> "$GITHUB_STEP_SUMMARY"

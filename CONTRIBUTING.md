@@ -106,8 +106,8 @@ To pass: add or update the relevant threats and mitigations (edit the JSON in Th
 - `site/` is the **self-hosted edition**: contact form off, nothing sent anywhere. The release zip is built from it.
 - `editions/hosted/` overlays the **hosted edition** (https://safeblueprint.pages.dev): contact page, `contact.js`, `config.js` with `FORM_ENDPOINT = "/api/contact"`. `functions/api/contact.js` is the Cloudflare Pages Function; it sends through Resend only and reads `RESEND_API_KEY` and `CONTACT_TO` from the Pages environment. No keys or addresses live in the repo.
 - Build either with `node scripts/build-edition.js hosted|selfhost`.
-- Release flow: **PR to `main`** (review + all required checks) → merge → `deploy.yml` job **deploy-staging** deploys automatically to https://staging.safeblueprint.pages.dev (no approval; `X-Robots-Tag: noindex`) → check staging → **approve the `production` environment** on the waiting **deploy-production** job. Manual run: Actions → deploy → Run workflow.
-- After staging succeeds, `deploy-production` waits for a maintainer to approve the `production` environment, then builds the hosted edition, deploys it to Cloudflare Pages and smoke-tests it.
+- Flow: **PR** (preview at `https://pr-<number>.safeblueprint.pages.dev`, commented on the PR) → **merge to `main`** (review + all required checks) → **staging** deploys automatically to https://staging.safeblueprint.pages.dev → **release**: `scripts/prepare-release.js` PR, the maintainer-only **Release** gate, a signed `vX.Y.Z` tag → **production** deploys from the tag after maintainer approval. Rollback: Actions → rollback with an earlier tag. Full steps: [docs/RELEASING.md](docs/RELEASING.md).
+- Previews and staging are `noindex`. Fork PRs never get a preview or any secrets.
 
 ## Penetration tests
 | What | When | Fails on |
