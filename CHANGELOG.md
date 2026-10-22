@@ -13,7 +13,17 @@ All notable changes to this project are documented here. Format: [Keep a Changel
 - `npm test` (node:test) and a `tests` CI workflow; `scripts/update-hashes.js` refreshes SRI and SHA256SUMS.
 
 ### General
-- Staging site at staging.safeblueprint.pages.dev: every merge to main goes live on staging first, before production; hidden from search engines; production still needs maintainer approval
+- Staging site at staging.safeblueprint.pages.dev: every merge to main goes live on staging first, hidden from search engines
+- Release process: production now goes live only from signed release tags and still needs maintainer approval; release notes come from this changelog
+- One-click rollback to an earlier signed release, with maintainer approval
+- Documented in docs/RELEASING.md
+
+### Security
+- Pull request previews are only built for branches in this repository; forks never get previews or deploy credentials
+- Every release and rollback checks the tag is signed, verified by GitHub and on main before deploying
+
+### Features
+- Pull request previews: each PR gets its own temporary preview link, posted on the PR and hidden from search engines
 - One-command Docker run and clear offline instructions (serve locally; opening the file directly is not supported)
 - Documented the release supply-chain level (SLSA Build Level 2) and how to verify it
 
