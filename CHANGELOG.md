@@ -3,32 +3,37 @@
 All notable changes to this project are documented here. Each release uses six plain-English headings: Features, Issues fixed, Interfaces updated, Security fixes, Privacy, General (see docs/RELEASE_NOTES_TEMPLATE.md). The release workflow publishes the matching section as the GitHub release notes. Versions follow [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
+
+## [1.0.2] - 2026-10-23
 ### Features
-- THREAT_MODEL.md now opens with a plain-English "what could go wrong and what we do about it" table and a Mermaid data-flow diagram; the STRIDE table is kept below as the detailed register for auditors
-- The top of the home page now shows the fictional sample report card (Wattle Lane Retail), in place of the plain sample link and the blank card lower down
-- The fictional sample report now shows the APP 1.7 coverage the check gives: refusals and good or bad effects, children and vulnerable people, human review still in scope, sensitive information named separately, a dated policy reviewed yearly, exemptions as a screen only, and the commercial-in-confidence carve-out
-- Label `prod` on a PR (applied by the owner) deploys it to production when merged, after staging succeeds and the maintainer approves the production environment; unlabelled merges stop at staging
-- Approve to release: one maintainer approval tags main, deploys production and publishes the release, with no local tagging
+- Home page: the fictional sample report (Wattle Lane Retail) now sits at the top, next to "Start the 5-minute check", and opens the sample report PDF
+- Fictional sample report refreshed to show the full APP 1.7 coverage
+- Approve to release: one maintainer approval tags, deploys production and publishes the release
+- Label a PR `prod` (owner only) to send it to production when merged, after staging passes and the maintainer approves production; unlabelled merges stop at staging
+- THREAT_MODEL.md now starts with a plain-English "what could go wrong and what we do about it" table and a data-flow diagram; the detailed register for auditors follows
 
 ### Issues fixed
-- APP 1.7 check and fictional sample report: the yearly policy review, the commercial-in-confidence/trade-secret carve-out and human-review-still-counts lines now read as OAIC guidance or good practice, not legal requirements, each with a link to its OAIC APP Guidelines paragraph (1.9, 1.67, 1.41). The legal duty to keep the policy up to date (APP 1.3) is kept separate
-- The sample card at the top of the home page now opens the fictional sample report PDF (/samples/sample-portfolio.pdf) in a new tab; before, the PDF was only in docs/ and the site returned the home page for it
-- APP 1.7 check now covers every area in the OAIC APP 1.7-1.9 guidance: refusing or failing to decide, good or bad effects, people experiencing vulnerability, human review not removing scope, sensitive information, privacy-policy placement and yearly review, exemptions as a screen only, and the commercial-in-confidence exclusion. Questions stay fixed
+- APP 1.7 check now covers every area in the OAIC APP 1.7-1.9 guidance, including refusals, good or bad effects, vulnerable people, human review, sensitive information, policy placement, exemptions and the commercial-in-confidence exclusion. Questions stay fixed
+- Lines that are OAIC good practice (yearly review, human review, commercial-in-confidence) now read as guidance, not law, each linked to its OAIC paragraph
+- The sample report PDF (/samples/sample-portfolio.pdf) is now served by the site; before, the link returned the home page
 
 ### Interfaces updated
-- New `npm run threat-model:update` writes the threat entry for your branch (detailed row plus a plain-English line) and regenerates the inventory; `npm run hooks` enables a pre-push check for it
-- New Actions workflow: approve-release (Run workflow with a version, then approve production)
+- New Actions workflow: approve-release (run with a version, then approve production)
+- New `prod` PR label for production deploys
+- New `npm run threat-model:update` writes the threat entry for a branch; `npm run hooks` adds a pre-push check for it
 
 ### Security fixes
-- The approved release tags exactly the commit that was checked before approval, signed with a dedicated release key checked against a committed allowed-signers list; release notes record the approver and the run
+- Releases tag exactly the commit checked before approval, signed with a dedicated release key checked against a committed allowed-signers list
 - Build provenance attestation kept for every release
+- Sample PDF served with the same security headers as the rest of the site and cannot be framed by other sites
+- The `prod` label only counts when the repository owner applied it; production still needs the maintainer's approval
 
 ### Privacy
-- No change
+- No new data collected; the APP 1.7 check still runs in the browser
 
 ### General
-- The threat-model gate no longer needs the `threat-model-reviewed` label. A risk-relevant PR passes when it adds a threat row naming every risky file (auto-drafted by `npm run threat-model:update`); Dependabot manifest-only updates pass on their own. The label-reset job is removed and the gate job now only needs `contents: read`
-- Release guide and threat model updated
+- Threat-model check no longer needs a manual label: risky changes pass when the PR adds a matching threat entry, drafted automatically. CI stays read-only and never writes to PR branches
+- Release guide, contributing guide and threat model updated
 
 ## [1.0.1] - 2026-10-22
 ### Features
@@ -118,6 +123,7 @@ All notable changes to this project are documented here. Each release uses six p
 - Self-hosting pack: Docker, docker-compose, nginx and install guide
 - Contributing guide with an approval checklist, security policy and issue templates
 
-[Unreleased]: https://github.com/goloviproducts-coder/safeblueprint-community/compare/v1.0.1...HEAD
+[Unreleased]: https://github.com/goloviproducts-coder/safeblueprint-community/compare/v1.0.2...HEAD
+[1.0.2]: https://github.com/goloviproducts-coder/safeblueprint-community/compare/v1.0.1...v1.0.2
 [1.0.1]: https://github.com/goloviproducts-coder/safeblueprint-community/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/goloviproducts-coder/safeblueprint-community/releases/tag/v1.0.0
