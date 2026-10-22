@@ -1,0 +1,126 @@
+name: approve-release
+# Approve to release: one maintainer approval in the production environment tags main, deploys
+# production and publishes the release, so nobody has to tag by hand. See docs/RELEASING.md.
+# 1. check (read-only): main only; CHANGELOG/VERSION/package.json prepared for the version; the tag is
+#    free; main HEAD is a GitHub-verified commit. Records that SHA.
+# 2. release-production (production environment = the approval): creates an annotated tag at the
+#    recorded SHA with GITHUB_TOKEN (needs the v* ruleset bypass for GitHub Actions), then deploys
+#    that commit to production with the same steps as deploy.yml.
+# 3. publish: calls release.yml to build, attest and publish the release, noting the approver and run.
+# Tags created with GITHUB_TOKEN never trigger the push-based release/deploy workflows, so nothing
+# runs twice. Maintainer-signed tags pushed by hand still use the push path.
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to release, for example v1.0.2 (must match VERSION and CHANGELOG on main)"
+        required: true
+        type: string
+permissions:
+  contents: read
+concurrency:
+  group: approve-release
+  cancel-in-progress: false
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      sha: ${{ steps.check.outputs.sha }}
+      tag: ${{ steps.check.outputs.tag }}
+    steps:
+      - name: Harden runner
+        uses: step-security/harden-runner@dc2769abcc0fcfbadfc1df54081c1608579ef6b2 # v2.22.2
+        with:
+          egress-policy: audit
+      - name: Run from main only
+        env:
+          REF: ${{ github.ref }}
+        run: '[ "$REF" = "refs/heads/main" ] || { echo "::error::Run approve-release from main"; exit 1; }'
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Check main is ready to release this version
+        id: check
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          VERSION_INPUT: ${{ inputs.version }}
+        run: |
+          set -euo pipefail
+          tag="v${VERSION_INPUT#v}"
+          [[ "$tag" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo "::error::'$VERSION_INPUT' is not a vX.Y.Z version"; exit 1; }
+          sha=$(git rev-parse HEAD)
+          node scripts/check-release.js "$tag"
+          if gh api "repos/$REPO/git/ref/tags/$tag" >/dev/null 2>&1; then echo "::error::$tag already exists"; exit 1; fi
+          [ "$(gh api "repos/$REPO/commits/$sha" -q .commit.verification.verified)" = "true" ] || { echo "::error::main HEAD $sha is not a verified commit"; exit 1; }
+          echo "sha=$sha" >> "$GITHUB_OUTPUT"
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+          echo "Ready: $tag at $sha. Waiting for production approval." >> "$GITHUB_STEP_SUMMARY"
+  release-production:
+    needs: check
+    runs-on: ubuntu-latest
+    concurrency:
+      group: deploy-production
+      cancel-in-progress: false
+    environment:
+      name: production
+      url: https://safeblueprint.pages.dev
+    permissions:
+      contents: write # create the tag
+      actions: read # read who approved this run
+      deployments: write # record the production deployment
+    outputs:
+      approver: ${{ steps.tag.outputs.approver }}
+    steps:
+      - name: Harden runner
+        uses: step-security/harden-runner@dc2769abcc0fcfbadfc1df54081c1608579ef6b2 # v2.22.2
+        with:
+          egress-policy: audit
+      - name: Create the tag at the approved commit
+        id: tag
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          RUN_ID: ${{ github.run_id }}
+          SHA: ${{ needs.check.outputs.sha }}
+          TAG: ${{ needs.check.outputs.tag }}
+        run: |
+          set -euo pipefail
+          approver=$(gh api "repos/$REPO/actions/runs/$RUN_ID/approvals" -q '[.[] | select(.state == "approved") | .user.login] | last // ""')
+          [ -n "$approver" ] || { echo "::error::No production approval recorded for this run"; exit 1; }
+          status=$(gh api "repos/$REPO/compare/$SHA...main" -q .status)
+          case "$status" in ahead|identical) ;; *) echo "::error::$SHA is no longer on main ($status)"; exit 1;; esac
+          obj=$(gh api -X POST "repos/$REPO/git/tags" -f tag="$TAG" -f object="$SHA" -f type=commit \
+            -f message="SafeBlueprint $TAG (approved by @$approver in run $RUN_ID)" \
+            -f 'tagger[name]=github-actions[bot]' -f 'tagger[email]=41898282+github-actions[bot]@users.noreply.github.com' -q .sha)
+          gh api -X POST "repos/$REPO/git/refs" -f ref="refs/tags/$TAG" -f sha="$obj" >/dev/null \
+            || { echo "::error::Could not create $TAG. The v* tag ruleset must allow GitHub Actions to bypass (docs/RELEASING.md)."; exit 1; }
+          echo "approver=$approver" >> "$GITHUB_OUTPUT"
+          echo "Tagged $TAG ($obj) at $SHA, approved by @$approver" >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          ref: ${{ needs.check.outputs.sha }}
+      - name: Release files are prepared for this tag
+        env:
+          TAG: ${{ needs.check.outputs.tag }}
+        run: node scripts/check-release.js "$TAG"
+      - name: Build, deploy and smoke-test production
+        uses: $/.github/actions/deploy-production
+        with:
+          cloudflare-api-token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          cloudflare-account-id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+  publish:
+    needs: [check, release-production]
+    permissions:
+      contents: write # publish the GitHub release and upload its files
+      id-token: write # sign the build provenance attestation
+      attestations: write # store the attestations
+    uses: $/.github/workflows/release.yml
+    with:
+      tag: ${{ needs.check.outputs.tag }}
+      sha: ${{ needs.check.outputs.sha }}
+      approver: ${{ needs.release-production.outputs.approver }}
+      run_url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}

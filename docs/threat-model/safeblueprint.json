@@ -496,6 +496,18 @@
                   "score": ""
                 },
                 {
+                  "id": "ae7d6419-faf9-593e-9a6d-b969ac54bf65",
+                  "number": 20,
+                  "title": "T20d Approve-to-release tags and deploys an unapproved commit",
+                  "status": "Mitigated",
+                  "severity": "High",
+                  "type": "Spoofing",
+                  "description": "The approve-release workflow could tag or deploy a commit nobody approved, or its tag permission could be abused.",
+                  "mitigation": "Runs from main only; read-only check job validates release files, free tag and verified main HEAD and records the SHA; tagging and production deploy run only after production environment approval, at exactly the recorded SHA still on main; approver and run URL recorded in tag and release notes; GITHUB_TOKEN tags never trigger push-based deploys; release.yml accepts the unsigned tag only from github-actions[bot] at the approved SHA; least-privilege tokens, pinned actions, no PAT or new secrets; provenance attestation kept. Residual: GitHub Actions ruleset bypass lets any reviewed workflow on main with contents: write create v* tags. Controls: SLSA-L2, OWASP-CICD-SEC-1, OWASP-CICD-SEC-5",
+                  "modelType": "STRIDE",
+                  "score": ""
+                },
+                {
                   "id": "529fa623-573b-58be-9040-032d7edf34f3",
                   "number": 21,
                   "title": "Unreviewed or indexed staging deploy",

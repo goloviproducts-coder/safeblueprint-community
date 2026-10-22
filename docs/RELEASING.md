@@ -9,7 +9,20 @@
 
 Previews and staging send `X-Robots-Tag: noindex, nofollow` so search engines ignore them. Production does not. All deploys build the hosted edition with `scripts/build-edition.js` and use the same pinned actions, harden-runner, read-only token permissions and no package-manager cache.
 
-## Cutting a release
+## Approve to release (recommended)
+No local tagging needed.
+1. **Prepare (PR).** Same as step 1 below: `node scripts/prepare-release.js patch|minor|major`, `node scripts/update-hashes.js`, signed commit, PR, merge.
+2. **Start.** Actions → **approve-release** → Run workflow on `main`, version `vX.Y.Z`. The `check` job confirms CHANGELOG, VERSION and package.json are prepared for that version, the tag is free and main HEAD is a verified commit, and records main's SHA.
+3. **Approve.** The `release-production` job waits for the `production` environment. Review the summary and approve under the run → Review deployments. This is the only approval.
+4. **Automatic.** After approval it creates an annotated tag at the recorded SHA (tagged by `github-actions[bot]`, message names the approver and run), deploys that commit to production with the same steps and smoke tests as `deploy.yml`, then calls `release.yml` to build the reproducible zip, SBOMs, SHA256SUMS and provenance attestation and publish the release. The notes come from the CHANGELOG and name the approver and the run URL.
+
+Notes:
+- The tag is not key-signed; verify a release with `gh attestation verify` (docs/VERIFY.md) and the approval record on the run.
+- Tags made by GitHub Actions do not trigger the push-based `release` and `deploy` workflows, so nothing runs twice.
+- If the deploy fails after tagging, the tag exists without a release: fix forward with a new patch version, or delete the tag (maintainer) and run again.
+- One-time setup: the `v*` tag ruleset must let GitHub Actions bypass it (Settings → Rules → Rulesets → Protect release tags → Bypass list → Add bypass → GitHub Actions → Always allow → Save changes).
+
+## Cutting a release (manual signed tag)
 1. **Prepare (PR).** On a new branch run `node scripts/prepare-release.js patch|minor|major`. It computes the next version from the latest `v*` tag and moves the CHANGELOG `Unreleased` bullets into that version, updating `VERSION` and `package.json`. Run `node scripts/update-hashes.js`, commit (signed, `-s`), open a PR, and merge it once the checks pass. Staging updates automatically.
 2. **Gate.** Actions → **Release** → Run workflow on `main` and choose the same bump. Only the maintainer can run it (`release` environment, required reviewer). It checks that `main` HEAD is a verified commit, that CHANGELOG and VERSION match the next version and that the tag is free, then prints the exact tag command in the job summary.
 3. **Tag (maintainer, locally).** Use `scripts/tag-release.sh vX.Y.Z`: it runs `scripts/check-release.js` against `origin/main` and refuses to sign the tag unless CHANGELOG has a `## [X.Y.Z]` section with all six headings and `VERSION` and `package.json` say `X.Y.Z`. Or run the printed command, for example:
