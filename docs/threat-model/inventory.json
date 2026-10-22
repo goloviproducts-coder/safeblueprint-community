@@ -124,8 +124,10 @@
     "https://www.oaic.gov.au": [
       "site/about/index.html",
       "site/forms.js",
+      "site/home.js",
       "site/index.html",
-      "site/privacy/index.html"
+      "site/privacy/index.html",
+      "site/sample/index.html"
     ],
     "https://www.onetrust.com": [
       "site/about/index.html"
@@ -358,7 +360,8 @@
     "site/sample/index.html": {
       "csp": "default-src 'self'; script-src 'self'; style-src 'self' blob:; img-src 'self' data:; connect-src 'self'; form-action 'self'; base-uri 'none'; object-src 'none'; worker-src 'self'; manifest-src 'self'",
       "externalOrigins": [
-        "https://safeblueprint.pages.dev"
+        "https://safeblueprint.pages.dev",
+        "https://www.oaic.gov.au"
       ],
       "fields": [],
       "forms": [],
@@ -438,7 +441,9 @@
         "createObjectURL": 1,
         "innerHTML/outerHTML": 2
       },
-      "externalOrigins": []
+      "externalOrigins": [
+        "https://www.oaic.gov.au"
+      ]
     },
     "site/questions/engine.js": {
       "apis": {},
