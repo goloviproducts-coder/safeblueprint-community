@@ -4,6 +4,7 @@ All notable changes to this project are documented here. Each release uses six p
 
 ## [Unreleased]
 ### Features
+- The top of the home page now shows the fictional sample report card (Wattle Lane Retail), in place of the plain sample link and the blank card lower down
 - Approve to release: one maintainer approval tags main, deploys production and publishes the release, with no local tagging
 
 ### Issues fixed
