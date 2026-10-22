@@ -494,6 +494,18 @@
                   "mitigation": "Deploy only from main (PR + required checks); production environment needs maintainer approval; secrets scoped to the environment; pinned wrangler-action; smoke tests after deploy; setup-node package cache disabled in the deploy job to prevent cache poisoning; production contact function accepts only the pages.dev origins (no localhost). Controls: SLSA-L2, OWASP-CICD-SEC-1",
                   "modelType": "STRIDE",
                   "score": ""
+                },
+                {
+                  "id": "529fa623-573b-58be-9040-032d7edf34f3",
+                  "number": 21,
+                  "title": "Unreviewed or indexed staging deploy",
+                  "status": "Mitigated",
+                  "severity": "Medium",
+                  "type": "Elevation of privilege",
+                  "description": "Code on the staging branch reaches the public staging URL without production approval, or staging is indexed and mistaken for production.",
+                  "mitigation": "deploy-staging.yml runs only on pushes to the protected staging branch (no deletion or force-push) or manual dispatch; deploys only to the staging Pages branch alias (--branch staging), never production; same pinned actions, harden-runner, read-only permissions and disabled package cache as production; X-Robots-Tag noindex added to the staging build only; smoke tests after deploy. Production stays approval-gated. Controls: SLSA-L2, OWASP-CICD-SEC-1",
+                  "modelType": "STRIDE",
+                  "score": ""
                 }
               ],
               "hasOpenThreats": false,

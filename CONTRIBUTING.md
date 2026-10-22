@@ -106,6 +106,8 @@ To pass: add or update the relevant threats and mitigations (edit the JSON in Th
 - `site/` is the **self-hosted edition**: contact form off, nothing sent anywhere. The release zip is built from it.
 - `editions/hosted/` overlays the **hosted edition** (https://safeblueprint.pages.dev): contact page, `contact.js`, `config.js` with `FORM_ENDPOINT = "/api/contact"`. `functions/api/contact.js` is the Cloudflare Pages Function; it sends through Resend only and reads `RESEND_API_KEY` and `CONTACT_TO` from the Pages environment. No keys or addresses live in the repo.
 - Build either with `node scripts/build-edition.js hosted|selfhost`.
+- Release flow: **PR to `main`** (review + all required checks) → **fast-forward `staging` to `main`** (`git push origin origin/main:staging`, or open a PR into `staging`) → `deploy-staging.yml` deploys automatically to https://staging.safeblueprint.pages.dev (no approval; `X-Robots-Tag: noindex`) → check staging → **approve the `production` environment** on the waiting `deploy` run.
+- `staging` is protected from deletion and force-pushes. Manual staging deploys: Actions → deploy-staging → Run workflow.
 - Every merge to `main` runs `deploy.yml`, which waits for a maintainer to approve the `production` environment, builds the hosted edition, deploys it to Cloudflare Pages and smoke-tests it.
 
 ## Penetration tests
