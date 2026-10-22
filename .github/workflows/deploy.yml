@@ -4,7 +4,7 @@ name: deploy
 # - push of a signed v* tag (see docs/RELEASING.md): deploy-staging, then deploy-production, which
 #   verifies the tag and waits for maintainer approval in the production environment before it gets the secrets.
 # - push to main from a merged PR labelled `prod` (label applied by the repo owner, see OWNER below):
-#   deploy-staging, then deploy-production-label in the `production` environment (no required reviewers).
+#   deploy-staging, then deploy-production-label in the `production` environment, which waits for maintainer approval.
 on:
   push:
     branches: [main]
@@ -66,7 +66,7 @@ jobs:
             actor=$(gh api "repos/$REPO/issues/$pr/events" --paginate -q '.[] | select((.event=="labeled" or .event=="unlabeled") and .label.name=="prod") | .event + " " + .actor.login' | tail -n 1)
             if [ "$has" = "true" ] && [ "$actor" = "labeled $OWNER" ]; then
               prod=true
-              echo "PR #$pr carries prod, applied by $OWNER: production deploys after staging, no approval." >> "$GITHUB_STEP_SUMMARY"
+              echo "PR #$pr carries prod, applied by $OWNER: production deploys after staging once a maintainer approves the production environment." >> "$GITHUB_STEP_SUMMARY"
             elif [ "$has" = "true" ]; then
               echo "::warning::PR #$pr has prod but it was not applied by $OWNER ($actor); staging only."
             fi
