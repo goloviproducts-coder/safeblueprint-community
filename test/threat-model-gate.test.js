@@ -157,3 +157,24 @@ test("URL detection: protocol-relative, single quotes, template literals, url()"
   assert.deepEqual(gen.origins("x='//cdn.example.com/a' y=`https://Cdn.Example.com/b`"), ["https://cdn.example.com"]);
   assert.equal(gen.origins("// just a comment\nvar a = 1; // another").length, 0);
 });
+
+test("table cells escape backslashes before pipes", () => {
+  const { cell } = require("../scripts/threat-model-gate.js");
+  assert.equal(cell("a\\|b"), "a\\\\\\|b");
+  assert.equal(cell("x|y\nz"), "x\\|y z");
+});
+test("risk-area mapping: 'deploy' anywhere and 'Build, release' only at the start", () => {
+  const { draftEntry } = require("../scripts/threat-model-gate.js");
+  assert.match(draftEntry("T99", [{ file: "x", reasons: ["Build, release and deploy scripts"] }]), /Build, release and deploy tooling/);
+  assert.match(draftEntry("T99", [{ file: "x", reasons: ["Staging deploy job"] }]), /Build, release and deploy tooling/);
+  assert.doesNotMatch(draftEntry("T99", [{ file: "x", reasons: ["Not Build, release"] }]), /Build, release and deploy tooling/);
+});
+test("draft script ignores changed paths that escape the repo", () => {
+  const { safePath } = require("../scripts/threat-model-gate.js");
+  const root = path.join(__dirname, "..");
+  assert.equal(safePath(root, "../etc/passwd"), null);
+  assert.equal(safePath(root, "/etc/passwd"), null);
+  assert.ok(safePath(root, "scripts/threat-model-draft.js"));
+  const files = require("../scripts/threat-model-draft.js").changedFiles("HEAD");
+  assert.ok(files.every((f) => safePath(root, f)));
+});

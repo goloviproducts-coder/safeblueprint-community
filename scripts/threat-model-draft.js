@@ -22,7 +22,7 @@ function changedFiles(base) {
   const committed = git(["diff", "--name-only", base + "...HEAD"]).split("\n");
   const local = git(["diff", "--name-only", "HEAD"]).split("\n");
   const untracked = git(["ls-files", "--others", "--exclude-standard"]).split("\n");
-  return Array.from(new Set(committed.concat(local, untracked).filter(Boolean))).filter((f) => fs.existsSync(path.join(root, f)) || committed.includes(f)).sort();
+  return Array.from(new Set(committed.concat(local, untracked).filter(Boolean))).filter((f) => { const abs = gate.safePath(root, f); return abs && (committed.includes(f) || fs.existsSync(abs)); }).sort();
 }
 // Insert after the last threat row of the "Threats and mitigations" table.
 function insertRow(text, row) {
@@ -95,4 +95,4 @@ if (require.main === module) {
   if (check && stale) { console.error("THREAT_MODEL.md or inventory.json is out of date. Run `npm run threat-model:update` and commit the result."); process.exit(1); }
   console.log(check ? "Threat model is up to date." : (stale ? "Updated THREAT_MODEL.md / inventory.json. Review the row and commit it." : "Threat model already up to date."));
 }
-module.exports = { update, insertRow, insertPlain, plainLine };
+module.exports = { update, insertRow, insertPlain, plainLine, changedFiles };

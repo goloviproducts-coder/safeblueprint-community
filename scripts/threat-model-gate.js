@@ -217,4 +217,4 @@ if (require.main === module) {
   if (process.env.GITHUB_STEP_SUMMARY) fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, text);
   process.exit(r.pass ? 0 : 1);
 }
-module.exports = { evaluate, summary, classifyFile, nextThreatId, draftEntry, addedRows, gitShow, PATH_RULES, MODEL_FILES };
+module.exports = { evaluate, summary, classifyFile, nextThreatId, draftEntry, safePath, cell, addedRows, gitShow, PATH_RULES, MODEL_FILES };
