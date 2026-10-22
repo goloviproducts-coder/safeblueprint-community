@@ -9,6 +9,7 @@ All notable changes to this project are documented here. Each release uses six p
 - Approve to release: one maintainer approval tags main, deploys production and publishes the release, with no local tagging
 
 ### Issues fixed
+- The sample card at the top of the home page now opens the fictional sample report PDF (/samples/sample-portfolio.pdf) in a new tab; before, the PDF was only in docs/ and the site returned the home page for it
 - APP 1.7 check now covers every area in the OAIC APP 1.7-1.9 guidance: refusing or failing to decide, good or bad effects, people experiencing vulnerability, human review not removing scope, sensitive information, privacy-policy placement and yearly review, exemptions as a screen only, and the commercial-in-confidence exclusion. Questions stay fixed
 
 ### Interfaces updated
