@@ -43,7 +43,7 @@ const URL_RE = /(?:\b(?:https?|wss?):)?\/\/(?:[A-Za-z0-9-]+\.)+[A-Za-z]{2,}(?::\
 function rel(p) { return path.relative(root, p).split(path.sep).join("/"); }
 // Every path must resolve inside the repository.
 function inside(p) {
-  p = path.resolve(root, p);
+  if (!path.isAbsolute(p)) throw new Error("Expected an absolute path: " + p);
   const r = path.relative(root, p);
   if (r.startsWith("..") || path.isAbsolute(r)) throw new Error("Refusing path outside the repository: " + p);
   return p;
