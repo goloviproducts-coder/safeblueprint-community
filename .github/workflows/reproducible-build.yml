@@ -1,0 +1,29 @@
+name: reproducible-build
+on:
+  pull_request:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  reproducible:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Harden runner
+        uses: step-security/harden-runner@dc2769abcc0fcfbadfc1df54081c1608579ef6b2 # v2.22.2
+        with:
+          egress-policy: audit
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Build twice and compare
+        run: |
+          VER="$(grep -oE "[0-9]+\.[0-9]+\.[0-9]+" VERSION | head -1)"
+          scripts/build-release.sh "$VER" /tmp/build-a
+          sleep 2
+          (umask 0077 && scripts/build-release.sh "$VER" /tmp/build-b)
+          a="$(sha256sum /tmp/build-a/*.zip | cut -d' ' -f1)"
+          b="$(sha256sum /tmp/build-b/*.zip | cut -d' ' -f1)"
+          echo "build A: $a"; echo "build B: $b"
+          [ "$a" = "$b" ] || { echo "Release zip is not reproducible" >&2; exit 1; }
+          { echo "### Reproducible build"; echo "Both builds: \`$a\`"; } >> "$GITHUB_STEP_SUMMARY"

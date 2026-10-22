@@ -5,7 +5,7 @@ SafeBlueprint Community Edition is an open-source project under the Apache-2.0 l
 ## Roles
 | Role | Who | Responsibilities |
 |---|---|---|
-| Maintainer | Logesh Chinnadurai ([@goloviproducts-coder](https://github.com/goloviproducts-coder)) | Final approval of every change to `main`, every release and every production deploy. Owns the roadmap, security response and licensing. |
+| Maintainer | [@goloviproducts-coder](https://github.com/goloviproducts-coder) | Final approval of every change to `main`, every release and every production deploy. Owns the roadmap, security response and licensing. |
 | Automated reviewer | The project's review bot | First review of every pull request: reads the change, checks it against the rules below and posts a review comment. It never gives the final approval. |
 | Contributors | Anyone | Open issues, discussions and pull requests under the [Contributing guide](CONTRIBUTING.md) and [Code of Conduct](CODE_OF_CONDUCT.md). |
 
