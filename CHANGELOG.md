@@ -7,6 +7,7 @@ All notable changes to this project are documented here. Each release uses six p
 - Custom question packs: load your own questions from CSV or JSON, with weights and control mappings
 - HTML export for custom question pack reports
 - Community question pack library: health, education and public sector starter packs, plus a template for your own internal control IDs
+- Public security dashboard showing the live status of every security check
 
 ### Issues fixed
 - Removed a penalty figure from the guidance (we do not quote penalty amounts)
@@ -21,6 +22,7 @@ All notable changes to this project are documented here. Each release uses six p
 - Threat model check required on every change
 - Automated penetration tests (ZAP, Nuclei, Nikto) and browser security tests
 - Owner approval required for every live deploy to the hosted site
+- Automated fuzz testing of the question-pack loader to catch crashes from unusual or hostile files
 
 ### Privacy
 - Removed the third-party form service (FormSubmit); no contact email is shown on the site
@@ -33,12 +35,6 @@ All notable changes to this project are documented here. Each release uses six p
 - One-command Docker run and clear offline instructions
 - Documented the release supply-chain level (SLSA Build Level 2) and how to verify it
 - Published governance (who decides and how), a public roadmap, and a promise to acknowledge security reports within 72 hours with a published-advisories process
-
-### Features
-- Public security dashboard showing the live status of every security check
-
-### Security fixes
-- Automated fuzz testing of the question-pack loader to catch crashes from unusual or hostile files
 
 ## [1.0.0] - 2026-10-22
 ### Features
