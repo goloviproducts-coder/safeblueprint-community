@@ -4,6 +4,7 @@ All notable changes to this project are documented here. Each release uses six p
 
 ## [Unreleased]
 ### Features
+- THREAT_MODEL.md now opens with a plain-English "what could go wrong and what we do about it" table and a Mermaid data-flow diagram; the STRIDE table is kept below as the detailed register for auditors
 - The top of the home page now shows the fictional sample report card (Wattle Lane Retail), in place of the plain sample link and the blank card lower down
 - The fictional sample report now shows the APP 1.7 coverage the check gives: refusals and good or bad effects, children and vulnerable people, human review still in scope, sensitive information named separately, a dated policy reviewed yearly, exemptions as a screen only, and the commercial-in-confidence carve-out
 - Approve to release: one maintainer approval tags main, deploys production and publishes the release, with no local tagging
@@ -14,6 +15,7 @@ All notable changes to this project are documented here. Each release uses six p
 - APP 1.7 check now covers every area in the OAIC APP 1.7-1.9 guidance: refusing or failing to decide, good or bad effects, people experiencing vulnerability, human review not removing scope, sensitive information, privacy-policy placement and yearly review, exemptions as a screen only, and the commercial-in-confidence exclusion. Questions stay fixed
 
 ### Interfaces updated
+- New `npm run threat-model:update` writes the threat entry for your branch (detailed row plus a plain-English line) and regenerates the inventory; `npm run hooks` enables a pre-push check for it
 - New Actions workflow: approve-release (Run workflow with a version, then approve production)
 
 ### Security fixes
@@ -24,6 +26,7 @@ All notable changes to this project are documented here. Each release uses six p
 - No change
 
 ### General
+- The threat-model gate no longer needs the `threat-model-reviewed` label. A risk-relevant PR passes when it adds a threat row naming every risky file (auto-drafted by `npm run threat-model:update`); Dependabot manifest-only updates pass on their own. The label-reset job is removed and the gate job now only needs `contents: read`
 - Release guide and threat model updated
 
 ## [1.0.1] - 2026-10-22

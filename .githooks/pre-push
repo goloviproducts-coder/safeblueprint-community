@@ -1,0 +1,4 @@
+#!/bin/sh
+# Blocks a push when the threat entry or inventory for this branch is missing or stale.
+# Enable once per clone: npm run hooks
+exec node scripts/threat-model-draft.js --check
