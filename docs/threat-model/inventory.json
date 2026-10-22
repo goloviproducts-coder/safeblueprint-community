@@ -182,6 +182,17 @@
         "X-Content-Type-Options": "nosniff",
         "X-Frame-Options": "DENY"
       },
+      "/samples/*": {
+        "Content-Security-Policy": "default-src 'self'; script-src 'self'; style-src 'self' blob:; img-src 'self' data:; connect-src 'self'; form-action 'self'; frame-ancestors 'none'; base-uri 'none'; object-src 'none'; worker-src 'self'; manifest-src 'self'; upgrade-insecure-requests",
+        "Content-Type": "application/pdf",
+        "Cross-Origin-Opener-Policy": "same-origin",
+        "Cross-Origin-Resource-Policy": "same-origin",
+        "Permissions-Policy": "camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()",
+        "Referrer-Policy": "strict-origin-when-cross-origin",
+        "Strict-Transport-Security": "max-age=63072000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "DENY"
+      },
       "/sw.js": {
         "Cache-Control": "no-cache",
         "Content-Security-Policy": "default-src 'self'; script-src 'self'; style-src 'self' blob:; img-src 'self' data:; connect-src 'self'; form-action 'self'; frame-ancestors 'none'; base-uri 'none'; object-src 'none'; worker-src 'self'; manifest-src 'self'; upgrade-insecure-requests",
