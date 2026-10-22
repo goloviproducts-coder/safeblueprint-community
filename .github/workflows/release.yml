@@ -1,11 +1,65 @@
 name: release
+# Two entry points:
+# - push of a maintainer-signed v* tag: verifies the tag is annotated, GitHub-verified and on main.
+# - workflow_call from approve-release.yml after the production approval: the tag is SSH-signed by the
+#   release deploy key, so it checks the signature against the committed .github/release-signers
+#   (GitHub cannot show it as Verified), the release identity, the approved commit, and that it is on main.
+#   The push this tag causes is skipped by the source job.
 on:
   push:
     tags: ["v*"]
+  workflow_call:
+    inputs:
+      tag:
+        type: string
+        required: true
+      sha:
+        description: Commit checked before approval; the tag must point at it
+        type: string
+        required: true
+      approver:
+        type: string
+        required: true
+      run_url:
+        type: string
+        required: true
 permissions:
   contents: read
 jobs:
+  source:
+    # A v* tag pushed by the approve-release workflow is released and deployed inside that run, so the
+    # push it causes here is skipped (no duplicate release or deploy, no second approval).
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      skip: ${{ steps.source.outputs.skip }}
+    steps:
+      - name: Harden runner
+        uses: step-security/harden-runner@dc2769abcc0fcfbadfc1df54081c1608579ef6b2 # v2.22.2
+        with:
+          egress-policy: audit
+      - name: Is this tag from the approve-release workflow
+        id: source
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          EVENT: ${{ github.event_name }}
+          REF: ${{ github.ref }}
+        run: |
+          set -euo pipefail
+          skip=false
+          if [ "$EVENT" = "push" ] && [[ "$REF" == refs/tags/v* ]]; then
+            read -r type sha < <(gh api "repos/$REPO/git/ref/${REF#refs/}" -q '.object.type + " " + .object.sha')
+            if [ "$type" = "tag" ] && [ "$(gh api "repos/$REPO/git/tags/$sha" -q '.tagger.name + " " + .tagger.email')" = "safeblueprint-release release@safeblueprint.invalid" ]; then
+              skip=true
+              echo "Tag from approve-release: release and deploy run in that workflow; skipping here." >> "$GITHUB_STEP_SUMMARY"
+            fi
+          fi
+          echo "skip=$skip" >> "$GITHUB_OUTPUT"
   release:
+    needs: source
+    if: needs.source.outputs.skip != 'true'
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -21,31 +75,39 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+          ref: ${{ inputs.sha || github.ref }}
       - name: Verify tag is signed, annotated and on main
         env:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
-          TAG: ${{ github.ref_name }}
+          TAG: ${{ inputs.tag || github.ref_name }}
+          APPROVED_SHA: ${{ inputs.sha }}
         run: |
           set -euo pipefail
           [[ "$TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo "::error::'$TAG' is not a vX.Y.Z tag"; exit 1; }
           read -r type sha < <(gh api "repos/$REPO/git/ref/tags/$TAG" -q '.object.type + " " + .object.sha')
           [ "$type" = "tag" ] || { echo "::error::$TAG is not an annotated tag"; exit 1; }
-          [ "$(gh api "repos/$REPO/git/tags/$sha" -q .verification.verified)" = "true" ] || { echo "::error::$TAG signature is not verified by GitHub"; exit 1; }
           commit=$(gh api "repos/$REPO/git/tags/$sha" -q .object.sha)
+          if [ -n "$APPROVED_SHA" ]; then
+            [ "$commit" = "$APPROVED_SHA" ] || { echo "::error::$TAG points at $commit, not the approved commit $APPROVED_SHA"; exit 1; }
+            git fetch -q --no-tags "https://github.com/$REPO.git" "refs/tags/$TAG:refs/tags/$TAG"
+            scripts/verify-release-tag.sh "$TAG" "$APPROVED_SHA" >/dev/null
+          else
+            [ "$(gh api "repos/$REPO/git/tags/$sha" -q .verification.verified)" = "true" ] || { echo "::error::$TAG signature is not verified by GitHub"; exit 1; }
+          fi
           status=$(gh api "repos/$REPO/compare/$commit...main" -q .status)
           case "$status" in ahead|identical) ;; *) echo "::error::$TAG ($commit) is not on main ($status)"; exit 1;; esac
           echo "TAG_COMMIT=$commit" >> "$GITHUB_ENV"
           echo "$TAG -> $commit: signed, annotated, on main"
       - name: Release files are prepared for this tag
         env:
-          TAG: ${{ github.ref_name }}
+          TAG: ${{ inputs.tag || github.ref_name }}
         run: node scripts/check-release.js "$TAG"
       - name: Verify source checksums
         run: sha256sum -c SHA256SUMS.txt
       - name: Build zip (reproducible, built twice)
         env:
-          TAG: ${{ github.ref_name }}
+          TAG: ${{ inputs.tag || github.ref_name }}
         run: |
           VER="${TAG#v}"
           scripts/build-release.sh "$VER" dist
@@ -75,15 +137,11 @@ jobs:
       - name: Create release
         env:
           GH_TOKEN: ${{ github.token }}
-          TAG: ${{ github.ref_name }}
+          TAG: ${{ inputs.tag || github.ref_name }}
+          APPROVER: ${{ inputs.approver }}
+          RUN_URL: ${{ inputs.run_url }}
         run: |
-          VER="${TAG#v}"
-          VER_RE="$(printf '%s' "$VER" | sed 's/[.]/\\./g')"
-          VER_RE="$VER_RE" awk '$0 ~ ("^## \\[" ENVIRON["VER_RE"] "\\]") {f=1; next} /^## \[/ && f {exit} f' CHANGELOG.md > notes.md
-          for h in "Features" "Issues fixed" "Interfaces updated" "Security fixes" "Privacy" "General"; do
-            grep -qx "### $h" notes.md || { echo "::error title=Release not prepared::CHANGELOG.md [$VER] is missing heading '### $h'. Run 'node scripts/prepare-release.js' in a PR before tagging (docs/RELEASING.md)."; exit 1; }
-          done
-          printf '\nVerify the download: `gh attestation verify %s.zip --repo %s && sha256sum -c SHA256SUMS`. Full steps: docs/VERIFY.md\n' "$NAME" "$GITHUB_REPOSITORY" >> notes.md
+          node scripts/release-notes.js "$TAG" "$NAME" "$GITHUB_REPOSITORY" "$APPROVER" "$RUN_URL" > notes.md
           gh release create "$TAG" --repo "$GITHUB_REPOSITORY" --title "SafeBlueprint $TAG" --verify-tag \
             --notes-file notes.md \
             "dist/${NAME}.zip" "dist/${NAME}.spdx.json" "dist/${NAME}.cdx.json" dist/SHA256SUMS

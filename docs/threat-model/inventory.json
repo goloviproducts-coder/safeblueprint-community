@@ -469,6 +469,42 @@
     ]
   },
   "workflows": {
+    ".github/workflows/approve-release.yml": {
+      "jobs": {
+        "check": {
+          "permissions": {
+            "contents": "read"
+          }
+        },
+        "publish": {
+          "permissions": {
+            "attestations": "write",
+            "contents": "write",
+            "id-token": "write"
+          }
+        },
+        "release-production": {
+          "environment": "(block)",
+          "permissions": {
+            "actions": "read",
+            "contents": "read",
+            "deployments": "write"
+          }
+        }
+      },
+      "permissions": {
+        "contents": "read"
+      },
+      "secrets": [
+        "secrets.CLOUDFLARE_ACCOUNT_ID",
+        "secrets.CLOUDFLARE_API_TOKEN",
+        "secrets.RELEASE_DEPLOY_KEY"
+      ],
+      "triggers": [
+        "workflow_dispatch"
+      ],
+      "usesPullRequestTarget": false
+    },
     ".github/workflows/checksums.yml": {
       "jobs": {
         "verify": {
@@ -555,6 +591,11 @@
           "permissions": {
             "contents": "read",
             "deployments": "write"
+          }
+        },
+        "source": {
+          "permissions": {
+            "contents": "read"
           }
         }
       },
@@ -699,6 +740,11 @@
             "contents": "write",
             "id-token": "write"
           }
+        },
+        "source": {
+          "permissions": {
+            "contents": "read"
+          }
         }
       },
       "permissions": {
@@ -706,7 +752,8 @@
       },
       "secrets": [],
       "triggers": [
-        "push"
+        "push",
+        "workflow_call"
       ],
       "usesPullRequestTarget": false
     },

@@ -3,6 +3,24 @@
 All notable changes to this project are documented here. Each release uses six plain-English headings: Features, Issues fixed, Interfaces updated, Security fixes, Privacy, General (see docs/RELEASE_NOTES_TEMPLATE.md). The release workflow publishes the matching section as the GitHub release notes. Versions follow [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
+### Features
+- Approve to release: one maintainer approval tags main, deploys production and publishes the release, with no local tagging
+
+### Issues fixed
+- None
+
+### Interfaces updated
+- New Actions workflow: approve-release (Run workflow with a version, then approve production)
+
+### Security fixes
+- The approved release tags exactly the commit that was checked before approval, signed with a dedicated release key checked against a committed allowed-signers list; release notes record the approver and the run
+- Build provenance attestation kept for every release
+
+### Privacy
+- No change
+
+### General
+- Release guide and threat model updated
 
 ## [1.0.1] - 2026-10-22
 ### Features
