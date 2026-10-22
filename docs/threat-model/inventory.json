@@ -906,17 +906,9 @@
             "contents": "read"
           }
         },
-        "reset-review-label": {
-          "permissions": {
-            "pull-requests": "write"
-          }
-        },
         "threat-model": {
           "permissions": {
-            "checks": "read",
-            "contents": "read",
-            "issues": "read",
-            "pull-requests": "read"
+            "contents": "read"
           }
         }
       },

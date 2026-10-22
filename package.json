@@ -10,7 +10,9 @@
     "test:security": "playwright test",
     "privacy-proof": "playwright test test/security/privacy-proof.spec.js --reporter=list",
     "threat-model": "node scripts/threat-model-generate.js",
-    "threat-model:check": "node scripts/threat-model-generate.js --check"
+    "threat-model:check": "node scripts/threat-model-generate.js --check",
+    "threat-model:update": "node scripts/threat-model-draft.js",
+    "hooks": "git config core.hooksPath .githooks"
   },
   "engines": {
     "node": ">=20"
