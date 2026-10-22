@@ -42,8 +42,8 @@ const PLAIN = [
   [/Container/i, "changes the self-host container"],
   [/Server function/i, "changes the hosted contact relay"],
   [/Schema|Core app logic|Service worker|Runtime config/i, "changes how the app loads questions, scores answers or builds reports"],
-  [/^Build, release|deploy/i, "changes how releases are built or deployed"],
-  [/network|storage|DOM|origin|^Form|^Input|^Scripts loaded|frames|inline|@import/, "changes what the page loads, stores or sends"],
+  [/(?:^Build, release)|deploy/i, "changes how releases are built or deployed"],
+  [/(?:network|storage|DOM|origin|frames|inline|@import)|(?:^(?:Form|Input|Scripts loaded))/, "changes what the page loads, stores or sends"],
   [/ZAP/i, "changes the security scanner rules"],
 ];
 function plainLine(id, risky) {

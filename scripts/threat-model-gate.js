@@ -105,8 +105,8 @@ const AREA_FACTS = [
   { m: /Container/i, c: "Self-host container", s: "Tampering / Elevation of privilege", r: "Medium", t: "CIS-Docker", x: "The container image runs with more privilege or ships unexpected files", g: "Pinned base image, non-root, Trivy image scan and Nikto on every PR." },
   { m: /Server function/i, c: "Server function", s: "Information disclosure / Denial of service", r: "High", t: "OWASP-ASVS-5", x: "The server function leaks data or can be abused", g: "Input validated and size-limited, no personal data stored, Semgrep and CodeQL scans, maintainer approval required to merge." },
   { m: /Schema|Core app logic|Service worker|Runtime config/i, c: "Browser app (pack loading, scoring, report, offline cache)", s: "Tampering / Information disclosure", r: "Medium", t: "OWASP-ASVS-5, OWASP-ASVS-14", x: "Hostile packs or changed app logic run script, corrupt a report or send data off the device", g: "Strict CSP with no inline script, schema validation, output encoding; fuzzing and browser security tests prove zero cross-origin requests and no script execution from packs." },
-  { m: /^Build, release|deploy/i, c: "Build, release and deploy tooling", s: "Tampering", r: "Medium", t: "SLSA-L2, OWASP-CICD-SEC-9", x: "Build or release tooling changes what is shipped", g: "Reproducible-build check on every PR; releases built twice and compared; signed tags; staging before production." },
-  { m: /network|storage|DOM|origin|^Form|^Input|^Scripts loaded|frames|inline|@import/, c: "Browser data flows", s: "Information disclosure / Tampering", r: "Medium", t: "OWASP-ASVS-14.4, OWASP-ASVS-5", x: "A new data flow, origin, form, field or DOM sink sends data off the device or opens an injection path", g: "CSP connect-src/form-action allow-list, SRI on scripts, zero-egress privacy proof and browser security tests run on every PR." },
+  { m: /(?:^Build, release)|deploy/i, c: "Build, release and deploy tooling", s: "Tampering", r: "Medium", t: "SLSA-L2, OWASP-CICD-SEC-9", x: "Build or release tooling changes what is shipped", g: "Reproducible-build check on every PR; releases built twice and compared; signed tags; staging before production." },
+  { m: /(?:network|storage|DOM|origin|frames|inline|@import)|(?:^(?:Form|Input|Scripts loaded))/, c: "Browser data flows", s: "Information disclosure / Tampering", r: "Medium", t: "OWASP-ASVS-14.4, OWASP-ASVS-5", x: "A new data flow, origin, form, field or DOM sink sends data off the device or opens an injection path", g: "CSP connect-src/form-action allow-list, SRI on scripts, zero-egress privacy proof and browser security tests run on every PR." },
   { m: /ZAP/i, c: "Security scanning", s: "Repudiation", r: "Low", t: "OWASP-WSTG", x: "Scan rule changes hide real findings", g: "ZAP rule changes are reviewed in the PR; Nuclei and Nikto scan independently." },
 ];
 const RANK = { Low: 1, Medium: 2, High: 3 };
@@ -115,7 +115,7 @@ function factsFor(reasons) {
   reasons.forEach((a) => { const f = AREA_FACTS.find((x) => x.m.test(a)) || AREA_FACTS[AREA_FACTS.length - 1]; if (!hits.includes(f)) hits.push(f); });
   return hits;
 }
-const cell = (v) => String(v).replace(/\|/g, "\\|").replace(/\r?\n/g, " ");
+const cell = (v) => String(v).replace(/\\/g, "\\\\").replace(/\|/g, "\\|").replace(/\r?\n/g, " ");
 function draftEntry(id, risky, label) {
   const reasons = Array.from(new Set(risky.flatMap((r) => r.reasons)));
   const hits = factsFor(reasons);
