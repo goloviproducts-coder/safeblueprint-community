@@ -197,7 +197,7 @@ function admTasks(verdict, trigger, ref, initiative, time) {
   if (verdict === "Likely in scope") {
     rows = [
       ["Book a lawyer to edit the disclosure wording", "Put the template wording in front of a lawyer before it goes in the privacy policy.", "Privacy lead"],
-      ["Add this decision to the privacy-policy inventory", "Record the decision type and that it may need an APP 1.8 disclosure. Date the policy and review it at least yearly, or when the program changes.", "Product owner"],
+      ["Add this decision to the privacy-policy inventory", "Record the decision type and that it may need an APP 1.8 disclosure. The law asks for an up-to-date policy (APP 1.3). OAIC guidance, not the Act, suggests dating it and reviewing it regularly, such as yearly or when the program changes (APP Guidelines para 1.9).", "Product owner"],
       ["Write what the program reads and outputs", "One paragraph: inputs, the decision, and who relies on the output.", "Engineering lead"]
     ];
   } else if (trigger === "likely" && verdict === "Unlikely") {
@@ -604,15 +604,26 @@ function admLegal(typeLabel, name, role, trigger, verdict) {
     "The effect on a person can be significant.",
     "APP 1.8 sets out what that description covers.",
     "It covers decisions a program makes alone, and decisions where a program does a thing substantially and directly related to making them.",
-    "A score or shortlist still counts even when a person reviews it.",
+    ["OAIC guidance says a score or shortlist can still count even when a person reviews it.", "OAIC APP Guidelines, para 1.41", "https://www.oaic.gov.au/privacy/australian-privacy-principles/australian-privacy-principles-guidelines/chapter-1-app-1-open-and-transparent-management-of-personal-information#:~:text=Importantly%2C%20a%20decision%20may%20be%20within%20scope"],
     "APP 1.9: refusing or failing to decide counts, and good or bad effects both count.",
     "Examples: a benefit, rights under a contract, or access to a significant service such as healthcare, housing or a job.",
     "A child or a person experiencing vulnerability may be affected more.",
-    "The description goes in your APP privacy policy. Keep the policy dated and review it at least yearly, or when the program changes.",
+    "The description goes in your APP privacy policy, which the law asks you to keep up to date (APP 1.3).",
+    ["Good practice, not a legal requirement: OAIC guidance suggests dating the policy and reviewing it regularly, for example yearly or when the program changes.", "OAIC APP Guidelines, para 1.9", "https://www.oaic.gov.au/privacy/australian-privacy-principles/australian-privacy-principles-guidelines/chapter-1-app-1-open-and-transparent-management-of-personal-information#:~:text=1.9%20An%20APP%20entity%20should%20regularly%20review"],
     "Exemptions such as small business or employee records are only a screen here. Check them with a lawyer.",
-    "You can leave out commercial-in-confidence details and trade secrets.",
+    ["OAIC guidance, based on the Explanatory Memorandum rather than the words of APP 1.7, says the policy need not include commercial-in-confidence information or trade secrets. It reads this narrowly: only information whose release could harm your commercial interests.", "OAIC APP Guidelines, para 1.67", "https://www.oaic.gov.au/privacy/australian-privacy-principles/australian-privacy-principles-guidelines/chapter-1-app-1-open-and-transparent-management-of-personal-information#:~:text=Commercial%2Din%2Dconfidence%20information%20about%20automated"],
     "This note is not a finding of compliance."
-  ].forEach(function (line) { box.appendChild(node("p", "", line)); });
+  ].forEach(function (line) {
+    if (typeof line === "string") { box.appendChild(node("p", "", line)); return; }
+    var p = node("p", "", line[0] + " Source: ");
+    var a = node("a", "", line[1]);
+    a.href = line[2];
+    a.target = "_blank";
+    a.rel = "noopener noreferrer";
+    p.appendChild(a);
+    p.appendChild(document.createTextNode("."));
+    box.appendChild(p);
+  });
   if (role === 2 && trigger === "unlikely") {
     box.appendChild(node("p", "", "No APP 1.8 wording is suggested."));
     box.appendChild(node("p", "", "A person decides. The program does not do that thing."));
@@ -642,7 +653,7 @@ function admLegal(typeLabel, name, role, trigger, verdict) {
     var unsure = node("p", "");
     unsure.appendChild(document.createTextNode("If a lawyer confirms APP 1.7 applies: we use [kinds of personal information] when a computer program makes, or does a thing substantially and directly related to making, this decision: " + typeLabel + " ("));
     unsure.appendChild(node("span", "", name));
-    unsure.appendChild(document.createTextNode("). Delete the limb that does not apply. Leave out trade secrets."));
+    unsure.appendChild(document.createTextNode("). Delete the limb that does not apply. OAIC guidance says commercial-in-confidence details and trade secrets need not be included."));
     box.appendChild(unsure);
   }
   wrap.appendChild(box);
