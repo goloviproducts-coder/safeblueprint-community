@@ -19,7 +19,7 @@
 <link rel="icon" href="data:,">
 <link rel="manifest" href="/manifest.webmanifest">
 <meta name="theme-color" content="#14213D">
-<link rel="stylesheet" href="/app.css" integrity="sha384-FPOJ8ZSU35mBUyCZ5/3V7YeTLenb6j4794pMNodl3HvQ7Ci6v3oPEGhLqqpAmaHy" crossorigin="anonymous">
+<link rel="stylesheet" href="/app.css" integrity="sha384-gvrmOX0SqAfxZThc08maZ5+dbEsb8oGnBpVoYgohYch8z3UHXmK6DFdsJOxbaiP8" crossorigin="anonymous">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' blob:; img-src 'self' data:; connect-src 'self'; form-action 'self'; base-uri 'none'; object-src 'none'; worker-src 'self'; manifest-src 'self'">
 </head>
 <body>
@@ -28,15 +28,30 @@
   <a class="logo" href="/">Safe<span>Blueprint</span></a>
   <span class="badge">Beta</span>
   <span class="net-pill" id="net-pill" hidden></span>
-  <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="primary-nav">Menu</button>
+  <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="primary-nav" aria-label="Open menu"><span class="nt-icon" aria-hidden="true">☰</span></button>
   <nav class="menu" id="primary-nav" aria-label="Primary">
-    <a href="/">Home</a>
-    <a href="/ai-security-checklist/">AI Security Checklist</a>
-    <a href="/privacy/">Privacy</a>
-    <a href="/security/" aria-current="page">Security</a>
-    <a href="/about/">About us</a>
-    <a href="/contact/">Contact</a>
-    <a href="https://github.com/goloviproducts-coder/safeblueprint-community" rel="noopener">GitHub</a>
+    <div class="nav-group">
+      <button class="nav-group-btn" type="button" aria-expanded="false" aria-controls="ng-tools" id="ngb-tools">Tools</button>
+      <ul class="nav-list" id="ng-tools" aria-labelledby="ngb-tools">
+        <li><a href="/">Automated decisions check</a></li>
+        <li><a href="/ai-security-checklist/">AI Security Checklist</a></li>
+      </ul>
+    </div>
+    <div class="nav-group has-current">
+      <button class="nav-group-btn" type="button" aria-expanded="false" aria-controls="ng-trust" id="ngb-trust">Trust</button>
+      <ul class="nav-list" id="ng-trust" aria-labelledby="ngb-trust">
+        <li><a href="/privacy/">Privacy</a></li>
+        <li><a href="/security/" aria-current="page">Security</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <button class="nav-group-btn" type="button" aria-expanded="false" aria-controls="ng-about" id="ngb-about">About</button>
+      <ul class="nav-list" id="ng-about" aria-labelledby="ngb-about">
+        <li><a href="/about/">About us</a></li>
+        <li><a href="/contact/">Contact</a></li>
+        <li><a href="https://github.com/goloviproducts-coder/safeblueprint-community" rel="noopener">GitHub<svg class="ext" aria-hidden="true" focusable="false" viewBox="0 0 16 16" width="12" height="12"><path d="M6 3H3v10h10v-3M9 2h5v5M14 2 7 9" fill="none" stroke="currentColor" stroke-width="1.6"/></svg><span class="sr-only"> (external site)</span></a></li>
+      </ul>
+    </div>
   </nav>
 </header>
 <div class="hero">
@@ -145,6 +160,6 @@
 <footer>
   <p class="footline">© 2026 · Beta · Not legal advice · <a href="/privacy/">Privacy</a> · <a href="/contact/">Contact</a> · <a href="https://github.com/goloviproducts-coder/safeblueprint-community" rel="noopener">Open source</a></p>
 </footer>
-<script src="/ui.js" integrity="sha384-1jE67bRdK6s55k8WY5W9spZeaxtXRE98d1/FNj3s7GVJ+0JD+yWg4uB9Cd3ad5i6" crossorigin="anonymous"></script>
+<script src="/ui.js" integrity="sha384-NTfXxLNHh9VRn1uVSc+axK5YrIR842WsQrxRumxAU8G1tQGAnpxhlGFvdnFL/aP8" crossorigin="anonymous"></script>
 </body>
 </html>
