@@ -602,7 +602,7 @@
             "deployments": "write"
           }
         },
-        "deploy-production-auto": {
+        "deploy-production-label": {
           "environment": "(block)",
           "permissions": {
             "contents": "read",

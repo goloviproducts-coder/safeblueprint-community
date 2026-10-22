@@ -4,7 +4,7 @@ name: deploy
 # - push of a signed v* tag (see docs/RELEASING.md): deploy-staging, then deploy-production, which
 #   verifies the tag and waits for maintainer approval in the production environment before it gets the secrets.
 # - push to main from a merged PR labelled `prod` (label applied by the repo owner, see OWNER below):
-#   deploy-staging, then deploy-production-auto in the `production-auto` environment, with no approval step.
+#   deploy-staging, then deploy-production-label in the `production` environment (no required reviewers).
 on:
   push:
     branches: [main]
@@ -193,9 +193,9 @@ jobs:
         with:
           cloudflare-api-token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           cloudflare-account-id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-  deploy-production-auto:
-    # Merged PR labelled `prod` by the owner: production right after staging, without an approval step.
-    # Tag and approve-release deploys keep the approval-gated `production` environment.
+  deploy-production-label:
+    # Merged PR labelled `prod` by the owner: production right after staging. Uses the `production`
+    # environment but only the Cloudflare secrets; it never references RELEASE_DEPLOY_KEY.
     needs: [source, deploy-staging]
     if: needs.source.outputs.prod == 'true' && github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
@@ -203,7 +203,7 @@ jobs:
       group: deploy-production
       cancel-in-progress: false
     environment:
-      name: production-auto
+      name: production
       url: https://safeblueprint.pages.dev
     permissions:
       contents: read
