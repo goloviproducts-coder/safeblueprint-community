@@ -12,11 +12,14 @@ Previews and staging send `X-Robots-Tag: noindex, nofollow` so search engines ig
 ## Cutting a release
 1. **Prepare (PR).** On a new branch run `node scripts/prepare-release.js patch|minor|major`. It computes the next version from the latest `v*` tag and moves the CHANGELOG `Unreleased` bullets into that version, updating `VERSION` and `package.json`. Run `node scripts/update-hashes.js`, commit (signed, `-s`), open a PR, and merge it once the checks pass. Staging updates automatically.
 2. **Gate.** Actions → **Release** → Run workflow on `main` and choose the same bump. Only the maintainer can run it (`release` environment, required reviewer). It checks that `main` HEAD is a verified commit, that CHANGELOG and VERSION match the next version and that the tag is free, then prints the exact tag command in the job summary.
-3. **Tag (maintainer, locally).** Run the printed command, for example:
+3. **Tag (maintainer, locally).** Use `scripts/tag-release.sh vX.Y.Z`: it runs `scripts/check-release.js` against `origin/main` and refuses to sign the tag unless CHANGELOG has a `## [X.Y.Z]` section with all six headings and `VERSION` and `package.json` say `X.Y.Z`. Or run the printed command, for example:
    `git fetch origin && git tag -s v1.1.0 -m "SafeBlueprint v1.1.0" <main HEAD sha> && git push origin v1.1.0`
    Your signing key must be added to GitHub as a **signing** key so the tag shows as Verified.
 4. **Build.** The tag push runs `release.yml`: it checks that the tag is signed, annotated and on `main`, then builds the zip, SPDX and CycloneDX SBOMs, SHA256SUMS and provenance attestations, and publishes release notes taken from the CHANGELOG section.
 5. **Deploy.** The same tag push runs `deploy.yml`: staging first, then `deploy-production` verifies the tag and waits. Approve it under Actions → the run → Review deployments.
+
+### Release readiness checks
+`scripts/check-release.js` is the single check for release files. It runs on every PR and on main (CHANGELOG, VERSION and package.json must agree), in `tag-release.sh` before signing, and first thing in `release.yml` and `deploy-production` on a tag push, so a tag cut without step 1 fails in seconds with the fix to apply and never reaches production. If that happens, merge the prepare PR, then delete and re-create the tag.
 
 ### Why CI does not create the tag
 A tag created by CI would not be signed with the maintainer's key. The `v*` tag ruleset allows only admins to create tags, and a tag pushed with `GITHUB_TOKEN` would not trigger the release and deploy workflows. Tagging locally with your own key is the safest option.

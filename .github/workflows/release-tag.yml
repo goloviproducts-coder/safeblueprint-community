@@ -48,8 +48,7 @@ jobs:
           cur=$(node -e 'const {nextVersion}=require("./scripts/prepare-release.js");process.stdout.write(nextVersion([process.argv[1]],process.argv[2]))' "${latest:-v0.0.0}" "$BUMP")
           prev=$(node -e 'const f=require("fs");const m=f.readFileSync("CHANGELOG.md","utf8").match(/^## \[(\d+\.\d+\.\d+)\]/m);process.stdout.write(m?m[1]:"")')
           echo "Latest tag: ${latest:-none}; requested $BUMP -> $cur; newest CHANGELOG version: ${prev:-none}"
-          [ "$prev" = "$cur" ] || { echo "::error::CHANGELOG has no [$cur] section yet. Run 'node scripts/prepare-release.js $BUMP' in a PR to main first."; exit 1; }
-          head -1 VERSION | grep -q " $cur$" || { echo "::error::VERSION is not $cur"; exit 1; }
+          node scripts/check-release.js "v$cur"
           git rev-parse -q --verify "refs/tags/v$cur" >/dev/null && { echo "::error::v$cur already exists"; exit 1; }
           [ "$(gh api "repos/$REPO/commits/$head" -q .commit.verification.verified)" = "true" ] || { echo "::error::main HEAD is not a verified commit"; exit 1; }
           {
