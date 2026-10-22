@@ -5,11 +5,17 @@
 | Preview | Every PR from a branch in this repo (never forks or Dependabot) | `https://pr-<number>.safeblueprint.pages.dev`, URL posted as a PR comment | None (`preview` environment) |
 | Staging | Every merge to `main`, every release tag, or Actions → deploy → Run workflow | https://staging.safeblueprint.pages.dev | None (`staging` environment) |
 | Production | A signed `vX.Y.Z` tag on `main` | https://safeblueprint.pages.dev | Maintainer (`production` environment) |
+| Production (label) | Merge of a PR labelled `prod` **by goloviproducts-coder** | https://safeblueprint.pages.dev, right after staging | Maintainer (`production` environment) |
 | Rollback | Actions → rollback → Run workflow with an earlier tag | https://safeblueprint.pages.dev | Maintainer (`production` environment) |
 
 Previews and staging send `X-Robots-Tag: noindex, nofollow` so search engines ignore them. Production does not. All deploys build the hosted edition with `scripts/build-edition.js` and use the same pinned actions, harden-runner, read-only token permissions and no package-manager cache.
 
-## Approve to release (recommended)
+## Label `prod` (fastest)
+Add the label `prod` to a PR before merging it. After the merge, `deploy.yml` deploys staging, then production in the `production` environment once staging succeeds and a maintainer approves it (run → Review deployments). The label only counts if the latest `prod` label event on that PR was by **goloviproducts-coder**; a label added by a bot or anyone else is ignored (staging only, with a warning). Unlabelled merges stop at staging. This does not tag or publish a release; use approve-release for a versioned release.
+
+Tag and approve-release releases are unchanged and still need the same approval. The label deploy job uses only the Cloudflare secrets and never references `RELEASE_DEPLOY_KEY`, which only the approve-release tagging job uses.
+
+## Approve to release (recommended for versioned releases)
 No local tagging needed.
 1. **Prepare (PR).** Same as step 1 below: `node scripts/prepare-release.js patch|minor|major`, `node scripts/update-hashes.js`, signed commit, PR, merge.
 2. **Start.** Actions → **approve-release** → Run workflow on `main`, version `vX.Y.Z`. The `check` job confirms CHANGELOG, VERSION and package.json are prepared for that version, the tag is free and main HEAD is a verified commit, and records main's SHA.

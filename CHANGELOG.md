@@ -7,6 +7,7 @@ All notable changes to this project are documented here. Each release uses six p
 - THREAT_MODEL.md now opens with a plain-English "what could go wrong and what we do about it" table and a Mermaid data-flow diagram; the STRIDE table is kept below as the detailed register for auditors
 - The top of the home page now shows the fictional sample report card (Wattle Lane Retail), in place of the plain sample link and the blank card lower down
 - The fictional sample report now shows the APP 1.7 coverage the check gives: refusals and good or bad effects, children and vulnerable people, human review still in scope, sensitive information named separately, a dated policy reviewed yearly, exemptions as a screen only, and the commercial-in-confidence carve-out
+- Label `prod` on a PR (applied by the owner) deploys it to production when merged, after staging succeeds and the maintainer approves the production environment; unlabelled merges stop at staging
 - Approve to release: one maintainer approval tags main, deploys production and publishes the release, with no local tagging
 
 ### Issues fixed

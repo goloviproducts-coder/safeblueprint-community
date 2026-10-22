@@ -3,6 +3,8 @@ name: deploy
 # - push to main (or manual run): deploy-staging only (no approval, https://staging.safeblueprint.pages.dev, noindex).
 # - push of a signed v* tag (see docs/RELEASING.md): deploy-staging, then deploy-production, which
 #   verifies the tag and waits for maintainer approval in the production environment before it gets the secrets.
+# - push to main from a merged PR labelled `prod` (label applied by the repo owner, see OWNER below):
+#   deploy-staging, then deploy-production-label in the `production` environment, which waits for maintainer approval.
 on:
   push:
     branches: [main]
@@ -17,8 +19,11 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+      pull-requests: read
+      issues: read
     outputs:
       skip: ${{ steps.source.outputs.skip }}
+      prod: ${{ steps.prod.outputs.prod }}
     steps:
       - name: Harden runner
         uses: step-security/harden-runner@dc2769abcc0fcfbadfc1df54081c1608579ef6b2 # v2.22.2
@@ -42,6 +47,31 @@ jobs:
             fi
           fi
           echo "skip=$skip" >> "$GITHUB_OUTPUT"
+      - name: Was this commit merged from a PR the owner labelled prod
+        id: prod
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          SHA: ${{ github.sha }}
+          OWNER: goloviproducts-coder
+        run: |
+          set -euo pipefail
+          prod=false
+          # Only a merged PR into main whose merge commit is exactly this push's SHA counts.
+          pr=$(gh api "repos/$REPO/commits/$SHA/pulls" -q "[.[] | select(.merged_at != null and .base.ref == \"main\" and .merge_commit_sha == \"$SHA\")] | first | .number // empty")
+          if [ -n "$pr" ] && [[ "$pr" =~ ^[0-9]+$ ]]; then
+            has=$(gh api "repos/$REPO/issues/$pr/labels" -q '[.[].name] | index("prod") != null')
+            # The latest labeled/unlabeled event for prod must be a labeled event by the owner (bots and others are ignored).
+            actor=$(gh api "repos/$REPO/issues/$pr/events" --paginate -q '.[] | select((.event=="labeled" or .event=="unlabeled") and .label.name=="prod") | .event + " " + .actor.login' | tail -n 1)
+            if [ "$has" = "true" ] && [ "$actor" = "labeled $OWNER" ]; then
+              prod=true
+              echo "PR #$pr carries prod, applied by $OWNER: production deploys after staging once a maintainer approves the production environment." >> "$GITHUB_STEP_SUMMARY"
+            elif [ "$has" = "true" ]; then
+              echo "::warning::PR #$pr has prod but it was not applied by $OWNER ($actor); staging only."
+            fi
+          fi
+          echo "prod=$prod" >> "$GITHUB_OUTPUT"
   deploy-staging:
     needs: source
     if: needs.source.outputs.skip != 'true'
@@ -160,6 +190,34 @@ jobs:
         run: node scripts/check-release.js "$TAG"
       - name: Build, deploy and smoke-test production
         uses: ./.github/actions/deploy-production # zizmor: ignore[self-repository] local action from the checked-out release commit
+        with:
+          cloudflare-api-token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          cloudflare-account-id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+  deploy-production-label:
+    # Merged PR labelled `prod` by the owner: production right after staging. Uses the `production`
+    # environment but only the Cloudflare secrets; it never references RELEASE_DEPLOY_KEY.
+    needs: [source, deploy-staging]
+    if: needs.source.outputs.prod == 'true' && github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    concurrency:
+      group: deploy-production
+      cancel-in-progress: false
+    environment:
+      name: production
+      url: https://safeblueprint.pages.dev
+    permissions:
+      contents: read
+      deployments: write
+    steps:
+      - name: Harden runner
+        uses: step-security/harden-runner@dc2769abcc0fcfbadfc1df54081c1608579ef6b2 # v2.22.2
+        with:
+          egress-policy: audit
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Build, deploy and smoke-test production
+        uses: ./.github/actions/deploy-production # zizmor: ignore[self-repository] local action from the merged main commit
         with:
           cloudflare-api-token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           cloudflare-account-id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
