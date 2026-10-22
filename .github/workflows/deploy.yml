@@ -126,7 +126,7 @@ jobs:
           TAG: ${{ github.ref_name }}
         run: node scripts/check-release.js "$TAG"
       - name: Build, deploy and smoke-test production
-        uses: $/.github/actions/deploy-production
+        uses: ./.github/actions/deploy-production # zizmor: ignore[self-repository] local action from the checked-out release commit
         with:
           cloudflare-api-token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           cloudflare-account-id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
