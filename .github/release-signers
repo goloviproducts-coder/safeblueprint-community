@@ -2,3 +2,4 @@
 # One line: the principal, the git namespace and the PUBLIC half of the RELEASE_DEPLOY_KEY deploy key, e.g.
 # release@safeblueprint.invalid namespaces="git" ssh-ed25519 AAAA... safeblueprint-release
 # Changing this file is risk-relevant: it decides which key can release. See docs/RELEASING.md.
+release@safeblueprint.invalid namespaces="git" ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKeqirQkeS5UitB3ZFLWYBuZqoEs2PqI9GixqBAZ9f4Y safeblueprint-release
