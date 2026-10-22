@@ -1,6 +1,6 @@
 {
   "name": "safeblueprint-community",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "description": "SafeBlueprint community edition. No runtime dependencies; tests use the built-in node:test runner.",
   "license": "Apache-2.0",

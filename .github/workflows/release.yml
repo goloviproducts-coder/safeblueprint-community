@@ -37,6 +37,10 @@ jobs:
           case "$status" in ahead|identical) ;; *) echo "::error::$TAG ($commit) is not on main ($status)"; exit 1;; esac
           echo "TAG_COMMIT=$commit" >> "$GITHUB_ENV"
           echo "$TAG -> $commit: signed, annotated, on main"
+      - name: Release files are prepared for this tag
+        env:
+          TAG: ${{ github.ref_name }}
+        run: node scripts/check-release.js "$TAG"
       - name: Verify source checksums
         run: sha256sum -c SHA256SUMS.txt
       - name: Build zip (reproducible, built twice)
@@ -77,7 +81,7 @@ jobs:
           VER_RE="$(printf '%s' "$VER" | sed 's/[.]/\\./g')"
           VER_RE="$VER_RE" awk '$0 ~ ("^## \\[" ENVIRON["VER_RE"] "\\]") {f=1; next} /^## \[/ && f {exit} f' CHANGELOG.md > notes.md
           for h in "Features" "Issues fixed" "Interfaces updated" "Security fixes" "Privacy" "General"; do
-            grep -qx "### $h" notes.md || { echo "CHANGELOG.md section for $VER is missing heading: $h" >&2; exit 1; }
+            grep -qx "### $h" notes.md || { echo "::error title=Release not prepared::CHANGELOG.md [$VER] is missing heading '### $h'. Run 'node scripts/prepare-release.js' in a PR before tagging (docs/RELEASING.md)."; exit 1; }
           done
           printf '\nVerify the download: `gh attestation verify %s.zip --repo %s && sha256sum -c SHA256SUMS`. Full steps: docs/VERIFY.md\n' "$NAME" "$GITHUB_REPOSITORY" >> notes.md
           gh release create "$TAG" --repo "$GITHUB_REPOSITORY" --title "SafeBlueprint $TAG" --verify-tag \

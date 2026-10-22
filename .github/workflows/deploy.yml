@@ -121,6 +121,10 @@ jobs:
           case "$status" in ahead|identical) ;; *) echo "::error::$TAG ($commit) is not on main ($status)"; exit 1;; esac
           echo "TAG_COMMIT=$commit" >> "$GITHUB_ENV"
           echo "$TAG -> $commit: signed, annotated, on main"
+      - name: Release files are prepared for this tag
+        env:
+          TAG: ${{ github.ref_name }}
+        run: node scripts/check-release.js "$TAG"
       - name: Check secrets are set
         env:
           CF_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
