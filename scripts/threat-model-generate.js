@@ -8,6 +8,10 @@ const fs = require("fs");
 const path = require("path");
 const root = path.join(__dirname, "..");
 const OUT = "docs/threat-model/inventory.json";
+const SITE_HEADERS = path.join(__dirname, "..", "site", "_headers");
+const NGINX = path.join(__dirname, "..", "nginx.conf");
+const PKG = path.join(__dirname, "..", "package.json");
+const OUT_ABS = path.join(__dirname, "..", "docs", "threat-model", "inventory.json");
 
 const API_PATTERNS = {
   "fetch": /\bfetch\s*\(/g,
@@ -35,10 +39,19 @@ const API_PATTERNS = {
 const URL_RE = /\b(?:https?|wss?):\/\/[A-Za-z0-9.-]+(?::\d+)?/g;
 
 function rel(p) { return path.relative(root, p).split(path.sep).join("/"); }
+// Every path must resolve inside the repository.
+function inside(p) {
+  const r = path.relative(root, p);
+  if (r.startsWith("..") || path.isAbsolute(r)) throw new Error("Refusing path outside the repository: " + p);
+  return p;
+}
+function readText(p) { try { return fs.readFileSync(inside(p), "utf8"); } catch (e) { return ""; } }
 function walk(dir) {
-  if (!fs.existsSync(dir)) return [];
-  return fs.readdirSync(dir, { withFileTypes: true }).flatMap((d) => {
-    const p = path.join(dir, d.name);
+  let entries;
+  try { entries = fs.readdirSync(inside(dir), { withFileTypes: true }); } catch (e) { return []; }
+  return entries.flatMap((d) => {
+    if (d.name.indexOf("..") !== -1 || d.name.indexOf("/") !== -1) throw new Error("Unsafe file name: " + d.name);
+    const p = inside(dir + path.sep + d.name);
     return d.isDirectory() ? walk(p) : [p];
   }).sort();
 }
@@ -49,7 +62,11 @@ function apis(text) {
   Object.keys(API_PATTERNS).forEach((k) => { const n = (text.match(API_PATTERNS[k]) || []).length; if (n) o[k] = n; });
   return o;
 }
-function attr(tag, name) { const m = tag.match(new RegExp("\\b" + name + "\\s*=\\s*\"([^\"]*)\"", "i")); return m ? m[1] : null; }
+const ATTR_RE = {
+  content: /\bcontent\s*=\s*"([^"]*)"/i, src: /\bsrc\s*=\s*"([^"]*)"/i, action: /\baction\s*=\s*"([^"]*)"/i,
+  method: /\bmethod\s*=\s*"([^"]*)"/i, type: /\btype\s*=\s*"([^"]*)"/i, name: /\bname\s*=\s*"([^"]*)"/i, id: /\bid\s*=\s*"([^"]*)"/i
+};
+function attr(tag, name) { const m = tag.match(ATTR_RE[name]); return m ? m[1] : null; }
 function htmlFacts(html) {
   const tags = (re) => html.match(re) || [];
   return {
@@ -123,14 +140,14 @@ function build() {
   const pages = {}, scripts = {}, endpoints = {};
   const addEndpoints = (f, list) => list.forEach((o) => { (endpoints[o] = endpoints[o] || []).push(f); });
   files.forEach((p) => {
-    const f = rel(p); const text = /\.(html|js|css|json|webmanifest|txt|xml)$/.test(f) ? fs.readFileSync(p, "utf8") : "";
+    const f = rel(p); const text = /\.(html|js|css|json|webmanifest|txt|xml)$/.test(f) ? readText(p) : "";
     if (f.endsWith(".html")) { const h = htmlFacts(text); pages[f] = h; addEndpoints(f, h.externalOrigins); }
     else if (f.endsWith(".js")) { scripts[f] = { apis: apis(text), externalOrigins: origins(text) }; addEndpoints(f, scripts[f].externalOrigins); }
     else if (f.endsWith(".css")) { const o = origins(text); if (o.length || /@import/.test(text)) scripts[f] = { apis: {}, externalOrigins: o, imports: (text.match(/@import/g) || []).length }; addEndpoints(f, o); }
   });
   const functions = {};
   walk(path.join(root, "functions")).forEach((p) => {
-    const f = rel(p); const t = fs.readFileSync(p, "utf8");
+    const f = rel(p); const t = readText(p);
     functions[f] = { apis: apis(t), externalOrigins: origins(t) }; addEndpoints(f, functions[f].externalOrigins);
   });
   const storage = {}, flows = [];
@@ -140,16 +157,15 @@ function build() {
   });
   Object.entries(pages).forEach(([f, p]) => p.forms.forEach((fm) => flows.push({ file: f, api: "form", action: fm.action, method: fm.method })));
   const workflows = {};
-  walk(path.join(root, ".github", "workflows")).filter((p) => /\.ya?ml$/.test(p)).forEach((p) => { workflows[rel(p)] = workflowFacts(fs.readFileSync(p, "utf8")); });
-  const pkg = JSON.parse(fs.readFileSync(path.join(root, "package.json"), "utf8"));
-  const readIf = (f) => (fs.existsSync(path.join(root, f)) ? fs.readFileSync(path.join(root, f), "utf8") : "");
+  walk(path.join(root, ".github", "workflows")).filter((p) => /\.ya?ml$/.test(p)).forEach((p) => { workflows[rel(p)] = workflowFacts(readText(p)); });
+  const pkg = JSON.parse(readText(PKG) || "{}");
   return sortKeys({
     generatedBy: "scripts/threat-model-generate.js (npm run threat-model). Do not edit by hand.",
     pages, scripts, functions,
     dataFlows: flows.sort((a, b) => (a.file + a.api).localeCompare(b.file + b.api)),
     externalEndpoints: Object.fromEntries(Object.entries(endpoints).map(([k, v]) => [k, uniq(v)])),
     storage: Object.fromEntries(Object.entries(storage).map(([k, v]) => [k, uniq(v)])),
-    headers: { "site/_headers": parseHeaders(readIf("site/_headers")), "nginx.conf": nginxHeaders(readIf("nginx.conf")) },
+    headers: { "site/_headers": parseHeaders(readText(SITE_HEADERS)), "nginx.conf": nginxHeaders(readText(NGINX)) },
     workflows,
     dependencies: { dependencies: pkg.dependencies || {}, devDependencies: pkg.devDependencies || {}, overrides: pkg.overrides || {} }
   });
@@ -157,8 +173,8 @@ function build() {
 function render() { return JSON.stringify(build(), null, 2) + "\n"; }
 
 if (require.main === module) {
-  const next = render(); const out = path.join(root, OUT);
-  const cur = fs.existsSync(out) ? fs.readFileSync(out, "utf8") : "";
+  const next = render(); const out = OUT_ABS;
+  const cur = readText(out);
   if (process.argv.includes("--check")) {
     if (cur !== next) { console.error(OUT + " is out of date. Run `npm run threat-model` and commit the result."); process.exit(1); }
     console.log(OUT + " is up to date."); process.exit(0);
