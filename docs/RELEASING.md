@@ -14,13 +14,23 @@ No local tagging needed.
 1. **Prepare (PR).** Same as step 1 below: `node scripts/prepare-release.js patch|minor|major`, `node scripts/update-hashes.js`, signed commit, PR, merge.
 2. **Start.** Actions → **approve-release** → Run workflow on `main`, version `vX.Y.Z`. The `check` job confirms CHANGELOG, VERSION and package.json are prepared for that version, the tag is free and main HEAD is a verified commit, and records main's SHA.
 3. **Approve.** The `release-production` job waits for the `production` environment. Review the summary and approve under the run → Review deployments. This is the only approval.
-4. **Automatic.** After approval it creates an annotated tag at the recorded SHA (tagged by `github-actions[bot]`, message names the approver and run), deploys that commit to production with the same steps and smoke tests as `deploy.yml`, then calls `release.yml` to build the reproducible zip, SBOMs, SHA256SUMS and provenance attestation and publish the release. The notes come from the CHANGELOG and name the approver and the run URL.
+4. **Automatic.** After approval it SSH-signs an annotated tag at the recorded SHA with the release deploy key (tagger `safeblueprint-release <release@safeblueprint.invalid>`; the message names the approver and the run), checks the signature against `.github/release-signers`, and pushes only that tag over SSH, trusting only the pinned github.com host key in `.github/ssh/github_known_hosts`. It then deploys that commit to production with the same steps and smoke tests as `deploy.yml`, and calls `release.yml` to build the reproducible zip, SBOMs, SHA256SUMS and provenance attestation and publish the release. The notes come from the CHANGELOG and name the approver and the run URL.
 
 Notes:
-- The tag is not key-signed; verify a release with `gh attestation verify` (docs/VERIFY.md) and the approval record on the run.
-- Tags made by GitHub Actions do not trigger the push-based `release` and `deploy` workflows, so nothing runs twice.
-- If the deploy fails after tagging, the tag exists without a release: fix forward with a new patch version, or delete the tag (maintainer) and run again.
-- One-time setup: the `v*` tag ruleset must let GitHub Actions bypass it (Settings → Rules → Rulesets → Protect release tags → Bypass list → Add bypass → GitHub Actions → Always allow → Save changes).
+- GitHub can't show these tags as **Verified**: that badge needs a key registered to a user account, and a deploy key isn't one. `release.yml` (called path) and `rollback.yml` verify them against the committed `.github/release-signers` instead. To check by hand: `git fetch origin tag vX.Y.Z && git -c gpg.ssh.allowedSignersFile=.github/release-signers verify-tag vX.Y.Z`, or run `scripts/verify-release-tag.sh vX.Y.Z`.
+- The SSH push does trigger the tag-push `release` and `deploy` workflows. Their first job (`source`) sees the release identity as the tagger and skips them, so nothing is released or deployed twice and there's no second approval.
+- If the deploy fails after tagging, the tag exists without a release. Fix forward with a new patch version, or delete the tag (maintainer) and run again. If only `publish` fails, re-run the failed job.
+
+### One-time setup (maintainer, on your own computer; the private key never leaves it except into the secret)
+1. Generate the key with no passphrase: `ssh-keygen -t ed25519 -N "" -C safeblueprint-release -f ./safeblueprint-release`
+2. Add the deploy key: Settings → Deploy keys → Add deploy key. Title `safeblueprint-release`, paste `safeblueprint-release.pub`, tick **Allow write access**, click Add key.
+3. Add the secret: Settings → Environments → `production` → Environment secrets → Add environment secret. Name `RELEASE_DEPLOY_KEY`, value = the whole private key file `safeblueprint-release` (including the BEGIN/END lines).
+4. Allow the public key to sign releases: add this one line to `.github/release-signers` in a PR (or paste the **public** key to the maintainers and they will open the PR):
+   `release@safeblueprint.invalid namespaces="git" <contents of safeblueprint-release.pub>`
+5. Tag ruleset: Settings → Rules → Rulesets → Protect release tags → Bypass list → Add bypass → **Deploy keys** → Always allow → Save changes.
+6. Delete the local private key: `rm ./safeblueprint-release` (keep or delete the `.pub`; it is public).
+
+To rotate: repeat with a new key, replace the line in `.github/release-signers` and the secret, and delete the old deploy key. To revoke: delete the deploy key and remove the line.
 
 ## Cutting a release (manual signed tag)
 1. **Prepare (PR).** On a new branch run `node scripts/prepare-release.js patch|minor|major`. It computes the next version from the latest `v*` tag and moves the CHANGELOG `Unreleased` bullets into that version, updating `VERSION` and `package.json`. Run `node scripts/update-hashes.js`, commit (signed, `-s`), open a PR, and merge it once the checks pass. Staging updates automatically.

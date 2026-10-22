@@ -498,12 +498,12 @@
                 {
                   "id": "ae7d6419-faf9-593e-9a6d-b969ac54bf65",
                   "number": 20,
-                  "title": "T20d Approve-to-release tags and deploys an unapproved commit",
+                  "title": "T20d Approve-to-release tags and deploys an unapproved commit, or the release key is misused",
                   "status": "Mitigated",
                   "severity": "High",
                   "type": "Spoofing",
                   "description": "The approve-release workflow could tag or deploy a commit nobody approved, or its tag permission could be abused.",
-                  "mitigation": "Runs from main only; read-only check job validates release files, free tag and verified main HEAD and records the SHA; tagging and production deploy run only after production environment approval, at exactly the recorded SHA still on main; approver and run URL recorded in tag and release notes; GITHUB_TOKEN tags never trigger push-based deploys; release.yml accepts the unsigned tag only from github-actions[bot] at the approved SHA; least-privilege tokens, pinned actions, no PAT or new secrets; provenance attestation kept. Residual: GitHub Actions ruleset bypass lets any reviewed workflow on main with contents: write create v* tags. Controls: SLSA-L2, OWASP-CICD-SEC-1, OWASP-CICD-SEC-5",
+                  "mitigation": "Runs from main only; read-only check job validates release files, allowed signers, free tag and verified main HEAD and records the SHA; only the production-environment job (maintainer approval) reads the RELEASE_DEPLOY_KEY environment secret, confirms approval and that the SHA is on main, SSH-signs the tag with a neutral identity, verifies it against .github/release-signers and pushes it over SSH with a pinned github.com host key; key in a temp 0600 file, never printed; job token read-only. The resulting push is skipped by the source job in release.yml and deploy.yml (no duplicate release or deploy). Called release and rollback verify the SSH signature against allowed signers. Approver and run URL recorded; provenance attestation kept. Residual: Deploy keys ruleset bypass; a stolen key could push a tag but cannot deploy without approval. Controls: SLSA-L2, OWASP-CICD-SEC-1, OWASP-CICD-SEC-5, OWASP-CICD-SEC-6",
                   "modelType": "STRIDE",
                   "score": ""
                 },

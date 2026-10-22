@@ -1,9 +1,10 @@
 name: release
 # Two entry points:
 # - push of a maintainer-signed v* tag: verifies the tag is annotated, GitHub-verified and on main.
-# - workflow_call from approve-release.yml after the production approval: the tag was created by
-#   GitHub Actions (not key-signed), so it verifies the tag is annotated, was tagged by
-#   github-actions[bot], points at the exact commit that was checked before approval, and is on main.
+# - workflow_call from approve-release.yml after the production approval: the tag is SSH-signed by the
+#   release deploy key, so it checks the signature against the committed .github/release-signers
+#   (GitHub cannot show it as Verified), the release identity, the approved commit, and that it is on main.
+#   The push this tag causes is skipped by the source job.
 on:
   push:
     tags: ["v*"]
@@ -25,7 +26,40 @@ on:
 permissions:
   contents: read
 jobs:
+  source:
+    # A v* tag pushed by the approve-release workflow is released and deployed inside that run, so the
+    # push it causes here is skipped (no duplicate release or deploy, no second approval).
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      skip: ${{ steps.source.outputs.skip }}
+    steps:
+      - name: Harden runner
+        uses: step-security/harden-runner@dc2769abcc0fcfbadfc1df54081c1608579ef6b2 # v2.22.2
+        with:
+          egress-policy: audit
+      - name: Is this tag from the approve-release workflow
+        id: source
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          EVENT: ${{ github.event_name }}
+          REF: ${{ github.ref }}
+        run: |
+          set -euo pipefail
+          skip=false
+          if [ "$EVENT" = "push" ] && [[ "$REF" == refs/tags/v* ]]; then
+            read -r type sha < <(gh api "repos/$REPO/git/ref/${REF#refs/}" -q '.object.type + " " + .object.sha')
+            if [ "$type" = "tag" ] && [ "$(gh api "repos/$REPO/git/tags/$sha" -q '.tagger.name + " " + .tagger.email')" = "safeblueprint-release release@safeblueprint.invalid" ]; then
+              skip=true
+              echo "Tag from approve-release: release and deploy run in that workflow; skipping here." >> "$GITHUB_STEP_SUMMARY"
+            fi
+          fi
+          echo "skip=$skip" >> "$GITHUB_OUTPUT"
   release:
+    needs: source
+    if: needs.source.outputs.skip != 'true'
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -56,7 +90,8 @@ jobs:
           commit=$(gh api "repos/$REPO/git/tags/$sha" -q .object.sha)
           if [ -n "$APPROVED_SHA" ]; then
             [ "$commit" = "$APPROVED_SHA" ] || { echo "::error::$TAG points at $commit, not the approved commit $APPROVED_SHA"; exit 1; }
-            [ "$(gh api "repos/$REPO/git/tags/$sha" -q .tagger.name)" = "github-actions[bot]" ] || { echo "::error::$TAG was not created by the approve-to-release workflow"; exit 1; }
+            git fetch -q --no-tags "https://github.com/$REPO.git" "refs/tags/$TAG:refs/tags/$TAG"
+            scripts/verify-release-tag.sh "$TAG" "$APPROVED_SHA" >/dev/null
           else
             [ "$(gh api "repos/$REPO/git/tags/$sha" -q .verification.verified)" = "true" ] || { echo "::error::$TAG signature is not verified by GitHub"; exit 1; }
           fi

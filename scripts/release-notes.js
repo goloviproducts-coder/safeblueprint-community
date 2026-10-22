@@ -14,7 +14,7 @@ function releaseNotes({ changelog, version, name, repo, approver, runUrl }) {
   out += `Verify the download: \`gh attestation verify ${safe(name)}.zip --repo ${safe(repo)} && sha256sum -c SHA256SUMS\`. Full steps: docs/VERIFY.md\n`;
   if (approver || runUrl) {
     out += `\nReleased through the approve-to-release workflow. Approved by @${safe(approver || "unknown")} in the \`production\` environment. Run: ${safe(runUrl || "")}\n`;
-    out += "This tag was created by GitHub Actions and is not key-signed; trust comes from the recorded approval and the build provenance attestation.\n";
+    out += "The tag is SSH-signed by the release key (check with `scripts/verify-release-tag.sh` against `.github/release-signers`; GitHub cannot show deploy-key signatures as Verified), and the zip has a build provenance attestation.\n";
   }
   return out;
 }

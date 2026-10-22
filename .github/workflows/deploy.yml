@@ -11,7 +11,40 @@ on:
 permissions:
   contents: read
 jobs:
+  source:
+    # A v* tag pushed by the approve-release workflow is released and deployed inside that run, so the
+    # push it causes here is skipped (no duplicate release or deploy, no second approval).
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      skip: ${{ steps.source.outputs.skip }}
+    steps:
+      - name: Harden runner
+        uses: step-security/harden-runner@dc2769abcc0fcfbadfc1df54081c1608579ef6b2 # v2.22.2
+        with:
+          egress-policy: audit
+      - name: Is this tag from the approve-release workflow
+        id: source
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          EVENT: ${{ github.event_name }}
+          REF: ${{ github.ref }}
+        run: |
+          set -euo pipefail
+          skip=false
+          if [ "$EVENT" = "push" ] && [[ "$REF" == refs/tags/v* ]]; then
+            read -r type sha < <(gh api "repos/$REPO/git/ref/${REF#refs/}" -q '.object.type + " " + .object.sha')
+            if [ "$type" = "tag" ] && [ "$(gh api "repos/$REPO/git/tags/$sha" -q '.tagger.name + " " + .tagger.email')" = "safeblueprint-release release@safeblueprint.invalid" ]; then
+              skip=true
+              echo "Tag from approve-release: release and deploy run in that workflow; skipping here." >> "$GITHUB_STEP_SUMMARY"
+            fi
+          fi
+          echo "skip=$skip" >> "$GITHUB_OUTPUT"
   deploy-staging:
+    needs: source
+    if: needs.source.outputs.skip != 'true'
     runs-on: ubuntu-latest
     # Own group so a production deploy waiting for approval never blocks staging.
     concurrency:

@@ -17,7 +17,7 @@ test("notes from a signed tag have no approval line", () => {
 test("approve-to-release notes record the approver and run", () => {
   const n = releaseNotes({ ...base, approver: "maint", runUrl: "https://github.com/o/r/actions/runs/1" });
   assert.match(n, /Approved by @maint in the `production` environment\. Run: https:\/\/github\.com\/o\/r\/actions\/runs\/1/);
-  assert.match(n, /not key-signed/);
+  assert.match(n, /SSH-signed by the release key/);
 });
 
 test("approver text cannot inject markdown or commands", () => {

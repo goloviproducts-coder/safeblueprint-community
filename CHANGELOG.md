@@ -13,7 +13,7 @@ All notable changes to this project are documented here. Each release uses six p
 - New Actions workflow: approve-release (Run workflow with a version, then approve production)
 
 ### Security fixes
-- The approved release tags exactly the commit that was checked before approval; release notes record the approver and the run
+- The approved release tags exactly the commit that was checked before approval, signed with a dedicated release key checked against a committed allowed-signers list; release notes record the approver and the run
 - Build provenance attestation kept for every release
 
 ### Privacy

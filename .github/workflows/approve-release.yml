@@ -3,12 +3,13 @@ name: approve-release
 # production and publishes the release, so nobody has to tag by hand. See docs/RELEASING.md.
 # 1. check (read-only): main only; CHANGELOG/VERSION/package.json prepared for the version; the tag is
 #    free; main HEAD is a GitHub-verified commit. Records that SHA.
-# 2. release-production (production environment = the approval): creates an annotated tag at the
-#    recorded SHA with GITHUB_TOKEN (needs the v* ruleset bypass for GitHub Actions), then deploys
-#    that commit to production with the same steps as deploy.yml.
+# 2. release-production (production environment = the approval): SSH-signs an annotated tag at the
+#    recorded SHA with the RELEASE_DEPLOY_KEY environment secret, verifies it against
+#    .github/release-signers and pushes it over SSH (pinned github.com host key; the v* ruleset lets
+#    Deploy keys bypass), then deploys that commit to production with the same steps as deploy.yml.
 # 3. publish: calls release.yml to build, attest and publish the release, noting the approver and run.
-# Tags created with GITHUB_TOKEN never trigger the push-based release/deploy workflows, so nothing
-# runs twice. Maintainer-signed tags pushed by hand still use the push path.
+# The SSH push does trigger the push-based release/deploy workflows; their first job sees the
+# release identity as tagger and skips, so nothing deploys twice. Signed manual tags work as before.
 on:
   workflow_dispatch:
     inputs:
@@ -53,6 +54,7 @@ jobs:
           [[ "$tag" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo "::error::'$VERSION_INPUT' is not a vX.Y.Z version"; exit 1; }
           sha=$(git rev-parse HEAD)
           node scripts/check-release.js "$tag"
+          grep -qE '^release@safeblueprint\.invalid +namespaces="git" +ssh-' .github/release-signers || { echo "::error::.github/release-signers has no release key yet (docs/RELEASING.md, one-time setup)"; exit 1; }
           if gh api "repos/$REPO/git/ref/tags/$tag" >/dev/null 2>&1; then echo "::error::$tag already exists"; exit 1; fi
           [ "$(gh api "repos/$REPO/commits/$sha" -q .commit.verification.verified)" = "true" ] || { echo "::error::main HEAD $sha is not a verified commit"; exit 1; }
           echo "sha=$sha" >> "$GITHUB_OUTPUT"
@@ -68,37 +70,30 @@ jobs:
       name: production
       url: https://safeblueprint.pages.dev
     permissions:
-      contents: write # create the tag
+      contents: read
       actions: read # read who approved this run
       deployments: write # record the production deployment
     outputs:
-      approver: ${{ steps.tag.outputs.approver }}
+      approver: ${{ steps.approval.outputs.approver }}
     steps:
       - name: Harden runner
         uses: step-security/harden-runner@dc2769abcc0fcfbadfc1df54081c1608579ef6b2 # v2.22.2
         with:
           egress-policy: audit
-      - name: Create the tag at the approved commit
-        id: tag
+      - name: Confirm the approval and that the recorded commit is still on main
+        id: approval
         env:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
           RUN_ID: ${{ github.run_id }}
           SHA: ${{ needs.check.outputs.sha }}
-          TAG: ${{ needs.check.outputs.tag }}
         run: |
           set -euo pipefail
           approver=$(gh api "repos/$REPO/actions/runs/$RUN_ID/approvals" -q '[.[] | select(.state == "approved") | .user.login] | last // ""')
           [ -n "$approver" ] || { echo "::error::No production approval recorded for this run"; exit 1; }
           status=$(gh api "repos/$REPO/compare/$SHA...main" -q .status)
           case "$status" in ahead|identical) ;; *) echo "::error::$SHA is no longer on main ($status)"; exit 1;; esac
-          obj=$(gh api -X POST "repos/$REPO/git/tags" -f tag="$TAG" -f object="$SHA" -f type=commit \
-            -f message="SafeBlueprint $TAG (approved by @$approver in run $RUN_ID)" \
-            -f 'tagger[name]=github-actions[bot]' -f 'tagger[email]=41898282+github-actions[bot]@users.noreply.github.com' -q .sha)
-          gh api -X POST "repos/$REPO/git/refs" -f ref="refs/tags/$TAG" -f sha="$obj" >/dev/null \
-            || { echo "::error::Could not create $TAG. The v* tag ruleset must allow GitHub Actions to bypass (docs/RELEASING.md)."; exit 1; }
           echo "approver=$approver" >> "$GITHUB_OUTPUT"
-          echo "Tagged $TAG ($obj) at $SHA, approved by @$approver" >> "$GITHUB_STEP_SUMMARY"
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
@@ -107,6 +102,16 @@ jobs:
         env:
           TAG: ${{ needs.check.outputs.tag }}
         run: node scripts/check-release.js "$TAG"
+      - name: Sign and push the tag with the release deploy key
+        env:
+          RELEASE_DEPLOY_KEY: ${{ secrets.RELEASE_DEPLOY_KEY }}
+          TAG: ${{ needs.check.outputs.tag }}
+          SHA: ${{ needs.check.outputs.sha }}
+          APPROVER: ${{ steps.approval.outputs.approver }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          scripts/create-release-tag.sh "$TAG" "$SHA" "$APPROVER" "$RUN_URL"
+          echo "Tagged $TAG at $SHA (SSH-signed release key), approved by @$APPROVER" >> "$GITHUB_STEP_SUMMARY"
       - name: Build, deploy and smoke-test production
         uses: ./.github/actions/deploy-production # zizmor: ignore[self-repository] local action from the checked-out release commit
         with:
