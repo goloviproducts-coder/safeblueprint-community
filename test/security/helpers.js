@@ -11,7 +11,7 @@ async function guard(page) {
   page.on("request", (r) => {
     const u = new URL(r.url());
     if (!["http:", "https:"].includes(u.protocol)) return; // data:, blob: stay on device
-    if (u.origin !== "http://localhost:4173") state.external.push(r.url());
+    if (u.origin !== new URL(process.env.PW_BASE_URL || "http://localhost:4173").origin) state.external.push(r.url());
   });
   page.on("dialog", async (d) => { state.dialogs.push(d.message()); await d.dismiss(); });
   page.on("pageerror", (e) => state.errors.push(e.message));

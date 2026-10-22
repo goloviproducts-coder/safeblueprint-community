@@ -27,6 +27,8 @@ All notable changes to this project are documented here. Each release uses six p
 ### Privacy
 - Removed the third-party form service (FormSubmit); no contact email is shown on the site
 - Nothing you enter is captured without your consent
+- Plain "What we never collect" list in the README and on the security page
+- Privacy proof anyone can run (npm run privacy-proof): a full run, a custom pack run and every export make zero requests to other sites
 
 ### General
 - Automatic deploy of the hosted site from the main branch to Cloudflare Pages
