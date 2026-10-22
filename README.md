@@ -1,6 +1,7 @@
 # SafeBlueprint Community Edition
 
-[![CodeQL](https://github.com/goloviproducts-coder/safeblueprint-community/actions/workflows/codeql.yml/badge.svg)](https://github.com/goloviproducts-coder/safeblueprint-community/actions/workflows/codeql.yml) [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/goloviproducts-coder/safeblueprint-community/badge)](https://scorecard.dev/viewer/?uri=github.com/goloviproducts-coder/safeblueprint-community) [![checksums](https://github.com/goloviproducts-coder/safeblueprint-community/actions/workflows/checksums.yml/badge.svg)](https://github.com/goloviproducts-coder/safeblueprint-community/actions/workflows/checksums.yml)
+[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/goloviproducts-coder/safeblueprint-community/badge)](https://scorecard.dev/viewer/?uri=github.com/goloviproducts-coder/safeblueprint-community) [![CodeQL](https://github.com/goloviproducts-coder/safeblueprint-community/actions/workflows/codeql.yml/badge.svg)](https://github.com/goloviproducts-coder/safeblueprint-community/actions/workflows/codeql.yml) [![Semgrep](https://github.com/goloviproducts-coder/safeblueprint-community/actions/workflows/semgrep.yml/badge.svg)](https://github.com/goloviproducts-coder/safeblueprint-community/actions/workflows/semgrep.yml) [![tests](https://github.com/goloviproducts-coder/safeblueprint-community/actions/workflows/tests.yml/badge.svg)](https://github.com/goloviproducts-coder/safeblueprint-community/actions/workflows/tests.yml) [![ZAP](https://github.com/goloviproducts-coder/safeblueprint-community/actions/workflows/zap-baseline.yml/badge.svg)](https://github.com/goloviproducts-coder/safeblueprint-community/actions/workflows/zap-baseline.yml) [![Security tests](https://github.com/goloviproducts-coder/safeblueprint-community/actions/workflows/security-tests.yml/badge.svg)](https://github.com/goloviproducts-coder/safeblueprint-community/actions/workflows/security-tests.yml) [![Threat model](https://github.com/goloviproducts-coder/safeblueprint-community/actions/workflows/threat-model-gate.yml/badge.svg)](https://github.com/goloviproducts-coder/safeblueprint-community/actions/workflows/threat-model-gate.yml) [![checksums](https://github.com/goloviproducts-coder/safeblueprint-community/actions/workflows/checksums.yml/badge.svg)](https://github.com/goloviproducts-coder/safeblueprint-community/actions/workflows/checksums.yml)  
+[Security dashboard](docs/SECURITY-DASHBOARD.md)
 
 Free, self-hostable AI decision-readiness and AI security checklist. **Everything runs on your device**: no accounts, no tracking, no external calls, nothing you type leaves the browser unless you choose to save an export.
 
@@ -14,7 +15,7 @@ Hosted version: https://safeblueprint.pages.dev
 - Exports to PDF, JSON (schema in `site/schema/report/`) and Markdown, ready to feed into GRC or AI tools.
 
 ## Customise the questions
-Load your own questions (your policies, control IDs and owners) from a CSV or JSON file. It stays on your device. Plain guide: [docs/CUSTOMISING.md](docs/CUSTOMISING.md). Template: [site/questions/template.csv](site/questions/template.csv). Example: [examples/acme-pack.csv](examples/acme-pack.csv).
+Load your own questions (your policies, control IDs and owners) from a CSV or JSON file. It stays on your device. Plain guide: [docs/CUSTOMISING.md](docs/CUSTOMISING.md). Template: [site/questions/template.csv](site/questions/template.csv). Example: [examples/acme-pack.csv](examples/acme-pack.csv). Ready-made packs: [packs/](packs/) (health, education, public sector, internal control IDs).
 
 ## Quick start
 ```bash
@@ -46,6 +47,9 @@ sha256sum -c SHA256SUMS
 gh attestation verify safeblueprint-selfhost-1.0.0.zip --repo goloviproducts-coder/safeblueprint-community
 ```
 Both must pass before you deploy. After unzipping, `sha256sum -c SHA256SUMS.txt` inside the folder checks every file.
+
+## Project
+- [Governance](GOVERNANCE.md) · [Roadmap](ROADMAP.md) · [Security policy](SECURITY.md) · [Contributing](CONTRIBUTING.md)
 
 ## Screenshots
 | Leader summary (portfolio) | Portfolio report p1 | Portfolio report p2 |
