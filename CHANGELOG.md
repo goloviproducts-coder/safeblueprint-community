@@ -7,7 +7,7 @@ All notable changes to this project are documented here. Each release uses six p
 - Approve to release: one maintainer approval tags main, deploys production and publishes the release, with no local tagging
 
 ### Issues fixed
-- None
+- APP 1.7 check now covers every area in the OAIC APP 1.7-1.9 guidance: refusing or failing to decide, good or bad effects, people experiencing vulnerability, human review not removing scope, sensitive information, privacy-policy placement and yearly review, exemptions as a screen only, and the commercial-in-confidence exclusion. Questions stay fixed
 
 ### Interfaces updated
 - New Actions workflow: approve-release (Run workflow with a version, then approve production)

@@ -10,20 +10,20 @@ var USES = [
 var YN = [["0", "Yes"], ["1", "No"], ["2", "Not sure"]];
 var STEPS = [
   { id: "name", title: "Name this decision", help: "Name the decision. Group it under an initiative. Names stay in this browser." },
-  { id: "type", title: "What kind of decision is this?", help: "Pick the closest. Credit-like scoring is not in this check.", options: USES.concat([["unsure", "Not sure"]]) },
-  { id: "pi", title: "Does it use personal information?", help: "A name, contact details, an application, or account history.", options: YN, short: true },
-  { id: "role", title: "Who makes the call?", help: "A shortlist a person relies on can still count.", options: [
+  { id: "type", title: "What kind of decision is this?", help: "Pick the closest. Refunds, cancellations and other contract rights, or access to education: pick Eligibility. Credit-like scoring is not in this check.", options: USES.concat([["unsure", "Not sure"]]) },
+  { id: "pi", title: "Does it use personal information?", help: "A name, contact details, an application, or account history. Health or biometric data counts too.", options: YN, short: true },
+  { id: "role", title: "Who makes the call?", help: "A score or shortlist a person relies on can still count, even when a person reviews it. A word processor used only to write up the decision does not.", options: [
     ["0", "Program decides", "No person makes the call."],
     ["1", "Program helps decide", "A person decides, using the program's output."],
     ["2", "A person decides", "The program does not do that substantial thing."],
     ["3", "Not sure", "You cannot say how far the program contributes."]
   ] },
-  { id: "effect", title: "Could it significantly affect someone?", help: "A job, a home, a service, a price, or an account.", options: YN, short: true },
+  { id: "effect", title: "Could it significantly affect someone?", help: "A job, a home, a service, a contract, a price, or an account. Good or bad outcomes count, and so does refusing or not deciding. A child or a person experiencing vulnerability may be affected more.", options: YN, short: true },
   { id: "review", title: "Can a person review or override the outcome?", help: "A person who can change the result before it stands.", options: YN, short: true },
   { id: "contest", title: "Can the affected person ask for a review?", help: "A way for that person to request a second look.", options: YN, short: true },
   { id: "supplier", title: "Who supplies the program?", help: "The vendor or team. Leave blank if you are not sure.", kind: "text", maxlength: 120 },
   { id: "explained", title: "Has the supplier explained how it works?", help: "A plain account of inputs, the decision, and the output.", options: YN, short: true },
-  { id: "turnover", title: "Is turnover over A$3 million?", help: "A screen only, not a legal finding.", options: YN, short: true },
+  { id: "turnover", title: "Is turnover over A$3 million?", help: "A screen only, not a legal finding. If the business has opted in to the Privacy Act, pick Yes.", options: YN, short: true },
   { id: "health", title: "Are you a health service provider?", help: "", options: YN, short: true },
   { id: "trade", title: "Do you trade in personal information?", help: "Collecting or disclosing it for a benefit.", options: YN, short: true },
   { id: "cth", title: "Are you a Commonwealth contractor?", help: "", options: YN, short: true }
@@ -197,7 +197,7 @@ function admTasks(verdict, trigger, ref, initiative, time) {
   if (verdict === "Likely in scope") {
     rows = [
       ["Book a lawyer to edit the disclosure wording", "Put the template wording in front of a lawyer before it goes in the privacy policy.", "Privacy lead"],
-      ["Add this decision to the privacy-policy inventory", "Record the decision type and that it may need an APP 1.8 disclosure.", "Product owner"],
+      ["Add this decision to the privacy-policy inventory", "Record the decision type and that it may need an APP 1.8 disclosure. Date the policy and review it at least yearly, or when the program changes.", "Product owner"],
       ["Write what the program reads and outputs", "One paragraph: inputs, the decision, and who relies on the output.", "Engineering lead"]
     ];
   } else if (trigger === "likely" && verdict === "Unlikely") {
@@ -533,8 +533,8 @@ function answerLabel(spec, value) {
 }
 function app18Text(typeLabel, name, role, verdict) {
   if (verdict !== "Likely in scope") return "";
-  if (role === 0) return "We use [describe, for example name and application answers] when a computer program makes this decision: " + typeLabel + " (" + name + ").";
-  if (role === 1) return "We use [describe] when a computer program does a thing that is substantially and directly related to making this decision: " + typeLabel + " (" + name + ").";
+  if (role === 0) return "We use [describe, for example name and application answers; name sensitive kinds such as health information separately] when a computer program makes this decision: " + typeLabel + " (" + name + ").";
+  if (role === 1) return "We use [describe; name sensitive kinds such as health information separately] when a computer program does a thing that is substantially and directly related to making this decision: " + typeLabel + " (" + name + ").";
   if (role === 2) return "";
   return "If a lawyer confirms APP 1.7 applies: we use [kinds of personal information] when a computer program makes, or does a thing substantially and directly related to making, this decision: " + typeLabel + " (" + name + ").";
 }
@@ -603,6 +603,14 @@ function admLegal(typeLabel, name, role, trigger, verdict) {
     "That applies where personal information is used.",
     "The effect on a person can be significant.",
     "APP 1.8 sets out what that description covers.",
+    "It covers decisions a program makes alone, and decisions where a program does a thing substantially and directly related to making them.",
+    "A score or shortlist still counts even when a person reviews it.",
+    "APP 1.9: refusing or failing to decide counts, and good or bad effects both count.",
+    "Examples: a benefit, rights under a contract, or access to a significant service such as healthcare, housing or a job.",
+    "A child or a person experiencing vulnerability may be affected more.",
+    "The description goes in your APP privacy policy. Keep the policy dated and review it at least yearly, or when the program changes.",
+    "Exemptions such as small business or employee records are only a screen here. Check them with a lawyer.",
+    "You can leave out commercial-in-confidence details and trade secrets.",
     "This note is not a finding of compliance."
   ].forEach(function (line) { box.appendChild(node("p", "", line)); });
   if (role === 2 && trigger === "unlikely") {
@@ -612,7 +620,7 @@ function admLegal(typeLabel, name, role, trigger, verdict) {
     box.appendChild(node("p", "", "Suggested wording for a lawyer to edit."));
     var kinds = node("p", "");
     kinds.appendChild(node("b", "", "Kinds of personal information. "));
-    kinds.appendChild(document.createTextNode("We use [describe, for example name and application answers] when a computer program makes this decision: " + typeLabel + " ("));
+    kinds.appendChild(document.createTextNode("We use [describe, for example name and application answers; name sensitive kinds such as health information separately] when a computer program makes this decision: " + typeLabel + " ("));
     kinds.appendChild(node("span", "", name));
     kinds.appendChild(document.createTextNode(")."));
     var sole = node("p", "");
@@ -623,7 +631,7 @@ function admLegal(typeLabel, name, role, trigger, verdict) {
     box.appendChild(node("p", "", "Suggested wording for a lawyer to edit."));
     var related = node("p", "");
     related.appendChild(node("b", "", "Kinds of personal information. "));
-    related.appendChild(document.createTextNode("We use [describe] when a computer program does a thing that is substantially and directly related to making this decision: " + typeLabel + " ("));
+    related.appendChild(document.createTextNode("We use [describe; name sensitive kinds such as health information separately] when a computer program does a thing that is substantially and directly related to making this decision: " + typeLabel + " ("));
     related.appendChild(node("span", "", name));
     related.appendChild(document.createTextNode(")."));
     var sub = node("p", "");
