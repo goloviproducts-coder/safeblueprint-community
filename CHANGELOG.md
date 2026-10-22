@@ -11,10 +11,12 @@ All notable changes to this project are documented here. Each release uses six p
 - Pull request previews: each PR gets its own temporary preview link, posted on the PR and hidden from search engines
 - Reproducible release builds: anyone can rebuild the self-host zip from the tagged commit and get an identical file
 - "Verify this release" guide (docs/VERIFY.md) with one-command checks for checksums, build provenance, the SBOM and the signed tag
+- Threat model inventory generated from the code (pages, data flows, external endpoints, storage, headers, workflow permissions)
 
 ### Issues fixed
 - Removed a penalty figure from the guidance (we do not quote penalty amounts)
 - Fixed the automated security scans so every scan runs on every change
+- Cosmetic changes such as menu, styling and copy no longer get stuck at the threat model check
 
 ### Interfaces updated
 - Two editions: hosted (safeblueprint.pages.dev) and self-hosted (localhost or your own infrastructure)
@@ -30,6 +32,7 @@ All notable changes to this project are documented here. Each release uses six p
 - Pull request previews are only built for branches in this repository; forks never get previews or deploy credentials
 - Every release and rollback checks the tag is signed, verified by GitHub and on main before deploying
 - Release workflow builds the zip twice and refuses to publish if the builds differ; a new check does the same on every pull request
+- Smarter threat model check: risk-relevant changes still need maintainer review and now get a draft threat entry
 
 ### Privacy
 - Removed the third-party form service (FormSubmit); no contact email is shown on the site

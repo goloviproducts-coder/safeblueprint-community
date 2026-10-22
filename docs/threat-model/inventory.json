@@ -1,0 +1,943 @@
+{
+  "dataFlows": [
+    {
+      "api": "fetch",
+      "count": 1,
+      "file": "functions/api/contact.js"
+    },
+    {
+      "action": "#ai-playbook",
+      "api": "form",
+      "file": "site/ai-security-checklist/index.html",
+      "method": "post"
+    },
+    {
+      "api": "fetch",
+      "count": 1,
+      "file": "site/forms.js"
+    },
+    {
+      "action": "#adm-playbook",
+      "api": "form",
+      "file": "site/index.html",
+      "method": "post"
+    },
+    {
+      "api": "fetch",
+      "count": 1,
+      "file": "site/questions/loader.js"
+    },
+    {
+      "api": "fetch",
+      "count": 2,
+      "file": "site/sw.js"
+    }
+  ],
+  "dependencies": {
+    "dependencies": {},
+    "devDependencies": {
+      "@playwright/test": "1.64.1",
+      "fast-check": "4.10.2",
+      "serve": "14.2.6"
+    },
+    "overrides": {
+      "compression": "1.8.2"
+    }
+  },
+  "externalEndpoints": {
+    "http://data.europa.eu": [
+      "site/forms.js"
+    ],
+    "https://api.resend.com": [
+      "functions/api/contact.js"
+    ],
+    "https://atlas.mitre.org": [
+      "site/checklist.js"
+    ],
+    "https://digital-strategy.ec.europa.eu": [
+      "site/ai-security-checklist/index.html"
+    ],
+    "https://eur-lex.europa.eu": [
+      "site/ai-security-checklist/index.html",
+      "site/forms.js"
+    ],
+    "https://github.com": [
+      "site/about/index.html",
+      "site/ai-security-checklist/index.html",
+      "site/contact/index.html",
+      "site/index.html",
+      "site/privacy/index.html",
+      "site/schema/index.html",
+      "site/security/index.html"
+    ],
+    "https://owasp.org": [
+      "site/checklist.js"
+    ],
+    "https://safeblueprint.pages.dev": [
+      "functions/api/contact.js",
+      "site/about/index.html",
+      "site/ai-security-checklist/index.html",
+      "site/contact/index.html",
+      "site/index.html",
+      "site/privacy/index.html",
+      "site/sample/index.html",
+      "site/schema/index.html",
+      "site/security/index.html"
+    ],
+    "https://schema.org": [
+      "site/index.html"
+    ],
+    "https://securityscorecards.dev": [
+      "site/security/index.html"
+    ],
+    "https://www.ai.gov.au": [
+      "site/about/index.html",
+      "site/ai-security-checklist/index.html",
+      "site/forms.js",
+      "site/index.html"
+    ],
+    "https://www.apache.org": [
+      "site/index.html"
+    ],
+    "https://www.credo.ai": [
+      "site/about/index.html"
+    ],
+    "https://www.cyber.gov.au": [
+      "site/about/index.html",
+      "site/checklist.js"
+    ],
+    "https://www.holisticai.com": [
+      "site/about/index.html"
+    ],
+    "https://www.industry.gov.au": [
+      "site/about/index.html"
+    ],
+    "https://www.instagram.com": [
+      "site/about/index.html"
+    ],
+    "https://www.iso.org": [
+      "site/forms.js"
+    ],
+    "https://www.nist.gov": [
+      "site/forms.js"
+    ],
+    "https://www.oaic.gov.au": [
+      "site/about/index.html",
+      "site/forms.js",
+      "site/index.html",
+      "site/privacy/index.html"
+    ],
+    "https://www.onetrust.com": [
+      "site/about/index.html"
+    ],
+    "https://www.sailpoint.com": [
+      "site/about/index.html"
+    ],
+    "https://www.vanta.com": [
+      "site/about/index.html"
+    ]
+  },
+  "functions": {
+    "functions/api/contact.js": {
+      "apis": {
+        "env secret": 4,
+        "fetch": 1
+      },
+      "externalOrigins": [
+        "https://api.resend.com",
+        "https://safeblueprint.pages.dev"
+      ]
+    }
+  },
+  "generatedBy": "scripts/threat-model-generate.js (npm run threat-model). Do not edit by hand.",
+  "headers": {
+    "nginx.conf": {
+      "Content-Security-Policy": "default-src 'self'; script-src 'self'; style-src 'self' blob:; img-src 'self' data:; connect-src 'self'; form-action 'self'; frame-ancestors 'none'; base-uri 'none'; object-src 'none'; worker-src 'self'; manifest-src 'self'",
+      "Cross-Origin-Opener-Policy": "same-origin",
+      "Cross-Origin-Resource-Policy": "same-origin",
+      "Permissions-Policy": "camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()",
+      "Referrer-Policy": "strict-origin-when-cross-origin",
+      "X-Content-Type-Options": "nosniff",
+      "X-Frame-Options": "DENY"
+    },
+    "site/_headers": {
+      "/*": {
+        "Content-Security-Policy": "default-src 'self'; script-src 'self'; style-src 'self' blob:; img-src 'self' data:; connect-src 'self'; form-action 'self'; frame-ancestors 'none'; base-uri 'none'; object-src 'none'; worker-src 'self'; manifest-src 'self'; upgrade-insecure-requests",
+        "Cross-Origin-Opener-Policy": "same-origin",
+        "Cross-Origin-Resource-Policy": "same-origin",
+        "Permissions-Policy": "camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()",
+        "Referrer-Policy": "strict-origin-when-cross-origin",
+        "Strict-Transport-Security": "max-age=63072000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "DENY"
+      },
+      "/manifest.webmanifest": {
+        "Content-Security-Policy": "default-src 'self'; script-src 'self'; style-src 'self' blob:; img-src 'self' data:; connect-src 'self'; form-action 'self'; frame-ancestors 'none'; base-uri 'none'; object-src 'none'; worker-src 'self'; manifest-src 'self'; upgrade-insecure-requests",
+        "Content-Type": "application/manifest+json",
+        "Cross-Origin-Opener-Policy": "same-origin",
+        "Cross-Origin-Resource-Policy": "same-origin",
+        "Permissions-Policy": "camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()",
+        "Referrer-Policy": "strict-origin-when-cross-origin",
+        "Strict-Transport-Security": "max-age=63072000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "DENY"
+      },
+      "/sw.js": {
+        "Cache-Control": "no-cache",
+        "Content-Security-Policy": "default-src 'self'; script-src 'self'; style-src 'self' blob:; img-src 'self' data:; connect-src 'self'; form-action 'self'; frame-ancestors 'none'; base-uri 'none'; object-src 'none'; worker-src 'self'; manifest-src 'self'; upgrade-insecure-requests",
+        "Cross-Origin-Opener-Policy": "same-origin",
+        "Cross-Origin-Resource-Policy": "same-origin",
+        "Permissions-Policy": "camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()",
+        "Referrer-Policy": "strict-origin-when-cross-origin",
+        "Strict-Transport-Security": "max-age=63072000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "DENY"
+      }
+    }
+  },
+  "pages": {
+    "site/about/index.html": {
+      "csp": "default-src 'self'; script-src 'self'; style-src 'self' blob:; img-src 'self' data:; connect-src 'self'; form-action 'self'; base-uri 'none'; object-src 'none'; worker-src 'self'; manifest-src 'self'",
+      "externalOrigins": [
+        "https://github.com",
+        "https://safeblueprint.pages.dev",
+        "https://www.ai.gov.au",
+        "https://www.credo.ai",
+        "https://www.cyber.gov.au",
+        "https://www.holisticai.com",
+        "https://www.industry.gov.au",
+        "https://www.instagram.com",
+        "https://www.oaic.gov.au",
+        "https://www.onetrust.com",
+        "https://www.sailpoint.com",
+        "https://www.vanta.com"
+      ],
+      "fields": [],
+      "forms": [],
+      "iframes": [],
+      "inlineHandlers": 0,
+      "inlineScripts": 0,
+      "scripts": [
+        "/ui.js"
+      ]
+    },
+    "site/ai-security-checklist/index.html": {
+      "csp": "default-src 'self'; script-src 'self'; style-src 'self' blob:; img-src 'self' data:; connect-src 'self'; form-action 'self'; base-uri 'none'; object-src 'none'; worker-src 'self'; manifest-src 'self'",
+      "externalOrigins": [
+        "https://digital-strategy.ec.europa.eu",
+        "https://eur-lex.europa.eu",
+        "https://github.com",
+        "https://safeblueprint.pages.dev",
+        "https://www.ai.gov.au"
+      ],
+      "fields": [
+        "input:checkbox:consent",
+        "input:checkbox:include",
+        "input:email:email",
+        "input:file:pack-file",
+        "input:radio:doc-class",
+        "input:radio:eu-annex",
+        "input:radio:eu-role",
+        "input:radio:eu-users",
+        "input:radio:report-mode",
+        "input:text:_honey",
+        "input:text:doc-version",
+        "input:text:org-name",
+        "input:text:prepared-for",
+        "select::prepared-role"
+      ],
+      "forms": [
+        {
+          "action": "#ai-playbook",
+          "method": "post"
+        }
+      ],
+      "iframes": [],
+      "inlineHandlers": 0,
+      "inlineScripts": 0,
+      "scripts": [
+        "/checklist.js",
+        "/config.js",
+        "/forms.js",
+        "/questions/engine.js",
+        "/questions/loader.js",
+        "/report.js",
+        "/ui.js"
+      ]
+    },
+    "site/contact/index.html": {
+      "csp": "default-src 'self'; script-src 'self'; style-src 'self' blob:; img-src 'self' data:; connect-src 'self'; form-action 'self'; base-uri 'none'; object-src 'none'; worker-src 'self'; manifest-src 'self'",
+      "externalOrigins": [
+        "https://github.com",
+        "https://safeblueprint.pages.dev"
+      ],
+      "fields": [],
+      "forms": [],
+      "iframes": [],
+      "inlineHandlers": 0,
+      "inlineScripts": 0,
+      "scripts": [
+        "/config.js",
+        "/forms.js",
+        "/ui.js"
+      ]
+    },
+    "site/index.html": {
+      "csp": "default-src 'self'; script-src 'self'; style-src 'self' blob:; img-src 'self' data:; connect-src 'self'; form-action 'self'; base-uri 'none'; object-src 'none'; worker-src 'self'; manifest-src 'self'",
+      "externalOrigins": [
+        "https://github.com",
+        "https://safeblueprint.pages.dev",
+        "https://schema.org",
+        "https://www.ai.gov.au",
+        "https://www.apache.org",
+        "https://www.oaic.gov.au"
+      ],
+      "fields": [
+        "input:checkbox:consent",
+        "input:checkbox:include",
+        "input:email:email",
+        "input:file:import-json",
+        "input:radio:agent-use",
+        "input:radio:ai-type",
+        "input:radio:doc-class",
+        "input:radio:rag-use",
+        "input:radio:report-mode",
+        "input:text:_honey",
+        "input:text:doc-version",
+        "input:text:init-name",
+        "input:text:initiative-name",
+        "input:text:org-name",
+        "input:text:prepared-for",
+        "select::prepared-role",
+        "textarea::assistant-prompt"
+      ],
+      "forms": [
+        {
+          "action": "#adm-playbook",
+          "method": "post"
+        }
+      ],
+      "iframes": [],
+      "inlineHandlers": 0,
+      "inlineScripts": 0,
+      "scripts": [
+        "/config.js",
+        "/forms.js",
+        "/home.js",
+        "/report.js",
+        "/ui.js"
+      ]
+    },
+    "site/privacy/index.html": {
+      "csp": "default-src 'self'; script-src 'self'; style-src 'self' blob:; img-src 'self' data:; connect-src 'self'; form-action 'self'; base-uri 'none'; object-src 'none'; worker-src 'self'; manifest-src 'self'",
+      "externalOrigins": [
+        "https://github.com",
+        "https://safeblueprint.pages.dev",
+        "https://www.oaic.gov.au"
+      ],
+      "fields": [],
+      "forms": [],
+      "iframes": [],
+      "inlineHandlers": 0,
+      "inlineScripts": 0,
+      "scripts": [
+        "/ui.js"
+      ]
+    },
+    "site/sample/index.html": {
+      "csp": "default-src 'self'; script-src 'self'; style-src 'self' blob:; img-src 'self' data:; connect-src 'self'; form-action 'self'; base-uri 'none'; object-src 'none'; worker-src 'self'; manifest-src 'self'",
+      "externalOrigins": [
+        "https://safeblueprint.pages.dev"
+      ],
+      "fields": [],
+      "forms": [],
+      "iframes": [],
+      "inlineHandlers": 0,
+      "inlineScripts": 0,
+      "scripts": [
+        "/ui.js"
+      ]
+    },
+    "site/schema/index.html": {
+      "csp": "default-src 'self'; script-src 'self'; style-src 'self' blob:; img-src 'self' data:; connect-src 'self'; form-action 'self'; base-uri 'none'; object-src 'none'; worker-src 'self'; manifest-src 'self'",
+      "externalOrigins": [
+        "https://github.com",
+        "https://safeblueprint.pages.dev"
+      ],
+      "fields": [],
+      "forms": [],
+      "iframes": [],
+      "inlineHandlers": 0,
+      "inlineScripts": 0,
+      "scripts": [
+        "/ui.js"
+      ]
+    },
+    "site/security/index.html": {
+      "csp": "default-src 'self'; script-src 'self'; style-src 'self' blob:; img-src 'self' data:; connect-src 'self'; form-action 'self'; base-uri 'none'; object-src 'none'; worker-src 'self'; manifest-src 'self'",
+      "externalOrigins": [
+        "https://github.com",
+        "https://safeblueprint.pages.dev",
+        "https://securityscorecards.dev"
+      ],
+      "fields": [],
+      "forms": [],
+      "iframes": [],
+      "inlineHandlers": 0,
+      "inlineScripts": 0,
+      "scripts": [
+        "/ui.js"
+      ]
+    }
+  },
+  "scripts": {
+    "site/checklist.js": {
+      "apis": {
+        "createObjectURL": 2,
+        "innerHTML/outerHTML": 3
+      },
+      "externalOrigins": [
+        "https://atlas.mitre.org",
+        "https://owasp.org",
+        "https://www.cyber.gov.au"
+      ]
+    },
+    "site/config.js": {
+      "apis": {},
+      "externalOrigins": []
+    },
+    "site/forms.js": {
+      "apis": {
+        "createObjectURL": 2,
+        "fetch": 1,
+        "innerHTML/outerHTML": 3
+      },
+      "externalOrigins": [
+        "http://data.europa.eu",
+        "https://eur-lex.europa.eu",
+        "https://www.ai.gov.au",
+        "https://www.iso.org",
+        "https://www.nist.gov",
+        "https://www.oaic.gov.au"
+      ]
+    },
+    "site/home.js": {
+      "apis": {
+        "FileReader": 1,
+        "createObjectURL": 1,
+        "innerHTML/outerHTML": 2
+      },
+      "externalOrigins": []
+    },
+    "site/questions/engine.js": {
+      "apis": {},
+      "externalOrigins": []
+    },
+    "site/questions/loader.js": {
+      "apis": {
+        "FileReader": 2,
+        "createObjectURL": 1,
+        "fetch": 1
+      },
+      "externalOrigins": []
+    },
+    "site/report.js": {
+      "apis": {
+        "createObjectURL": 1
+      },
+      "externalOrigins": []
+    },
+    "site/sw.js": {
+      "apis": {
+        "caches": 7,
+        "fetch": 2
+      },
+      "externalOrigins": []
+    },
+    "site/ui.js": {
+      "apis": {
+        "caches": 2,
+        "serviceWorker.register": 1
+      },
+      "externalOrigins": []
+    }
+  },
+  "storage": {
+    "caches": [
+      "site/sw.js",
+      "site/ui.js"
+    ]
+  },
+  "workflows": {
+    ".github/workflows/checksums.yml": {
+      "jobs": {
+        "verify": {
+          "permissions": "inherit"
+        }
+      },
+      "permissions": {
+        "contents": "read"
+      },
+      "secrets": [],
+      "triggers": [
+        "pull_request",
+        "push"
+      ],
+      "usesPullRequestTarget": false
+    },
+    ".github/workflows/claude-security-review.yml": {
+      "jobs": {
+        "review": {
+          "permissions": {
+            "contents": "read",
+            "pull-requests": "write"
+          }
+        }
+      },
+      "permissions": {
+        "contents": "read"
+      },
+      "secrets": [
+        "secrets.ANTHROPIC_API_KEY"
+      ],
+      "triggers": [
+        "pull_request"
+      ],
+      "usesPullRequestTarget": false
+    },
+    ".github/workflows/codeql.yml": {
+      "jobs": {
+        "analyze": {
+          "permissions": {
+            "actions": "read",
+            "contents": "read",
+            "security-events": "write"
+          }
+        }
+      },
+      "permissions": {
+        "contents": "read"
+      },
+      "secrets": [],
+      "triggers": [
+        "pull_request",
+        "push",
+        "schedule"
+      ],
+      "usesPullRequestTarget": false
+    },
+    ".github/workflows/dependency-review.yml": {
+      "jobs": {
+        "dependency-review": {
+          "permissions": "inherit"
+        }
+      },
+      "permissions": {
+        "contents": "read"
+      },
+      "secrets": [],
+      "triggers": [
+        "pull_request"
+      ],
+      "usesPullRequestTarget": false
+    },
+    ".github/workflows/deploy.yml": {
+      "jobs": {
+        "deploy-production": {
+          "environment": "(block)",
+          "permissions": {
+            "contents": "read",
+            "deployments": "write"
+          }
+        },
+        "deploy-staging": {
+          "environment": "(block)",
+          "permissions": {
+            "contents": "read",
+            "deployments": "write"
+          }
+        }
+      },
+      "permissions": {
+        "contents": "read"
+      },
+      "secrets": [
+        "secrets.CLOUDFLARE_ACCOUNT_ID",
+        "secrets.CLOUDFLARE_API_TOKEN"
+      ],
+      "triggers": [
+        "push",
+        "workflow_dispatch"
+      ],
+      "usesPullRequestTarget": false
+    },
+    ".github/workflows/gitleaks.yml": {
+      "jobs": {
+        "gitleaks": {
+          "permissions": "inherit"
+        }
+      },
+      "permissions": {
+        "contents": "read"
+      },
+      "secrets": [],
+      "triggers": [
+        "pull_request",
+        "push"
+      ],
+      "usesPullRequestTarget": false
+    },
+    ".github/workflows/nikto.yml": {
+      "jobs": {
+        "nikto": {
+          "permissions": "inherit"
+        }
+      },
+      "permissions": {
+        "contents": "read"
+      },
+      "secrets": [],
+      "triggers": [
+        "pull_request",
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "usesPullRequestTarget": false
+    },
+    ".github/workflows/nuclei.yml": {
+      "jobs": {
+        "nuclei": {
+          "permissions": {
+            "contents": "read",
+            "security-events": "write"
+          }
+        }
+      },
+      "permissions": {
+        "contents": "read"
+      },
+      "secrets": [],
+      "triggers": [
+        "pull_request"
+      ],
+      "usesPullRequestTarget": false
+    },
+    ".github/workflows/osv-scanner.yml": {
+      "jobs": {
+        "scan-pr": {
+          "permissions": {
+            "actions": "read",
+            "contents": "read",
+            "security-events": "write"
+          }
+        },
+        "scan-scheduled": {
+          "permissions": {
+            "actions": "read",
+            "contents": "read",
+            "security-events": "write"
+          }
+        }
+      },
+      "permissions": {
+        "contents": "read"
+      },
+      "secrets": [],
+      "triggers": [
+        "pull_request",
+        "push",
+        "schedule"
+      ],
+      "usesPullRequestTarget": false
+    },
+    ".github/workflows/preview.yml": {
+      "jobs": {
+        "preview": {
+          "environment": "(block)",
+          "permissions": {
+            "contents": "read",
+            "deployments": "write",
+            "pull-requests": "write"
+          }
+        }
+      },
+      "permissions": {
+        "contents": "read"
+      },
+      "secrets": [
+        "secrets.CLOUDFLARE_ACCOUNT_ID",
+        "secrets.CLOUDFLARE_API_TOKEN"
+      ],
+      "triggers": [
+        "pull_request"
+      ],
+      "usesPullRequestTarget": false
+    },
+    ".github/workflows/release-tag.yml": {
+      "jobs": {
+        "gate": {
+          "environment": "release",
+          "permissions": {
+            "contents": "read"
+          }
+        }
+      },
+      "permissions": {
+        "contents": "read"
+      },
+      "secrets": [],
+      "triggers": [
+        "workflow_dispatch"
+      ],
+      "usesPullRequestTarget": false
+    },
+    ".github/workflows/release.yml": {
+      "jobs": {
+        "release": {
+          "permissions": {
+            "attestations": "write",
+            "contents": "write",
+            "id-token": "write"
+          }
+        }
+      },
+      "permissions": {
+        "contents": "read"
+      },
+      "secrets": [],
+      "triggers": [
+        "push"
+      ],
+      "usesPullRequestTarget": false
+    },
+    ".github/workflows/reproducible-build.yml": {
+      "jobs": {
+        "reproducible": {
+          "permissions": "inherit"
+        }
+      },
+      "permissions": {
+        "contents": "read"
+      },
+      "secrets": [],
+      "triggers": [
+        "pull_request",
+        "push"
+      ],
+      "usesPullRequestTarget": false
+    },
+    ".github/workflows/rollback.yml": {
+      "jobs": {
+        "rollback": {
+          "environment": "(block)",
+          "permissions": {
+            "contents": "read",
+            "deployments": "write"
+          }
+        }
+      },
+      "permissions": {
+        "contents": "read"
+      },
+      "secrets": [
+        "secrets.CLOUDFLARE_ACCOUNT_ID",
+        "secrets.CLOUDFLARE_API_TOKEN"
+      ],
+      "triggers": [
+        "workflow_dispatch"
+      ],
+      "usesPullRequestTarget": false
+    },
+    ".github/workflows/scorecard.yml": {
+      "jobs": {
+        "analysis": {
+          "permissions": {
+            "id-token": "write",
+            "security-events": "write"
+          }
+        }
+      },
+      "permissions": "read-all",
+      "secrets": [],
+      "triggers": [
+        "branch_protection_rule",
+        "push",
+        "schedule"
+      ],
+      "usesPullRequestTarget": false
+    },
+    ".github/workflows/security-tests.yml": {
+      "jobs": {
+        "browser-security": {
+          "permissions": "inherit"
+        }
+      },
+      "permissions": {
+        "contents": "read"
+      },
+      "secrets": [],
+      "triggers": [
+        "pull_request",
+        "push"
+      ],
+      "usesPullRequestTarget": false
+    },
+    ".github/workflows/semgrep.yml": {
+      "jobs": {
+        "semgrep": {
+          "permissions": {
+            "contents": "read",
+            "security-events": "write"
+          }
+        }
+      },
+      "permissions": {
+        "contents": "read"
+      },
+      "secrets": [],
+      "triggers": [
+        "pull_request",
+        "push"
+      ],
+      "usesPullRequestTarget": false
+    },
+    ".github/workflows/site-quality.yml": {
+      "jobs": {
+        "html-validate": {
+          "permissions": "inherit"
+        },
+        "lighthouse": {
+          "permissions": "inherit"
+        }
+      },
+      "permissions": {
+        "contents": "read"
+      },
+      "secrets": [],
+      "triggers": [
+        "pull_request",
+        "push"
+      ],
+      "usesPullRequestTarget": false
+    },
+    ".github/workflows/tests.yml": {
+      "jobs": {
+        "test": {
+          "permissions": "inherit"
+        }
+      },
+      "permissions": {
+        "contents": "read"
+      },
+      "secrets": [],
+      "triggers": [
+        "pull_request",
+        "push"
+      ],
+      "usesPullRequestTarget": false
+    },
+    ".github/workflows/threat-model-gate.yml": {
+      "jobs": {
+        "inventory-up-to-date": {
+          "permissions": {
+            "contents": "read"
+          }
+        },
+        "reset-review-label": {
+          "permissions": {
+            "pull-requests": "write"
+          }
+        },
+        "threat-model": {
+          "permissions": {
+            "checks": "read",
+            "contents": "read",
+            "issues": "read",
+            "pull-requests": "read"
+          }
+        }
+      },
+      "permissions": {
+        "contents": "read"
+      },
+      "secrets": [],
+      "triggers": [
+        "pull_request"
+      ],
+      "usesPullRequestTarget": false
+    },
+    ".github/workflows/trivy.yml": {
+      "jobs": {
+        "trivy": {
+          "permissions": {
+            "contents": "read",
+            "security-events": "write"
+          }
+        }
+      },
+      "permissions": {
+        "contents": "read"
+      },
+      "secrets": [],
+      "triggers": [
+        "pull_request",
+        "push"
+      ],
+      "usesPullRequestTarget": false
+    },
+    ".github/workflows/zap-baseline.yml": {
+      "jobs": {
+        "zap": {
+          "permissions": "inherit"
+        }
+      },
+      "permissions": {
+        "contents": "read"
+      },
+      "secrets": [],
+      "triggers": [
+        "pull_request"
+      ],
+      "usesPullRequestTarget": false
+    },
+    ".github/workflows/zap-full.yml": {
+      "jobs": {
+        "zap-full": {
+          "permissions": {
+            "contents": "read",
+            "issues": "write"
+          }
+        }
+      },
+      "permissions": {
+        "contents": "read"
+      },
+      "secrets": [],
+      "triggers": [
+        "push",
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "usesPullRequestTarget": false
+    },
+    ".github/workflows/zizmor.yml": {
+      "jobs": {
+        "zizmor": {
+          "permissions": {
+            "contents": "read",
+            "security-events": "write"
+          }
+        }
+      },
+      "permissions": {
+        "contents": "read"
+      },
+      "secrets": [],
+      "triggers": [
+        "pull_request",
+        "push"
+      ],
+      "usesPullRequestTarget": false
+    }
+  }
+}

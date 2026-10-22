@@ -87,15 +87,16 @@ A PR is approved when all of the following hold (mirrors the PR template checkli
 Required to pass: `test` (unit tests + hashes current), `verify` (checksums + no outbound calls), CodeQL, Semgrep, Gitleaks, Trivy, dependency review and zizmor. HTML validation must pass too; Lighthouse is report-only. If a scanner flags a false positive, explain it in the PR rather than disabling the rule. New workflows must pin actions to a full commit SHA, use least-privilege `permissions`, set `persist-credentials: false` and never use `pull_request_target`. The `security-review` label triggers an optional AI review (off until the maintainers add an API key).
 
 ## Threat model gate
-`THREAT_MODEL.md` and `docs/threat-model/safeblueprint.json` (OWASP Threat Dragon v2) describe how SafeBlueprint can be attacked and what stops it. The `threat-model-gate` check runs `scripts/threat-model-gate.js` on every PR. It **fails** when the PR changes a security-sensitive area and neither threat model file changed:
-- `site/_headers`, `nginx.conf`, `Dockerfile`, `docker-compose.yml`
-- `.github/workflows/**`, `.github/dependabot.yml`, `.github/CODEOWNERS`
-- `site/schema/**`, `site/questions/loader.js`, `site/questions/engine.js`
-- `scripts/threat-model-gate.js`, `test/threat-model-gate.test.js`, `.zap/**`, `package.json`, `package-lock.json`
-- export code (`site/report.js`, `site/forms.js`) and `site/sw.js`
-- any changed `site/**/*.js` that uses `fetch(`, `XMLHttpRequest`, `FileReader`, `localStorage`, `sessionStorage`, `indexedDB`, `navigator.sendBeacon`, `import(`, `WebSocket`, `EventSource`, `postMessage` or `innerHTML`
+`THREAT_MODEL.md` and `docs/threat-model/safeblueprint.json` (OWASP Threat Dragon v2) describe how SafeBlueprint can be attacked and what stops it. `docs/threat-model/inventory.json` is generated from the code by `npm run threat-model`: pages, forms and input fields, data flows, external endpoints, storage, security headers, workflow triggers and permissions, and dependencies. Do not edit it by hand.
 
-To pass: add or update the relevant threats and mitigations (edit the JSON in Threat Dragon, then mirror the table in `THREAT_MODEL.md`), **or** ask a maintainer to review and apply the `threat-model-reviewed` label. The label only counts if a user with admin or maintain permission applied it **after the latest push**; a new push removes the label automatically. The gate script always runs from the base branch, so a PR cannot weaken it, and changes to the gate itself, its tests, `.zap/**`, `CODEOWNERS` or `package*.json` are also security-sensitive. The JSON must parse, and the job summary lists the areas that were triggered. Tests: `test/threat-model-gate.test.js`.
+The `threat-model-gate` workflow has two checks:
+- **threat-model** runs `scripts/threat-model-gate.js` from the base branch and compares each changed file's content before and after the PR.
+  - **Cosmetic or no-risk** changes pass with no label: markup and navigation, CSS without new imports, copy, SRI hashes, `SHA256SUMS.txt`, tests and docs, and schema files reformatted without content changes.
+  - **Risk-relevant** changes need the `threat-model-reviewed` label: new uses of `fetch`, `XMLHttpRequest`, `WebSocket`, `EventSource`, `sendBeacon`, `postMessage`, storage (`localStorage`, `sessionStorage`, `indexedDB`, cookies, caches), DOM or eval sinks; new external origins; changed form actions, input fields, page scripts or the CSP meta; schema content or `site/config.json` changes; and any change to workflows, `_headers`, `nginx.conf`, Docker files, `functions/**`, `site/sw.js`, `scripts/**`, `.zap/**`, `CODEOWNERS`, Dependabot, the lockfile, or dependencies and scripts in `package.json`.
+  - For risk-relevant PRs the job summary gives a draft threat entry (next `Txx`, marked "Draft – needs maintainer review"). Copy it into `THREAT_MODEL.md` and complete it, or confirm no new threat, then a maintainer applies the label.
+- **inventory-up-to-date** regenerates `inventory.json` and fails with a diff if it is stale. Fix it by running `npm run threat-model` and committing the result. CI never pushes to your branch.
+
+The label only counts if a user with admin or maintain permission applied it **after the latest push**; a new push removes the label automatically. Updating the threat model files does not replace the label for a risk-relevant change. Tests: `test/threat-model-gate.test.js`.
 
 ## Extra scanners
 - **harden-runner** (egress audit) runs first in every job except container jobs (semgrep), where it isn't supported.

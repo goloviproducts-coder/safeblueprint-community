@@ -45,7 +45,9 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.base.sha }}
           path: .base
-          sparse-checkout: scripts/threat-model-gate.js
+          sparse-checkout: |
+            scripts/threat-model-gate.js
+            scripts/threat-model-generate.js
           sparse-checkout-cone-mode: false
           persist-credentials: false
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
@@ -80,4 +82,29 @@ jobs:
           REVIEWED_LABEL: ${{ steps.label.outputs.reviewed }}
         run: |
           git diff --name-only "$BASE_SHA...$HEAD_SHA" > "$RUNNER_TEMP/changed.txt"
-          node .base/scripts/threat-model-gate.js "$RUNNER_TEMP/changed.txt"
+          # Content before the PR is read from the merge base, so the classifier compares real changes.
+          BASE_REF=$(git merge-base "$BASE_SHA" "$HEAD_SHA") node .base/scripts/threat-model-gate.js "$RUNNER_TEMP/changed.txt"
+  # The machine-readable inventory must match the code. Read-only: nothing is pushed back to the
+  # branch; if it is stale the job fails and the author (or the bot) runs `npm run threat-model`.
+  inventory-up-to-date:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Harden runner
+        uses: step-security/harden-runner@dc2769abcc0fcfbadfc1df54081c1608579ef6b2 # v2.22.2
+        with:
+          egress-policy: audit
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+      - name: Regenerate and compare docs/threat-model/inventory.json
+        run: |
+          node scripts/threat-model-generate.js
+          if ! git diff --exit-code -- docs/threat-model/inventory.json; then
+            echo "::error file=docs/threat-model/inventory.json::Inventory is out of date. Run 'npm run threat-model' and commit the result."
+            exit 1
+          fi
