@@ -12,7 +12,7 @@ const NAV_AFTER = '<header><button class="nav-toggle" type="button" aria-label="
 const UI_BEFORE = 'var btn=document.querySelector(".nav-toggle");btn.addEventListener("click",function(){btn.textContent="Close";});';
 const UI_AFTER = 'var btn=document.querySelector(".nav-toggle");var mq=window.matchMedia("(max-width:900px)");btn.addEventListener("click",function(){btn.setAttribute("aria-label","Close menu");btn.firstElementChild.textContent="\\u00d7";});document.addEventListener("keydown",function(e){if(e.key==="Escape")btn.focus();});';
 
-test("PR #25 style nav change (markup, CSS, ui.js, SRI, SHA256SUMS) is cosmetic and passes with no label", () => {
+test("PR #25 style nav change (markup, CSS, ui.js, SRI, SHA256SUMS) is cosmetic and passes with no threat row", () => {
   const r = ev([
     { file: "site/index.html", before: NAV_BEFORE, after: NAV_AFTER },
     { file: "site/app.css", before: ".menu{display:flex}", after: ".menu{display:flex}.nav-list{display:none}" },
@@ -63,24 +63,45 @@ test("package.json: dependency or script change is risk, description is not", ()
   assert.equal(classifyFile("package.json", p({}), p({ description: "new" })).length, 0);
   assert.ok(classifyFile("package.json", p({}), p({ devDependencies: { a: "2" } })).length);
 });
-test("risk change fails without label, passes with it, and drafts the next threat id", () => {
-  const r = ev([{ file: "site/home.js", before: "", after: "fetch('https://x.example')" }]);
+test("risk change fails without a new threat row and drafts a completed next entry", () => {
+  const r = ev([{ file: "site/home.js", before: "", after: "fetch('https://x.example')" }], { modelBefore: "| T21 | x |" });
   assert.equal(r.pass, false);
-  assert.match(r.draft, /^\| T22 \|.*Draft – needs maintainer review/);
-  assert.match(summary(r), /Draft threat entry/);
-  assert.equal(ev([{ file: "site/home.js", before: "", after: "fetch('/a')" }], { reviewed: true }).pass, true);
+  assert.match(r.draft, /^\| T22 \| Browser data flows \|.*\| Medium \|.*Auto-drafted/);
+  assert.doesNotMatch(r.draft, /\((component|mitigation|STRIDE category)\)/);
+  assert.match(summary(r), /npm run threat-model:update/);
   assert.equal(nextThreatId("| T01 |\n| T20a |\n| T21 |"), "T22");
 });
-test("a threat-model update alone does not excuse a risk change (label still required)", () => {
-  const r = ev([{ file: "site/_headers", before: "a", after: "b" }, { file: "THREAT_MODEL.md", before: "", after: "x" }]);
-  assert.equal(r.pass, false);
+test("risk change passes when this PR adds a row naming every risky file (no label)", () => {
+  const changes = [{ file: "site/_headers", before: "a", after: "b" }, { file: "Dockerfile", before: "a", after: "b" }];
+  const r1 = ev(changes, { modelBefore: "| T21 | x |" });
+  const row = r1.draft;
+  assert.equal(ev(changes, { modelBefore: "| T21 | x |", modelText: "| T21 | x |\n" + row }).pass, true);
+  const partial = ev(changes, { modelBefore: "| T21 | x |", modelText: "| T21 | x |\n| T22 | a | b | `site/_headers` |" });
+  assert.equal(partial.pass, false);
+  assert.deepEqual(partial.missing, ["Dockerfile"]);
 });
-test("invalid Threat Dragon JSON fails even with the label", () => {
+test("an existing row naming the file does not count; only rows added in this PR do", () => {
+  const old = "| T21 | x | `site/_headers` |";
+  assert.equal(ev([{ file: "site/_headers", before: "a", after: "b" }], { modelBefore: old, modelText: old }).pass, false);
+});
+test("Dependabot manifest-only updates pass; Dependabot touching other risk files does not", () => {
+  const dep = [{ file: "package-lock.json", before: "a", after: "b" }];
+  assert.equal(ev(dep, { modelBefore: "| T21 | x |", author: "dependabot[bot]" }).pass, true);
+  assert.equal(ev(dep, { modelBefore: "| T21 | x |", author: "someone" }).pass, false);
+  assert.equal(ev(dep.concat([{ file: ".github/workflows/x.yml", before: "a", after: "b" }]), { modelBefore: "| T21 | x |", author: "dependabot[bot]" }).pass, false);
+});
+test("invalid Threat Dragon JSON fails even with a threat row", () => {
   const root = fs.mkdtempSync(path.join(require("os").tmpdir(), "tmgate-"));
   fs.mkdirSync(path.join(root, "docs/threat-model"), { recursive: true });
   fs.writeFileSync(path.join(root, "docs/threat-model/safeblueprint.json"), "{nope");
-  const r = evaluate([{ file: "docs/threat-model/safeblueprint.json", before: "" }], { root, reviewed: true });
+  const r = evaluate([{ file: "docs/threat-model/safeblueprint.json", before: "" }], { root, modelBefore: "", modelText: "| T01 | `docs/threat-model/safeblueprint.json` |" });
   assert.equal(r.pass, false);
+});
+test("draft script inserts the row after the last threat row and adds a plain-English line", () => {
+  const { insertRow, plainLine } = require("../scripts/threat-model-draft.js");
+  const out = insertRow("# x\n| T01 | a |\n| T02 | b |\n\n## Next", "| T03 | c |");
+  assert.equal(out, "# x\n| T01 | a |\n| T02 | b |\n| T03 | c |\n\n## Next");
+  assert.match(plainLine("T03", [{ file: "site/_headers", reasons: ["Security headers"] }]), /^- \*\*T03\*\*: .*site\/_headers.*auto-drafted/);
 });
 test("paths with .. are ignored", () => {
   assert.equal(ev(["site/../../etc/passwd.js"]).pass, true);
@@ -135,4 +156,25 @@ test("URL detection: protocol-relative, single quotes, template literals, url()"
   ].forEach(([f, b, a]) => assert.match(classifyFile(f, b, a).join(" "), /evil\.example/, a));
   assert.deepEqual(gen.origins("x='//cdn.example.com/a' y=`https://Cdn.Example.com/b`"), ["https://cdn.example.com"]);
   assert.equal(gen.origins("// just a comment\nvar a = 1; // another").length, 0);
+});
+
+test("table cells escape backslashes before pipes", () => {
+  const { cell } = require("../scripts/threat-model-gate.js");
+  assert.equal(cell("a\\|b"), "a\\\\\\|b");
+  assert.equal(cell("x|y\nz"), "x\\|y z");
+});
+test("risk-area mapping: 'deploy' anywhere and 'Build, release' only at the start", () => {
+  const { draftEntry } = require("../scripts/threat-model-gate.js");
+  assert.match(draftEntry("T99", [{ file: "x", reasons: ["Build, release and deploy scripts"] }]), /Build, release and deploy tooling/);
+  assert.match(draftEntry("T99", [{ file: "x", reasons: ["Staging deploy job"] }]), /Build, release and deploy tooling/);
+  assert.doesNotMatch(draftEntry("T99", [{ file: "x", reasons: ["Not Build, release"] }]), /Build, release and deploy tooling/);
+});
+test("draft script ignores changed paths that escape the repo", () => {
+  const { safePath } = require("../scripts/threat-model-gate.js");
+  const root = path.join(__dirname, "..");
+  assert.equal(safePath(root, "../etc/passwd"), null);
+  assert.equal(safePath(root, "/etc/passwd"), null);
+  assert.ok(safePath(root, "scripts/threat-model-draft.js"));
+  const files = require("../scripts/threat-model-draft.js").changedFiles("HEAD");
+  assert.ok(files.every((f) => safePath(root, f)));
 });
