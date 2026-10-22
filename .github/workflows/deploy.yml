@@ -10,12 +10,13 @@ on:
   workflow_dispatch:
 permissions:
   contents: read
-concurrency:
-  group: deploy-production
-  cancel-in-progress: false
 jobs:
   deploy-staging:
     runs-on: ubuntu-latest
+    # Own group so a production deploy waiting for approval never blocks staging.
+    concurrency:
+      group: deploy-staging
+      cancel-in-progress: false
     environment:
       name: staging
       url: https://staging.safeblueprint.pages.dev
@@ -84,6 +85,9 @@ jobs:
     needs: deploy-staging
     if: startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
+    concurrency:
+      group: deploy-production
+      cancel-in-progress: false
     environment:
       name: production
       url: https://safeblueprint.pages.dev
