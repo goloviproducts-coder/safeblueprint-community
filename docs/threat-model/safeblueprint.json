@@ -502,8 +502,8 @@
                   "status": "Mitigated",
                   "severity": "Medium",
                   "type": "Elevation of privilege",
-                  "description": "Code on the staging branch reaches the public staging URL without production approval, or staging is indexed and mistaken for production.",
-                  "mitigation": "deploy-staging.yml runs only on pushes to the protected staging branch (no deletion or force-push) or manual dispatch; deploys only to the staging Pages branch alias (--branch staging), never production; same pinned actions, harden-runner, read-only permissions and disabled package cache as production; X-Robots-Tag noindex added to the staging build only; smoke tests after deploy. Production stays approval-gated. Controls: SLSA-L2, OWASP-CICD-SEC-1",
+                  "description": "Merged code reaches the public staging URL without production approval, or staging is indexed and mistaken for production.",
+                  "mitigation": "Staging is the first job of deploy.yml, runs only on pushes to main (PR + required checks) or manual dispatch, and deploys only to the staging Pages branch alias (--branch staging), never production; same pinned actions, harden-runner, read-only permissions and disabled package cache as production; X-Robots-Tag noindex added to the staging build only; smoke tests after deploy. The production job needs staging to succeed and then still waits for maintainer approval. Controls: SLSA-L2, OWASP-CICD-SEC-1",
                   "modelType": "STRIDE",
                   "score": ""
                 }

@@ -13,7 +13,7 @@ All notable changes to this project are documented here. Format: [Keep a Changel
 - `npm test` (node:test) and a `tests` CI workflow; `scripts/update-hashes.js` refreshes SRI and SHA256SUMS.
 
 ### General
-- Staging site at staging.safeblueprint.pages.dev: changes can be checked live before production; hidden from search engines; production still needs maintainer approval
+- Staging site at staging.safeblueprint.pages.dev: every merge to main goes live on staging first, before production; hidden from search engines; production still needs maintainer approval
 - One-command Docker run and clear offline instructions (serve locally; opening the file directly is not supported)
 - Documented the release supply-chain level (SLSA Build Level 2) and how to verify it
 
