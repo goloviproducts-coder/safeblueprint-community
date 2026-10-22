@@ -1,0 +1,9 @@
+# name: Internal control IDs template
+# version: 2026.1
+# contributor: SafeBlueprint contributors
+id,pack,section,order,question,help_text,type,options,required,weight,risk_if,severity,maps_to_control,pattern,finding_text,action_text,owner_role,show_if,audience
+C01,controls,Governance,1,Is this AI use recorded in your AI register?,Replace ORG-GOV-01 with your own control ID.,yesno,,true,2,no|unsure,medium,ORG-GOV-01,,AI use is not in the register.,Add it to the AI register.,Control owner,,leaders
+C02,controls,Access,2,Is access to the AI system limited to the people who need it?,Replace ORG-ACC-01 with your own control ID.,yesno,,true,3,no|unsure,high,ORG-ACC-01|ASD-E8-ADMIN,,Access is broader than needed.,Review and reduce access.,Control owner,,architects
+C03,controls,Data,3,Is the data the AI system uses classified and approved?,Replace ORG-DATA-01 with your own control ID.,yesno,,false,2,no|unsure,medium,ORG-DATA-01,,Data is not classified or approved.,Classify the data and record approval.,Control owner,,delivery
+C04,controls,Change,4,Do model or prompt changes go through change approval?,Replace ORG-CHG-01 with your own control ID.,yesno,,false,2,no|unsure,medium,ORG-CHG-01,,Changes skip change approval.,Route model and prompt changes through change approval.,Control owner,,delivery
+C05,controls,Monitoring,5,Is AI output monitored with an owner who acts on issues?,Replace ORG-MON-01 with your own control ID.,yesno,,false,1,no|unsure,low,ORG-MON-01,,No monitoring owner.,Name a monitoring owner and a review cadence.,Control owner,,delivery

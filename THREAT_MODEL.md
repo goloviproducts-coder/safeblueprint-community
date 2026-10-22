@@ -3,7 +3,7 @@
 STRIDE threat model for SafeBlueprint Community Edition. The machine-readable copy is [docs/threat-model/safeblueprint.json](docs/threat-model/safeblueprint.json) (OWASP Threat Dragon v2; open it at https://www.threatdragon.com or in the desktop app). **Keep both in sync.**
 
 ## Scope and assumptions
-- The app is static HTML/JS. There is no backend, account or database in the self-hosted edition; the contact relay is disabled.
+- The app is static HTML/JS. There is no backend, account or database in the self-hosted edition; the contact relay is disabled. In the hosted edition, if the relay is unavailable the contact page shows plain links to Instagram and GitHub Issues (no extra network calls; no email address is shown).
 - All answers and question packs stay in the visitor's browser. Nothing is sent unless a future feature asks for explicit consent.
 - Out of scope: the visitor's own device security, and how users store or share exported files.
 
@@ -47,7 +47,7 @@ CI/CD --signed release, attestations--> Repository --zip/image--> Self-host serv
 | T20 | CI/CD deploy | Elevation of privilege | Unreviewed code deployed to production | High | Deploy only from main (PR + required checks); production environment needs maintainer approval; secrets scoped to the environment; pinned wrangler-action; smoke tests after deploy; setup-node package cache disabled in the deploy job to prevent cache poisoning; production contact function accepts only the pages.dev origins (no localhost). | SLSA-L2, OWASP-CICD-SEC-1 | Mitigated |
 
 ## Verification
-Mitigations above are tested continuously: browser security tests (`test/security/`) prove malicious packs cannot run script or break reports, CSP violations fail the build, and full tool runs and exports make zero cross-origin requests. `npm run privacy-proof` lets anyone reproduce the zero-egress check for a full run, a custom pack run and every export. Nuclei and ZAP scan the served site; Nikto and header checks scan the self-host container. See CONTRIBUTING.md, "Penetration tests".
+Mitigations above are tested continuously: property-based fuzzing (fast-check, a pinned dev-only dependency that never ships in the site) feeds random and hostile input to the pack loader, scoring and Markdown export; browser security tests (`test/security/`) prove malicious packs cannot run script or break reports, CSP violations fail the build, and full tool runs and exports make zero cross-origin requests. `npm run privacy-proof` lets anyone reproduce the zero-egress check for a full run, a custom pack run and every export. Nuclei and ZAP scan the served site; Nikto and header checks scan the self-host container. See CONTRIBUTING.md, "Penetration tests".
 
 ## When to update
 Update this file **and** the Threat Dragon JSON when a change touches a security-sensitive area: security headers, nginx/Docker, workflows, schemas, the question loader, export code, the service worker, or browser code that uses network, storage or DOM-injection APIs. The `threat-model-gate` check enforces this (see CONTRIBUTING.md).

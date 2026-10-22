@@ -15,6 +15,7 @@
   },
   "devDependencies": {
     "@playwright/test": "1.64.1",
+    "fast-check": "4.10.2",
     "serve": "14.2.6"
   },
   "overrides": {
