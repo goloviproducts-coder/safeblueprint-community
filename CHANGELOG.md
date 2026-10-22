@@ -32,8 +32,6 @@ All notable changes to this project are documented here. Each release uses six p
 - Pack contribution and review process with contributor credit; every pack is validated automatically
 - One-command Docker run and clear offline instructions
 - Documented the release supply-chain level (SLSA Build Level 2) and how to verify it
-
-### General
 - Published governance (who decides and how), a public roadmap, and a promise to acknowledge security reports within 72 hours with a published-advisories process
 
 ## [1.0.0] - 2026-10-22
