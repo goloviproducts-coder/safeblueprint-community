@@ -51,6 +51,9 @@ Add `upgrade-insecure-requests` to the CSP when you serve over HTTPS.
 
 Then open http://localhost:8080/. The container runs nginx as a non-root user on port 8080, with a read-only file system. Put it behind your TLS and SSO proxy for shared use.
 
+## Offline and air-gapped use
+Everything runs in the browser and nothing calls the internet, so Options A, B and C all work with no internet connection. Opening `site/index.html` directly from disk (`file://`) is **not** supported because pages load files from the site root; always serve the folder, even on a laptop.
+
 ## Check the files have not been changed
 
 From the pack folder:

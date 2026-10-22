@@ -6,6 +6,7 @@ All notable changes to this project are documented here. Each release uses six p
 ### Features
 - Custom question packs: load your own questions from CSV or JSON, with weights and control mappings
 - HTML export for custom question pack reports
+- Community question pack library: health, education and public sector starter packs, plus a template for your own internal control IDs
 
 ### Issues fixed
 - Removed a penalty figure from the guidance (we do not quote penalty amounts)
@@ -28,6 +29,9 @@ All notable changes to this project are documented here. Each release uses six p
 ### General
 - Automatic deploy of the hosted site from the main branch to Cloudflare Pages
 - NOTICE file and a polite request to credit SafeBlueprint when you reuse it
+- Pack contribution and review process with contributor credit; every pack is validated automatically
+- One-command Docker run and clear offline instructions
+- Documented the release supply-chain level (SLSA Build Level 2) and how to verify it
 
 ## [1.0.0] - 2026-10-22
 ### Features
