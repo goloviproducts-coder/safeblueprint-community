@@ -40,18 +40,42 @@ if ("serviceWorker" in navigator) navigator.serviceWorker.register("/sw.js");
   var btn = document.querySelector(".nav-toggle");
   var nav = document.getElementById("primary-nav");
   if (!btn || !nav) return;
-  function closeMenu() {
-    nav.classList.remove("open");
-    btn.setAttribute("aria-expanded", "false");
-    btn.textContent = "Menu";
+  var mobile = window.matchMedia("(max-width:900px)");
+  var groups = Array.prototype.slice.call(nav.querySelectorAll(".nav-group-btn"));
+  function closeGroups(except) {
+    groups.forEach(function (g) { if (g !== except) g.setAttribute("aria-expanded", "false"); });
   }
-  btn.addEventListener("click", function () {
-    var open = nav.classList.toggle("open");
+  function setMenu(open) {
+    nav.classList.toggle("open", open);
     btn.setAttribute("aria-expanded", open ? "true" : "false");
-    btn.textContent = open ? "Close" : "Menu";
+    btn.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+    btn.firstElementChild.textContent = open ? "\u00d7" : "\u2630";
+    if (open) { var first = nav.querySelector("a"); if (first) first.focus(); }
+  }
+  btn.addEventListener("click", function () { setMenu(!nav.classList.contains("open")); });
+  groups.forEach(function (g) {
+    if (mobile.matches) g.setAttribute("tabindex", "-1");
+    g.addEventListener("click", function () {
+      if (mobile.matches) return;
+      var open = g.getAttribute("aria-expanded") !== "true";
+      closeGroups(g);
+      g.setAttribute("aria-expanded", open ? "true" : "false");
+      if (open) { var a = g.nextElementSibling.querySelector("a"); if (a) a.focus(); }
+    });
   });
-  nav.querySelectorAll("a").forEach(function (link) { link.addEventListener("click", closeMenu); });
-  document.addEventListener("keydown", function (event) { if (event.key === "Escape") closeMenu(); });
+  mobile.addEventListener("change", function () {
+    closeGroups(null); setMenu(false);
+    groups.forEach(function (g) { if (mobile.matches) g.setAttribute("tabindex", "-1"); else g.removeAttribute("tabindex"); });
+  });
+  nav.querySelectorAll("a").forEach(function (link) { link.addEventListener("click", function () { closeGroups(null); setMenu(false); }); });
+  document.addEventListener("click", function (e) { if (!nav.contains(e.target)) closeGroups(null); });
+  nav.addEventListener("focusout", function (e) { if (!mobile.matches && e.relatedTarget && !nav.contains(e.relatedTarget)) closeGroups(null); });
+  document.addEventListener("keydown", function (event) {
+    if (event.key !== "Escape") return;
+    var openG = groups.filter(function (g) { return g.getAttribute("aria-expanded") === "true"; })[0];
+    if (openG && !mobile.matches) { closeGroups(null); openG.focus(); return; }
+    if (nav.classList.contains("open")) { setMenu(false); btn.focus(); }
+  });
 })();
 (function () {
   var el = document.getElementById("deadline-chip");
