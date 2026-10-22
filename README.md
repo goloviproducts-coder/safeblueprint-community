@@ -47,6 +47,9 @@ gh attestation verify safeblueprint-selfhost-1.0.0.zip --repo goloviproducts-cod
 ```
 Both must pass before you deploy. After unzipping, `sha256sum -c SHA256SUMS.txt` inside the folder checks every file.
 
+## Project
+- [Governance](GOVERNANCE.md) · [Roadmap](ROADMAP.md) · [Security policy](SECURITY.md) · [Contributing](CONTRIBUTING.md)
+
 ## Screenshots
 | Leader summary (portfolio) | Portfolio report p1 | Portfolio report p2 |
 |---|---|---|
