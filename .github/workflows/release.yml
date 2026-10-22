@@ -67,19 +67,18 @@ jobs:
         with:
           subject-path: dist/${{ env.NAME }}.zip
           sbom-path: dist/${{ env.NAME }}.spdx.json
-      - name: Release notes from CHANGELOG
-        env:
-          TAG: ${{ github.ref_name }}
-        run: |
-          VER="${TAG#v}"
-          awk -v v="## [${VER}]" 'index($0,v)==1{f=1;next} f&&/^## \[/{exit} f' CHANGELOG.md > dist/NOTES.md
-          [ -s dist/NOTES.md ] || { echo "::error::CHANGELOG has no [${VER}] section"; exit 1; }
-          printf '\n### Verify\n`gh attestation verify %s.zip --repo %s && sha256sum -c SHA256SUMS`\n' "$NAME" "$GITHUB_REPOSITORY" >> dist/NOTES.md
       - name: Create release
         env:
           GH_TOKEN: ${{ github.token }}
           TAG: ${{ github.ref_name }}
         run: |
+          VER="${TAG#v}"
+          VER_RE="$(printf '%s' "$VER" | sed 's/[.]/\\./g')"
+          VER_RE="$VER_RE" awk '$0 ~ ("^## \\[" ENVIRON["VER_RE"] "\\]") {f=1; next} /^## \[/ && f {exit} f' CHANGELOG.md > notes.md
+          for h in "Features" "Issues fixed" "Interfaces updated" "Security fixes" "Privacy" "General"; do
+            grep -qx "### $h" notes.md || { echo "CHANGELOG.md section for $VER is missing heading: $h" >&2; exit 1; }
+          done
+          printf '\nVerify the download: `gh attestation verify %s.zip --repo %s && sha256sum -c SHA256SUMS`\n' "$NAME" "$GITHUB_REPOSITORY" >> notes.md
           gh release create "$TAG" --repo "$GITHUB_REPOSITORY" --title "SafeBlueprint $TAG" --verify-tag \
-            --notes-file dist/NOTES.md \
+            --notes-file notes.md \
             "dist/${NAME}.zip" "dist/${NAME}.spdx.json" "dist/${NAME}.cdx.json" dist/SHA256SUMS
