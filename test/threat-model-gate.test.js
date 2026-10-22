@@ -15,7 +15,6 @@ const UI_AFTER = 'var btn=document.querySelector(".nav-toggle");var mq=window.ma
 test("PR #25 style nav change (markup, CSS, ui.js, SRI, SHA256SUMS) is cosmetic and passes with no label", () => {
   const r = ev([
     { file: "site/index.html", before: NAV_BEFORE, after: NAV_AFTER },
-    { file: "site/schema/index.html", before: NAV_BEFORE, after: NAV_AFTER },
     { file: "site/app.css", before: ".menu{display:flex}", after: ".menu{display:flex}.nav-list{display:none}" },
     { file: "site/ui.js", before: UI_BEFORE, after: UI_AFTER },
     { file: "SHA256SUMS.txt", before: "aa  ./site/ui.js\n", after: "bb  ./site/ui.js\n" }
@@ -34,8 +33,8 @@ test("new fetch, XHR, WebSocket, beacon or storage in site JS is risk", () => {
   });
 });
 test("moving or removing an existing sink is not risk", () => {
-  assert.equal(classifyFile("site/forms.js", "fetch('/api/contact')", "// tidy\nfetch('/api/contact')").length, 0);
-  assert.equal(classifyFile("site/forms.js", "fetch('/a');fetch('/b')", "fetch('/a')").length, 0);
+  assert.equal(classifyFile("site/home.js", "fetch('/api/contact')", "// tidy\nfetch('/api/contact')").length, 0);
+  assert.equal(classifyFile("site/home.js", "fetch('/a');fetch('/b')", "fetch('/a')").length, 0);
 });
 test("new external origin in site code or markup is risk; existing origin is not", () => {
   assert.match(classifyFile("site/about/index.html", '<a href="https://github.com/x">', '<a href="https://evil.example/x">')[0], /evil\.example/);
@@ -48,11 +47,10 @@ test("form action, new input fields, CSP meta, new script and inline handlers ar
   assert.ok(classifyFile("site/c.html", '<script src="/ui.js"></script>', '<script src="/ui.js"></script><script src="/extra.js"></script>').length);
   assert.ok(classifyFile("site/c.html", "<p>x</p>", '<p onclick="go()">x</p>').length);
 });
-test("schema: content change is risk, reformatting or SRI-only touch is not", () => {
+test("schema JSON outside site/: content change is risk, reformatting is not", () => {
   const a = '{"type":"object","properties":{"name":{"type":"string"}}}';
-  assert.equal(classifyFile("site/schema/report/v1.json", a, JSON.stringify(JSON.parse(a), null, 2)).length, 0);
-  assert.match(classifyFile("site/schema/report/v1.json", a, '{"type":"object","properties":{"name":{"type":"string"},"email":{"type":"string"}}}')[0], /Schema content/);
-  assert.equal(classifyFile("site/schema/index.html", NAV_BEFORE, NAV_AFTER).length, 0);
+  assert.equal(classifyFile("schema/report/v1.json", a, JSON.stringify(JSON.parse(a), null, 2)).length, 0);
+  assert.match(classifyFile("schema/report/v1.json", a, '{"type":"object","properties":{"name":{"type":"string"},"email":{"type":"string"}}}')[0], /Schema content/);
 });
 test("workflows, headers, nginx, Docker, functions, service worker, lockfile and scripts are always risk", () => {
   ["site/_headers", "nginx.conf", "Dockerfile", ".github/workflows/tests.yml", "functions/api/contact.js", "site/sw.js", "package-lock.json", "scripts/build-release.sh", ".github/CODEOWNERS", ".zap/rules.tsv", "scripts/threat-model-gate.js", ".github/workflows/threat-model-gate.yml", "test/threat-model-gate.test.js"].forEach((f) => {
@@ -89,8 +87,10 @@ test("paths with .. are ignored", () => {
 });
 test("the shipped Threat Dragon model parses and has threats", () => {
   const j = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "docs", "threat-model", "safeblueprint.json"), "utf8"));
+  assert.ok(j.version.startsWith("2."));
   const threats = j.detail.diagrams.flatMap((d) => d.cells).flatMap((c) => (c.data && c.data.threats) || []);
   assert.ok(threats.length >= 10);
+  threats.forEach((t) => assert.ok(t.mitigation && t.status, t.title));
 });
 test("generated inventory is committed and up to date", () => {
   const cur = fs.readFileSync(path.join(__dirname, "..", "docs", "threat-model", "inventory.json"), "utf8");
@@ -102,4 +102,37 @@ test("inventory captures flows, endpoints, headers and workflow permissions", ()
   assert.ok(inv.headers["site/_headers"]["/*"]["Content-Security-Policy"]);
   assert.ok(Object.values(inv.workflows).every((w) => w.usesPullRequestTarget === false));
   assert.deepEqual(gen.workflowFacts("on:\n  pull_request:\npermissions:\n  contents: read\njobs:\n  a:\n    permissions:\n      issues: write\n").jobs.a.permissions, { issues: "write" });
+});
+
+test("Threat Dragon JSON without summary/diagrams fails", () => {
+  const root = fs.mkdtempSync(path.join(require("os").tmpdir(), "tmgate-"));
+  fs.mkdirSync(path.join(root, "docs/threat-model"), { recursive: true });
+  fs.writeFileSync(path.join(root, "docs/threat-model/safeblueprint.json"), "{}");
+  const r = evaluate([{ file: "docs/threat-model/safeblueprint.json", before: "" }], { root });
+  assert.equal(r.pass, false);
+  assert.match(r.errors[0], /summary and detail\.diagrams/);
+});
+test("summary lists every triggered area", () => {
+  const s = summary(ev([{ file: "Dockerfile", before: "a", after: "b" }, { file: "site/sw.js", before: "a", after: "b" }]));
+  assert.match(s, /Container image/);
+  assert.match(s, /Service worker/);
+  assert.match(s, /❌/);
+});
+test("core logic files and everything under site/schema/ are always risk, even for cosmetic edits", () => {
+  ["site/questions/loader.js", "site/questions/engine.js", "site/report.js", "site/forms.js", "site/schema/index.html", "site/schema/report/v1.json", "site/schema/sub/x.css"].forEach((f) => {
+    assert.ok(classifyFile(f, "// a", "// b").length, f);
+  });
+  assert.equal(classifyFile("site/questions/other.js", "// a", "// b").length, 0);
+});
+test("URL detection: protocol-relative, single quotes, template literals, url()", () => {
+  [
+    ["site/a.html", "<p></p>", "<img src='//evil.example/x.png'>"],
+    ["site/a.html", "<p></p>", "<a href='https://evil.example/x'>"],
+    ["site/a.js", "var a=1;", "var u=`https://evil.example/${p}`;"],
+    ["site/a.js", "var a=1;", "var u='//evil.example/p';"],
+    ["site/a.js", "var a=1;", "var u=`wss://evil.example:8443/s`;"],
+    ["site/a.css", ".a{}", ".a{background:url(//evil.example/i.png)}"]
+  ].forEach(([f, b, a]) => assert.match(classifyFile(f, b, a).join(" "), /evil\.example/, a));
+  assert.deepEqual(gen.origins("x='//cdn.example.com/a' y=`https://Cdn.Example.com/b`"), ["https://cdn.example.com"]);
+  assert.equal(gen.origins("// just a comment\nvar a = 1; // another").length, 0);
 });

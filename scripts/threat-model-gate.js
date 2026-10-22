@@ -28,6 +28,8 @@ const PATH_RULES = [
   { area: "Self-host server (nginx)", test: (f) => f === "nginx.conf" },
   { area: "Container image", test: (f) => f === "Dockerfile" || f === "docker-compose.yml" || f === ".dockerignore" },
   { area: "Server function", test: (f) => f.startsWith("functions/") },
+  { area: "Core app logic (question loading, scoring, report, export, forms)", test: (f) => ["site/questions/loader.js", "site/questions/engine.js", "site/report.js", "site/forms.js"].includes(f) },
+  { area: "Schema (pack format and validation)", test: (f) => f.startsWith("site/schema/") },
   { area: "Service worker / offline cache", test: (f) => f === "site/sw.js" },
   { area: "ZAP scan rules", test: (f) => f.startsWith(".zap/") },
   { area: "Build, release and deploy scripts", test: (f) => f.startsWith("scripts/") }

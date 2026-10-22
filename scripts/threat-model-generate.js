@@ -36,11 +36,14 @@ const API_PATTERNS = {
   "window.open": /\bwindow\.open\s*\(/g,
   "env secret": /\benv\.[A-Z_]{3,}\b/g
 };
-const URL_RE = /\b(?:https?|wss?):\/\/[A-Za-z0-9.-]+(?::\d+)?/g;
+// Absolute (http, https, ws, wss) and protocol-relative (//host) URLs, whether they sit in
+// double quotes, single quotes, template literals, url() or bare text.
+const URL_RE = /(?:\b(?:https?|wss?):)?\/\/(?:[A-Za-z0-9-]+\.)+[A-Za-z]{2,}(?::\d+)?/g;
 
 function rel(p) { return path.relative(root, p).split(path.sep).join("/"); }
 // Every path must resolve inside the repository.
 function inside(p) {
+  p = path.resolve(root, p);
   const r = path.relative(root, p);
   if (r.startsWith("..") || path.isAbsolute(r)) throw new Error("Refusing path outside the repository: " + p);
   return p;
@@ -51,12 +54,14 @@ function walk(dir) {
   try { entries = fs.readdirSync(inside(dir), { withFileTypes: true }); } catch (e) { return []; }
   return entries.flatMap((d) => {
     if (d.name.indexOf("..") !== -1 || d.name.indexOf("/") !== -1) throw new Error("Unsafe file name: " + d.name);
-    const p = inside(dir + path.sep + d.name);
+    const p = inside(path.resolve(dir, d.name));
     return d.isDirectory() ? walk(p) : [p];
   }).sort();
 }
 function uniq(a) { return Array.from(new Set(a)).sort(); }
-function origins(text) { return uniq((text.match(URL_RE) || []).map((u) => u.toLowerCase())); }
+function origins(text) {
+  return uniq((text.match(URL_RE) || []).map((u) => { u = u.toLowerCase(); return u.startsWith("//") ? "https:" + u : u; }));
+}
 function apis(text) {
   const o = {};
   Object.keys(API_PATTERNS).forEach((k) => { const n = (text.match(API_PATTERNS[k]) || []).length; if (n) o[k] = n; });
@@ -179,6 +184,9 @@ if (require.main === module) {
     if (cur !== next) { console.error(OUT + " is out of date. Run `npm run threat-model` and commit the result."); process.exit(1); }
     console.log(OUT + " is up to date."); process.exit(0);
   }
-  fs.writeFileSync(out, next); console.log((cur === next ? "Unchanged: " : "Wrote ") + OUT);
+  // Atomic write: create a fresh temp file exclusively, then rename it over the output.
+  const tmp = inside(out + "." + process.pid + ".tmp");
+  fs.writeFileSync(tmp, next, { flag: "wx" });
+  fs.renameSync(tmp, out); console.log((cur === next ? "Unchanged: " : "Wrote ") + OUT);
 }
 module.exports = { build, render, apis, origins, htmlFacts, workflowFacts, API_PATTERNS };
