@@ -3,7 +3,7 @@
 STRIDE threat model for SafeBlueprint Community Edition. The machine-readable copy is [docs/threat-model/safeblueprint.json](docs/threat-model/safeblueprint.json) (OWASP Threat Dragon v2; open it at https://www.threatdragon.com or in the desktop app). **Keep both in sync.**
 
 ## Scope and assumptions
-- The app is static HTML/JS. There is no backend, account or database in the self-hosted edition; the contact relay is disabled.
+- The app is static HTML/JS. There is no backend, account or database in the self-hosted edition; the contact relay is disabled. In the hosted edition, if the relay is unavailable the contact page shows plain links to Instagram and GitHub Issues (no extra network calls; no email address is shown).
 - All answers and question packs stay in the visitor's browser. Nothing is sent unless a future feature asks for explicit consent.
 - Out of scope: the visitor's own device security, and how users store or share exported files.
 
