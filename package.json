@@ -8,7 +8,9 @@
     "test": "node --test test/*.test.js",
     "build:default-pack": "node scripts/build-default-pack.js",
     "test:security": "playwright test",
-    "privacy-proof": "playwright test test/security/privacy-proof.spec.js --reporter=list"
+    "privacy-proof": "playwright test test/security/privacy-proof.spec.js --reporter=list",
+    "threat-model": "node scripts/threat-model-generate.js",
+    "threat-model:check": "node scripts/threat-model-generate.js --check"
   },
   "engines": {
     "node": ">=20"
