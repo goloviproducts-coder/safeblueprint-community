@@ -21,6 +21,22 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+      - name: Verify tag is signed, annotated and on main
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          [[ "$TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo "::error::'$TAG' is not a vX.Y.Z tag"; exit 1; }
+          read -r type sha < <(gh api "repos/$REPO/git/ref/tags/$TAG" -q '.object.type + " " + .object.sha')
+          [ "$type" = "tag" ] || { echo "::error::$TAG is not an annotated tag"; exit 1; }
+          [ "$(gh api "repos/$REPO/git/tags/$sha" -q .verification.verified)" = "true" ] || { echo "::error::$TAG signature is not verified by GitHub"; exit 1; }
+          commit=$(gh api "repos/$REPO/git/tags/$sha" -q .object.sha)
+          status=$(gh api "repos/$REPO/compare/$commit...main" -q .status)
+          case "$status" in ahead|identical) ;; *) echo "::error::$TAG ($commit) is not on main ($status)"; exit 1;; esac
+          echo "TAG_COMMIT=$commit" >> "$GITHUB_ENV"
+          echo "$TAG -> $commit: signed, annotated, on main"
       - name: Verify source checksums
         run: sha256sum -c SHA256SUMS.txt
       - name: Build zip

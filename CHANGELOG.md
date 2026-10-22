@@ -8,6 +8,7 @@ All notable changes to this project are documented here. Each release uses six p
 - HTML export for custom question pack reports
 - Community question pack library: health, education and public sector starter packs, plus a template for your own internal control IDs
 - Public security dashboard showing the live status of every security check
+- Pull request previews: each PR gets its own temporary preview link, posted on the PR and hidden from search engines
 
 ### Issues fixed
 - Removed a penalty figure from the guidance (we do not quote penalty amounts)
@@ -23,6 +24,8 @@ All notable changes to this project are documented here. Each release uses six p
 - Automated penetration tests (ZAP, Nuclei, Nikto) and browser security tests
 - Owner approval required for every live deploy to the hosted site
 - Automated fuzz testing of the question-pack loader to catch crashes from unusual or hostile files
+- Pull request previews are only built for branches in this repository; forks never get previews or deploy credentials
+- Every release and rollback checks the tag is signed, verified by GitHub and on main before deploying
 
 ### Privacy
 - Removed the third-party form service (FormSubmit); no contact email is shown on the site
@@ -31,10 +34,13 @@ All notable changes to this project are documented here. Each release uses six p
 - Privacy proof anyone can run (npm run privacy-proof): a full run, a custom pack run and every export make zero requests to other sites
 
 ### General
-- Automatic deploy of the hosted site from the main branch to Cloudflare Pages
+- Automatic deploy of the hosted site to Cloudflare Pages: staging from main, production from signed release tags
 - NOTICE file and a polite request to credit SafeBlueprint when you reuse it
 - Pack contribution and review process with contributor credit; every pack is validated automatically
 - One-command Docker run and clear offline instructions
+- Staging site at staging.safeblueprint.pages.dev: every merge to main goes live on staging first, hidden from search engines
+- One-click rollback to an earlier signed release, with maintainer approval
+- Release, preview, staging and rollback steps documented in docs/RELEASING.md
 - Documented the release supply-chain level (SLSA Build Level 2) and how to verify it
 - Published governance (who decides and how), a public roadmap, and a promise to acknowledge security reports within 72 hours with a published-advisories process
 

@@ -491,7 +491,43 @@
                   "severity": "High",
                   "type": "Elevation of privilege",
                   "description": "A deploy could ship code that skipped review.",
-                  "mitigation": "Deploy only from main (PR + required checks); production environment needs maintainer approval; secrets scoped to the environment; pinned wrangler-action; smoke tests after deploy; setup-node package cache disabled in the deploy job to prevent cache poisoning; production contact function accepts only the pages.dev origins (no localhost). Controls: SLSA-L2, OWASP-CICD-SEC-1",
+                  "mitigation": "Deploy production only from signed vX.Y.Z tags on main (PR + required checks); production environment needs maintainer approval; secrets scoped to the environment; pinned wrangler-action; smoke tests after deploy; setup-node package cache disabled in the deploy job to prevent cache poisoning; production contact function accepts only the pages.dev origins (no localhost). Controls: SLSA-L2, OWASP-CICD-SEC-1",
+                  "modelType": "STRIDE",
+                  "score": ""
+                },
+                {
+                  "id": "529fa623-573b-58be-9040-032d7edf34f3",
+                  "number": 21,
+                  "title": "Unreviewed or indexed staging deploy",
+                  "status": "Mitigated",
+                  "severity": "Medium",
+                  "type": "Elevation of privilege",
+                  "description": "Merged code reaches the public staging URL without production approval, or staging is indexed and mistaken for production.",
+                  "mitigation": "Staging is the first job of deploy.yml, runs only on pushes to main (PR + required checks), signed v* tags or manual dispatch, and deploys only to the staging Pages branch alias (--branch staging), never production; same pinned actions, harden-runner, read-only permissions and disabled package cache as production; X-Robots-Tag noindex added to the staging build only; smoke tests after deploy. Production deploys only from verified release tags, after staging succeeds and a maintainer approves. Controls: SLSA-L2, OWASP-CICD-SEC-1",
+                  "modelType": "STRIDE",
+                  "score": ""
+                },
+                {
+                  "id": "88501380-adca-5abd-ad9f-2dda327dd905",
+                  "number": 22,
+                  "title": "PR preview leaks secrets or ships attacker code",
+                  "status": "Mitigated",
+                  "severity": "Medium",
+                  "type": "Information disclosure",
+                  "description": "A PR deploy leaks the Cloudflare token or ships attacker code under the project domain.",
+                  "mitigation": "preview.yml runs on pull_request only (never pull_request_target), only for same-repo heads and not Dependabot, so fork PRs never run it or get secrets; build step has no secrets; deploys only to a pr-<number> alias; noindex; token limited to contents:read, deployments and PR comments. Residual: write-access users can run code beside the token. Controls: OWASP-CICD-SEC-4, OWASP-CICD-SEC-6",
+                  "modelType": "STRIDE",
+                  "score": ""
+                },
+                {
+                  "id": "4673cfd8-a2eb-597a-882d-bed6c97c8f7a",
+                  "number": 23,
+                  "title": "Forged or off-main release tag deployed",
+                  "status": "Mitigated",
+                  "severity": "High",
+                  "type": "Tampering",
+                  "description": "An unsigned, forged or off-main tag is released or deployed, or a rollback changes main.",
+                  "mitigation": "Production deploys only from vX.Y.Z tags; release, deploy-production and rollback verify via the GitHub API that the tag is annotated, GitHub-verified and on main; v* tag ruleset admin-only; tags signed locally by the maintainer (no CI signing key); maintainer-only Release gate; rollback is read-only on git, checks out the exact tag commit, verifies SHA256SUMS and needs production approval. Controls: SLSA-L2, OWASP-CICD-SEC-1, OWASP-CICD-SEC-9",
                   "modelType": "STRIDE",
                   "score": ""
                 }
