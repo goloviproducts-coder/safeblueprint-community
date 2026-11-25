@@ -1,5 +1,5 @@
 # nginx 1.31.7-alpine (pinned by digest)
-FROM nginx:1.31.7-alpine@sha256:892bb2152464f0c5d8972593a5f5afaf8054552580b699d95f8ff4af08c2d33d
+FROM nginx:1.31.8-alpine@sha256:fed7e14be83cbd2661a75cdc5b872d936cf155d46c327084d30b8df19ae88d72
 RUN rm -rf /usr/share/nginx/html/* && mkdir -p /tmp && chown -R nginx:nginx /var/cache/nginx /tmp
 COPY nginx.conf /etc/nginx/nginx.conf
 COPY --chown=nginx:nginx site/ /usr/share/nginx/html/
